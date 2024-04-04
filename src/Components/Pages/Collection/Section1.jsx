@@ -29,7 +29,7 @@ const Section1 = () => {
 					</button>
 				</div>
 
-				<div className="flex items-center">
+				{/* <div className="flex items-center">
 					<label className="block text-lg font-semibold mb-1 mr-[32rem] whitespace-nowrap">
 						Hero Section Title
 					</label>
@@ -45,7 +45,7 @@ const Section1 = () => {
 							placeholder="PARAGRAPH"
 						/>
 					</div>
-				</div>
+				</div> */}
 			</div>
 			<div>
 				<div className="flex items-center justify-between">

@@ -1,0 +1,17 @@
+.nav-link {
+    text-decoration: none;
+    color: gray;
+    /* Default link color */
+}
+
+.nav-link:hover {
+    color: blue;
+    /* Hover color */
+}
+
+.nav-link.active {
+    color: blue;
+    /* Active link color */
+    border-bottom: 2px solid blue;
+    /* Underline */
+}

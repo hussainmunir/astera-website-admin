@@ -4,12 +4,15 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import uploadsvg from "../../../Images/UploadIcons.png";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import { Switch } from "@mui/material";
 
-const Section2 = () => {
+const Section3 = () => {
 	const [selectedImage, setSelectedImage] = useState(null);
 	const [editorContent, setEditorContent] = useState("");
 	const [charCount, setCharCount] = useState(0);
-	const maxChars = 500; // Set the max characters allowed
+	const [inputEnabled, setInputEnabled] = useState(false);
+	const [inputText, setInputText] = useState("");
+	const maxChars = 500;
 
 	const onDrop = useCallback((acceptedFiles) => {
 		setSelectedImage(acceptedFiles[0]);
@@ -22,7 +25,13 @@ const Section2 = () => {
 		setEditorContent(content);
 		setCharCount(editor.getLength() - 1); // Minus 1 to not count the trailing newline
 	};
+	const handleToggleChange = () => {
+		setInputEnabled(!inputEnabled); // Toggle the input field enable/disable state
+	};
 
+	const handleInputChange = (e) => {
+		setInputText(e.target.value);
+	};
 	// Quill modules to attach to editor
 	// Add your desired modules here
 	const modules = {
@@ -64,7 +73,7 @@ const Section2 = () => {
 				<div className="hidden md:flex items-center justify-between mb-[1rem]">
 					<div className="w-full flex flex-col">
 						<div className="w-full text-lg font-semibold leading-7 text-gray-900 max-md:max-w-full">
-							Section 2
+							Section 3
 						</div>
 						<div className="mt-1 w-full text-sm leading-5 text-ellipsis text-slate-600 max-md:max-w-full">
 							Update desired photo and details here.
@@ -93,7 +102,7 @@ const Section2 = () => {
 					</div>
 				</div>
 
-				<div className="flex mt-[2rem]">
+				{/* <div className="flex mt-[2rem]">
 					<label
 						htmlFor="bio"
 						className="text-lg font-medium text-gray-900 mr-[24rem]"
@@ -112,11 +121,41 @@ const Section2 = () => {
 							modules={modules}
 							formats={formats}
 							placeholder="Write a short introduction."
-							style={{ height: "200px", marginBottom: "40px",width:"600px" }}
+							style={{ height: "200px", marginBottom: "40px", width: "600px" }}
 						/>
 						<div className="text-sm ml-1 text-gray-600">
 							{`${maxChars - charCount} characters left`}
 						</div>
+					</div>
+				</div> */}
+
+				<div className="flex mt-4 items-center">
+					<div className="flex mt-4 items-center">
+						<div className="mr-4">
+							<span className="mb-0 ml-2 font-extrabold whitespace-nowrap">
+								Add Button
+							</span>
+							<Switch
+								checked={inputEnabled}
+								onChange={handleToggleChange}
+								color="primary"
+							/>
+							<span></span>
+						</div>
+						<div className="relative flex items-center">
+							<input
+								type="text"
+								className="border ml-[28rem] border-gray-300 px-3 py-2 focus:outline-none focus:border-black"
+								placeholder="Input Field"
+								onChange={handleInputChange}
+								disabled={!inputEnabled}
+							/>
+						</div>
+						{inputEnabled && (
+							<div className="bg-gray-300  text-black px-3 py-2 border whitespace-nowrap rounded-lg ml-[2rem]">
+								{inputText}
+							</div>
+						)}
 					</div>
 				</div>
 			</div>
@@ -125,7 +164,7 @@ const Section2 = () => {
 				<div className="flex items-center justify-between">
 					<div className="w-1/3">
 						<label className="block text-lg ml-[2rem] mt-[2rem] font-semibold mb-1">
-							Hero Image{" "}
+							Image{" "}
 							<HelpOutlineIcon
 								style={{
 									fontSize: 16,
@@ -172,4 +211,4 @@ const Section2 = () => {
 	);
 };
 
-export default Section2;
+export default Section3;
