@@ -17,16 +17,13 @@ const Section1 = () => {
 			<div className="max-w-lg ml-[2rem] mt-[2rem]">
 				<div className="hidden md:flex items-center justify-between mb-[1rem] relative">
 					<div className="w-full flex flex-col">
-						<div className="w-full text-lg font-semibold leading-7 text-gray-900 max-md:max-w-full">
-							Section 1
+						<div className="w-full text-lg font-bold leading-7 text-gray-900 max-md:max-w-full">
+							Section 2
 						</div>
 						<div className="mt-1 w-full text-sm leading-5 text-ellipsis text-slate-600 max-md:max-w-full">
 							Update desired photo and details here.
 						</div>
 					</div>
-					<button className="text-white bg-purple-600 rounded-lg px-3 py-2 focus:outline-none absolute  top-0 right-0 mt-4 mr-4">
-						Save
-					</button>
 				</div>
 
 				{/* <div className="flex items-center">
