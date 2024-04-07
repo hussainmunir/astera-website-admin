@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 
-export function SecondSection({ saveImage }) {
-  const [previousImages, setPreviousImages] = useState([]);
+export function SecondSection() {
   const [newImages, setNewImages] = useState([]);
-  const [uploadedImage, setUploadedImage] = useState(null);
+  const [subtitle, setSubtitle] = useState('');
+  const [title, setTitle] = useState('');
 
   const handleImageUpload = (event) => {
     const files = event.target.files;
@@ -15,7 +15,7 @@ export function SecondSection({ saveImage }) {
 
       reader.onload = () => {
         const imageDataUrl = reader.result;
-        updatedNewImages.push({ id: i, dataUrl: imageDataUrl });
+        updatedNewImages.push({ id: i, dataUrl: imageDataUrl, title: '', subtitle: '' });
         setNewImages((prevImages) => [...prevImages, ...updatedNewImages]);
       };
 
@@ -23,8 +23,22 @@ export function SecondSection({ saveImage }) {
     }
   };
 
+  const handleTitleChange = (event, id) => {
+    const updatedImages = newImages.map(image =>
+      image.id === id ? { ...image, title: event.target.value } : image
+    );
+    setNewImages(updatedImages);
+  };
+
+  const handleSubtitleChange = (event, id) => {
+    const updatedImages = newImages.map(image =>
+      image.id === id ? { ...image, subtitle: event.target.value } : image
+    );
+    setNewImages(updatedImages);
+  };
+
   return (
-    <div>
+    <div className="w-full h-screen">
       <div>
         <p className="font-bold ml-8 mt-8 text-lg">Section 2</p>
         <p className="ml-8 mt-1 text-ellipsis text-slate-600">
@@ -33,13 +47,19 @@ export function SecondSection({ saveImage }) {
         <div className="flex">
           <p className="ml-8 mt-6 font-bold text-lg"> Title </p>
           <input
-            className="mt-6 ml-[20rem] border-2 border-black-500 border-solid p-3 rounded-lg"
+            type="text"
+            className="mt-6 w-[14rem] ml-[20rem] border-2 border-black-500 border-solid p-3 rounded-lg"
             placeholder="WHAT'S NEW"
-          ></input>
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
           <input
-            className="mt-6 ml-[2rem] border-2 border-black-500 border-solid p-3 rounded-lg"
+            type="text"
+            className="mt-6 w-[14rem] ml-[1rem] border-2 border-black-500 border-solid p-3 rounded-lg"
             placeholder="COLLECTION 2024"
-          ></input>
+            value={subtitle}
+            onChange={(e) => setSubtitle(e.target.value)}
+          />
         </div>
         <div className="flex">
           <p className="ml-8 mt-6 font-bold text-lg">Image</p>
@@ -52,8 +72,7 @@ export function SecondSection({ saveImage }) {
         <div className="ml-8 mt-1 text-ellipsis text-slate-600">
           This will be displayed on your Section 3
         </div>
-        <div className="w-[350px] h-[170px] border-2 border-gray-300 border-solid rounded-lg p-6 ml-[24rem] relative">
-          {/* File input positioned absolutely to cover the entire area */}
+        <div className="w-[400px] h-[180px] border-2 border-gray-300 border-solid rounded-lg p-6 ml-[24.5rem] relative -mt-[2rem]">
           <input
             type="file"
             className="absolute inset-0 w-full h-full opacity-0 z-50 cursor-pointer"
@@ -79,38 +98,40 @@ export function SecondSection({ saveImage }) {
           </div>
         </div>
 
-        <div className="ml-8 mt-4">
-          <p className="font-bold text-lg">New Images</p>
-          {/* Display newly uploaded images */}
-          <div className="flex flex-wrap mt-4">
+        <div className="flex ml-8 mt-8 gap-20">
+          <p className="font-bold text-lg">Catalogs Images</p>
+          
+          <div className="flex flex-wrap ml-[9rem] w-[30rem] gap-8">
             {newImages.map((image) => (
               <div
                 key={image.id}
-                className="w-[220px] h-[170px] border-2 border-neutral rounded-lg p-2 mr-4 mb-4"
+                className="w-[220px] h-[170px] border-2 border-neutral rounded-lg p-2"
+                style={{ marginRight: '', marginBottom: '100px' }} 
               >
                 <img
                   src={image.dataUrl}
                   className="w-full h-full object-contain"
-                  alt={`Image ${image.id}`}
+                  alt={`Image ${image.id} `}
+                />
+                <input
+                  className="border-2 border-black-500 border-solid p-3 rounded-lg mt-4 -ml-2 w-[13.5rem]"
+                  type="text"
+                  placeholder="WHAT'S NEW"
+                  value={image.title}
+                  onChange={(e) => handleTitleChange(e, image.id)}
+                />
+                <input
+                  className="border-2 border-black-500 border-solid p-3 rounded-lg mt-2 -ml-2 w-[13.5rem]"
+                  type="text"
+                  placeholder="NEW COLLECTION 2024"
+                  value={image.subtitle}
+                  onChange={(e) => handleSubtitleChange(e, image.id)}
                 />
               </div>
             ))}
           </div>
         </div>
       </div>
-      {/* Display temporarily uploaded image */}
-      {uploadedImage && (
-        <div className="ml-8 mt-4">
-          <p className="font-bold text-lg">Temporary Uploaded Image</p>
-          <div className="w-[220px] h-[170px] border-2 border-neutral rounded-lg p-2 mt-4">
-            <img
-              src={uploadedImage}
-              alt="Uploaded Image"
-              className="w-full h-full object-contain"
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -1,12 +1,6 @@
 import React, { useState } from 'react';
 
-export function FirstTitle({ savebtnvalue }) {
-  const [savebtnval, setSavebtnval] = useState(false);
-
-  const btnvalhandler = () => {
-    setSavebtnval(true);
-    savebtnvalue(savebtnval);
-  };
+export function FirstTitle() {
 
   return (
     <div className="mt-[2rem] ml-[2rem] flex flex-col justify-center self-stretch">
@@ -22,7 +16,7 @@ export function FirstTitle({ savebtnvalue }) {
         </p>
         <div className="flex ml-[80rem] space-x-5 -mt-[1.5rem]">
           <button className="border-solid border-2 p-2 w-[5rem] border-black text-blue bg-white rounded-xl" >Close</button>
-          <button className="border-1 border-solid border-blue w-[5rem] text-white bg-blue-700 p-2 rounded-xl" onClick={btnvalhandler}>Save</button>
+          <button className="border-1 border-solid border-blue w-[5rem] text-white bg-blue-700 p-2 rounded-xl" >Save</button>
         </div>
       </div>
     </div>
