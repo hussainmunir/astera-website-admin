@@ -164,7 +164,7 @@ export function Section1() {
 										<input
 											type="text"
 											className="border-2 border-gray-300 p-2 rounded-lg"
-											placeholder="Enter description"
+											placeholder="Enter Category"
 											value={pair.text}
 											onChange={(e) =>
 												setImageTextPairs((prevPairs) =>
@@ -176,6 +176,23 @@ export function Section1() {
 												)
 											}
 										/>
+										<div className="mt-2">
+											<input
+												type="text"
+												className="border-2 border-gray-300 p-2 rounded-lg"
+												placeholder="Enter description"
+												value={pair.text}
+												onChange={(e) =>
+													setImageTextPairs((prevPairs) =>
+														prevPairs.map((prevPair, idx) =>
+															idx === index
+																? { ...prevPair, text: e.target.value }
+																: prevPair
+														)
+													)
+												}
+											/>
+										</div>
 										<IconButton
 											className="mt-2 bg-white border border-black"
 											onClick={() => handleDeletePair(index)}
