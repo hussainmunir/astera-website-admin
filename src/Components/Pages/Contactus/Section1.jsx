@@ -14,28 +14,23 @@ const Section1 = () => {
 
 	return (
 		<div>
-			
-				<div className="max-w-lg ml-[2rem] mt-[2rem]">
-					<div className="hidden md:flex items-center justify-between mb-[1rem]">
-						<div className="w-full flex flex-col">
-							<div className="w-full text-black text-lg max-md:max-w-full">
-								<b>Section 1</b>
-							</div>
-							<div className="mt-1 w-full text-sm leading-5 text-ellipsis text-slate-600 max-md:max-w-full">
-								Update desired photo and details here.
-							</div>
+			<div className="max-w-lg ml-[2rem] mt-[2rem]">
+				<div className="hidden md:flex items-center justify-between mb-[1rem] relative">
+					<div className="w-full flex flex-col">
+						<div className="w-full text-lg font-semibold leading-7 text-gray-900 max-md:max-w-full">
+							Section 1
+						</div>
+						<div className="mt-1 w-full text-sm leading-5 text-ellipsis text-slate-600 max-md:max-w-full">
+							Update desired photo and details here.
 						</div>
 					</div>
-					<button className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute top-[20rem] ml-[90%] ">
+					<button className="text-white bg-purple-600 rounded-lg px-3 py-2 focus:outline-none absolute  top-0 right-0 mt-4 mr-4">
 						Save
-					</button>
-					<button className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute top-[20rem] ml-[84%]">
-						Cancel
 					</button>
 				</div>
 
 				<div className="flex items-center">
-					<label className="block text-lg font-semibold mb-1 ml-[2rem] mr-[32rem] whitespace-nowrap">
+					<label className="block text-lg font-semibold mb-1 mr-[32rem] whitespace-nowrap">
 						Hero Section Title
 					</label>
 					<div className="flex">
@@ -51,7 +46,7 @@ const Section1 = () => {
 						/>
 					</div>
 				</div>
-		
+			</div>
 			<div>
 				<div className="flex items-center justify-between">
 					<div className="w-1/3">

@@ -5,7 +5,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import uploadsvg from "../../../Images/UploadIcons.png";
 
-export function SecondSection() {
+export function Section1() {
 	const [newImages, setNewImages] = useState([]);
 	const [imageTextPairs, setImageTextPairs] = useState([]);
 	const [subtitle, setSubtitle] = useState("");
@@ -57,8 +57,7 @@ export function SecondSection() {
 		multiple: true,
 	});
 
-
-  const [selectedImage, setSelectedImage] = useState(null);
+	const [selectedImage, setSelectedImage] = useState(null);
 
 	const onDrop = useCallback((acceptedFiles) => {
 		setSelectedImage(acceptedFiles[0]);

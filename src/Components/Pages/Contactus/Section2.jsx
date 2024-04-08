@@ -5,11 +5,10 @@ import "react-quill/dist/quill.snow.css";
 import uploadsvg from "../../../Images/UploadIcons.png";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
-const Section7 = () => {
+const Section2 = () => {
 	const [selectedImage, setSelectedImage] = useState(null);
 	const [editorContent, setEditorContent] = useState("");
 	const [charCount, setCharCount] = useState(0);
-	const [avatarImage, setAvatarImage] = useState(null); // State for avatar image
 	const maxChars = 500; // Set the max characters allowed
 
 	const onDrop = useCallback((acceptedFiles) => {
@@ -24,18 +23,8 @@ const Section7 = () => {
 		setCharCount(editor.getLength() - 1); // Minus 1 to not count the trailing newline
 	};
 
-	// Function to handle dropping avatar image
-	const onDropAvatar = useCallback((acceptedFiles) => {
-		setAvatarImage(acceptedFiles[0]);
-	}, []);
-
-	const {
-		getRootProps: getRootPropsAvatar,
-		getInputProps: getInputPropsAvatar,
-	} = useDropzone({
-		onDrop: onDropAvatar,
-	});
-
+	// Quill modules to attach to editor
+	// Add your desired modules here
 	const modules = {
 		toolbar: [
 			[{ header: "1" }, { header: "2" }, { font: [] }],
@@ -51,6 +40,8 @@ const Section7 = () => {
 		},
 	};
 
+	// Quill formats to attach to editor
+	// Add your desired formats here
 	const formats = [
 		"header",
 		"font",
@@ -66,13 +57,14 @@ const Section7 = () => {
 		"image",
 		"video",
 	];
+
 	return (
-		<div className="w-full">
+		<div>
 			<div className="max-w-lg ml-[2rem] mt-[2rem]">
 				<div className="hidden md:flex items-center justify-between mb-[1rem]">
 					<div className="w-full flex flex-col">
 						<div className="w-full text-lg font-semibold leading-7 text-gray-900 max-md:max-w-full">
-							Section 7
+							Section 2
 						</div>
 						<div className="mt-1 w-full text-sm leading-5 text-ellipsis text-slate-600 max-md:max-w-full">
 							Update desired photo and details here.
@@ -82,9 +74,10 @@ const Section7 = () => {
 						Save
 					</button>
 				</div>
+
 				<div className="flex items-center">
 					<label className="block text-lg font-semibold mb-1 mr-[32rem] whitespace-nowrap">
-						Name
+						Title
 					</label>
 					<div className="flex">
 						<input
@@ -97,42 +90,6 @@ const Section7 = () => {
 							className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black"
 							placeholder="PARAGRAPH"
 						/>
-					</div>
-				</div>
-
-				<div className="flex items-center justify-between">
-					<div className="w-1/3">
-						<label className="block text-lg mt-8 font-semibold mb-1 whitespace-nowrap">
-							Set Avatar
-						</label>
-					</div>
-					<div className="mt-8 ml-8 flex justify-start items-center">
-						{/* Avatar Image Display */}
-						{avatarImage && (
-							<img
-								src={URL.createObjectURL(avatarImage)}
-								alt="Avatar"
-								className="w-32 h-32 rounded-full mr-4"
-							/>
-						)}
-						{/* Upload Avatar Section */}
-						<div
-							{...getRootPropsAvatar()}
-							className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center cursor-pointer"
-						>
-							<input {...getInputPropsAvatar()} />
-							<img
-								src={uploadsvg}
-								alt="Upload Icon"
-								className="w-12 h-12 mb-2"
-							/>
-							<p className="text-sm text-gray-600 mb-2">
-								Click to upload or drag and drop
-							</p>
-							<p className="text-xs text-gray-600">
-								(Supported formats: SVG, PNG, JPG, or GIF)
-							</p>
-						</div>
 					</div>
 				</div>
 
@@ -168,7 +125,7 @@ const Section7 = () => {
 				<div className="flex items-center justify-between">
 					<div className="w-1/3">
 						<label className="block text-lg ml-[2rem] mt-[2rem] font-semibold mb-1">
-							Image 1{" "}
+							Hero Image{" "}
 							<HelpOutlineIcon
 								style={{
 									fontSize: 16,
@@ -215,4 +172,4 @@ const Section7 = () => {
 	);
 };
 
-export default Section7;
+export default Section2;
