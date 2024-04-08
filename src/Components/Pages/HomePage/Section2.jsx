@@ -70,8 +70,11 @@ const Section2 = () => {
 							Update desired photo and details here.
 						</div>
 					</div>
-					<button className="text-white bg-purple-600 rounded-lg px-3 py-2 focus:outline-none">
+					<button className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute ml-[87%] ">
 						Save
+					</button>
+					<button className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute ml-[79rem] ">
+						Cancel
 					</button>
 				</div>
 
@@ -167,7 +170,7 @@ const Section2 = () => {
 				</div>
 			</div>
 
-			<div className="border border-l border-black m-[2rem] "></div>
+			<div className="border border-l border-gray m-[2rem] "></div>
 		</div>
 	);
 };

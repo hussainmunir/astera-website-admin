@@ -97,7 +97,7 @@ const Section1 = () => {
 					</div>
 				</div>
 			</div>
-			<div className="border border-l border-black m-[2rem] "></div>
+			<div className="border border-l border-gray m-[2rem] "></div>
 		</div>
 	);
 };
