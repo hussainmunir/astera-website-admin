@@ -26,10 +26,10 @@ const Section1 = () => {
 							</div>
 						</div>
 					</div>
-					<button className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute top-[20rem] ml-[90%] ">
+					<button className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute top-[20rem] ml-[87%] ">
 						Save
 					</button>
-					<button className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute top-[20rem] ml-[84%]">
+					<button className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute top-[20rem] ml-[80%]">
 						Cancel
 					</button>
 				</div>
