@@ -90,9 +90,9 @@ function NavBar() {
 				</div>
 
 				<Link
-					to="/catalogs"
+					to="/catalog"
 					className={
-						location.pathname === "/catalogs" ? "nav-link active " : "nav-link"
+						location.pathname === "/catalog" ? "nav-link active " : "nav-link"
 					}
 				>
 					Catalogs

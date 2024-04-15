@@ -8,6 +8,7 @@ import { Novelties } from "./Components/Pages/Novelties/Novelties";
 import { Timeless } from './Components/Pages/Timeless/Timeless';
 import { Contactus } from './Components/Pages/Contactus/Contactus';
 import { Discover } from './Components/Pages/Discover/Discover';
+import { Catalog } from './Components/Pages/Catalog.jsx/Catalog';
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
 				<Route path="/timeless" element={<Timeless />} />
 				<Route path="/contact" element={<Contactus />} />
 				<Route path="/discover" element={<Discover/>} />
+				<Route path="/catalog" element={<Catalog/>} />
 			</Routes>
 		</BrowserRouter>
 	);
