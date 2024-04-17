@@ -15,6 +15,11 @@ export function Section1() {
   return (
     <div className="section1 mt-[5rem] ml-[6rem]">
       <div>
+      <input
+						type="text"
+						className="mt-6 w-[17rem] ml-[22rem] border-2 border-black-500 border-solid p-3 rounded-lg"
+						placeholder="TITLE"
+					/>
         <div className="flex items-center justify-between">
           <div className="w-full mt-[2rem] ml-[22rem] flex justify-start">
             {selectedImage && (
