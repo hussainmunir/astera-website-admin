@@ -9,11 +9,13 @@ import { Timeless } from './Components/Pages/Timeless/Timeless';
 import { Contactus } from './Components/Pages/Contactus/Contactus';
 import { Discover } from './Components/Pages/Discover/Discover';
 import { Catalog } from './Components/Pages/Catalog.jsx/Catalog';
+import { CollectionsProvider } from "./CollectionsContext";
 
 function App() {
 
   return (
 		<BrowserRouter>
+		<CollectionsProvider>
 			<Navbar />
 			<Routes>
 				<Route path="/" element={<HomePage />} />
@@ -25,6 +27,7 @@ function App() {
 				<Route path="/discover" element={<Discover/>} />
 				<Route path="/catalog" element={<Catalog/>} />
 			</Routes>
+			</CollectionsProvider>
 		</BrowserRouter>
 	);
 }
