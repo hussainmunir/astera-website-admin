@@ -4,59 +4,58 @@ import uploadsvg from "../../../Images/UploadIcons.png";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
 const Section1 = () => {
-	const [selectedImage, setSelectedImage] = useState(null);
+	const [selectedVideo, setSelectedVideo] = useState(null);
 
 	const onDrop = useCallback((acceptedFiles) => {
-		setSelectedImage(acceptedFiles[0]);
+		setSelectedVideo(acceptedFiles[0]);
 	}, []);
 
 	const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
 	return (
 		<div>
-			
-				<div className="max-w-lg ml-[2rem] mt-[2rem]">
-					<div className="hidden md:flex items-center justify-between mb-[1rem]">
-						<div className="w-full flex flex-col">
-							<div className="w-full text-black text-lg max-md:max-w-full">
-								<b>Section 1</b>
-							</div>
-							<div className="mt-1 w-full text-sm leading-5 text-ellipsis text-slate-600 max-md:max-w-full">
-								Update desired photo and details here.
-							</div>
+			<div className="max-w-lg ml-[2rem] mt-[2rem]">
+				<div className="hidden md:flex items-center justify-between mb-[1rem]">
+					<div className="w-full flex flex-col">
+						<div className="w-full text-black text-lg max-md:max-w-full">
+							<b>Section 1</b>
+						</div>
+						<div className="mt-1 w-full text-sm leading-5 text-ellipsis text-slate-600 max-md:max-w-full">
+							Update desired video and details here.
 						</div>
 					</div>
-					<button className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute top-[20rem] ml-[87%] ">
-						Save
-					</button>
-					<button className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute top-[20rem] ml-[80%]">
-						Cancel
-					</button>
 				</div>
+				<button className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute top-[20rem] ml-[87%] ">
+					Save
+				</button>
+				<button className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute top-[20rem] ml-[80%]">
+					Cancel
+				</button>
+			</div>
 
-				<div className="flex items-center">
-					<label className="block text-lg font-semibold mb-1 ml-[2rem] mr-[32rem] whitespace-nowrap">
-						Hero Section Title
-					</label>
-					<div className="flex">
-						<input
-							type="text"
-							className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black mr-[2rem]"
-							placeholder="HEADING"
-						/>
-						<input
-							type="text"
-							className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black"
-							placeholder="PARAGRAPH"
-						/>
-					</div>
+			<div className="flex items-center">
+				<label className="block text-lg font-semibold mb-1 ml-[2rem] mr-[32rem] whitespace-nowrap">
+					Hero Section Title
+				</label>
+				<div className="flex">
+					<input
+						type="text"
+						className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black mr-[2rem]"
+						placeholder="HEADING"
+					/>
+					<input
+						type="text"
+						className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black"
+						placeholder="PARAGRAPH"
+					/>
 				</div>
-		
+			</div>
+
 			<div>
 				<div className="flex items-center justify-between">
 					<div className="w-1/3">
 						<label className="block text-lg ml-[2rem] mt-[2rem] font-semibold mb-1">
-							Hero Image{" "}
+							Hero Video{" "}
 							<HelpOutlineIcon
 								style={{
 									fontSize: 16,
@@ -70,10 +69,10 @@ const Section1 = () => {
 						</p>
 					</div>
 					<div className="w-full mt-[2rem] ml-[22rem] flex justify-start">
-						{selectedImage && (
-							<img
-								src={URL.createObjectURL(selectedImage)}
-								alt="Uploaded"
+						{selectedVideo && (
+							<video
+								src={URL.createObjectURL(selectedVideo)}
+								controls
 								className="w-auto h-40 object-cover rounded-lg mr-[2rem]"
 							/>
 						)}
@@ -91,7 +90,7 @@ const Section1 = () => {
 								Click to upload or drag and drop
 							</p>
 							<p className="text-sm text-gray-600">
-								SVG, PNG, JPG or GIF (max. 800x400px)
+								Supported formats: MP4, AVI, MOV (max. 100MB)
 							</p>
 						</div>
 					</div>
