@@ -10,23 +10,27 @@ import { Contactus } from './Components/Pages/Contactus/Contactus';
 import { Discover } from './Components/Pages/Discover/Discover';
 import { Catalog } from './Components/Pages/Catalog.jsx/Catalog';
 import { CollectionsProvider } from "./CollectionsContext";
+import { Product } from './Components/Pages/Product/Product';
+import { Event } from './Components/Pages/Event/Event';
 
 function App() {
 
-  return (
+	return (
 		<BrowserRouter>
-		<CollectionsProvider>
-			<Navbar />
-			<Routes>
-				<Route path="/" element={<HomePage />} />
-				<Route path="/collection" element={<Collection />} />
-				<Route path="/newcollection" element={<NewCollection />} />
-				<Route path="/novelties" element={<Novelties />} />
-				<Route path="/timeless" element={<Timeless />} />
-				<Route path="/contact" element={<Contactus />} />
-				<Route path="/discover" element={<Discover/>} />
-				<Route path="/catalog" element={<Catalog/>} />
-			</Routes>
+			<CollectionsProvider>
+				<Navbar />
+				<Routes>
+					<Route path="/" element={<HomePage />} />
+					<Route path="/collection" element={<Collection />} />
+					<Route path="/newcollection" element={<NewCollection />} />
+					<Route path="/novelties" element={<Novelties />} />
+					<Route path="/timeless" element={<Timeless />} />
+					<Route path="/contact" element={<Contactus />} />
+					<Route path="/discover" element={<Discover />} />
+					<Route path="/catalog" element={<Catalog />} />
+					<Route path="/product" element={<Product />} />
+					<Route path="/event" element={<Event />} />
+				</Routes>
 			</CollectionsProvider>
 		</BrowserRouter>
 	);

@@ -1,0 +1,27 @@
+IN APP.JSX FILE
+
+ <Route path="/product" element={<Product />} />
+ <Route path="/event" element={<Event />} />
+
+
+IN NAVBAR/menu.jsx
+
+<Link
+     to="/product"
+	className={
+		location.pathname === "/product"
+				? "nav-link active whitespace-nowrap"
+							: "nav-link whitespace-nowrap"					}
+				>
+					Product
+</Link>	
+
+<Link
+	to="/event"
+         	className={
+		     location.pathname === "/event"
+			? "nav-link active whitespace-nowrap"
+			: "nav-link whitespace-nowrap" 
+			}	>
+		Even		
+</Link>

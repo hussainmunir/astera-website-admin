@@ -4,10 +4,10 @@ import "./Menu.css";
 
 
 function NavBar() {
-  const [showDropdown, setShowDropdown] = useState(false);
-  const location = useLocation();
+	const [showDropdown, setShowDropdown] = useState(false);
+	const location = useLocation();
 
-  return (
+	return (
 		<div className="flex flex-col justify-center items-start border-b border-gray-200 border-solid max-md:pr-5 mt-[4rem] ml-[2rem]">
 			<div className="flex gap-10 justify-between items-start max-w-full w-[500px] max-md:flex-wrap">
 				<Link
@@ -106,6 +106,25 @@ function NavBar() {
 					}
 				>
 					Contact Us
+				</Link>
+				<Link
+					to="/product"
+					className={
+						location.pathname === "/product"
+							? "nav-link active whitespace-nowrap"
+							: "nav-link whitespace-nowrap"}
+				>
+					Products
+				</Link>
+
+				<Link
+					to="/event"
+					className={
+						location.pathname === "/event"
+							? "nav-link active whitespace-nowrap"
+							: "nav-link whitespace-nowrap"
+					}	>
+					Events
 				</Link>
 			</div>
 		</div>
