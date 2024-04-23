@@ -279,7 +279,7 @@ const Title3 = () => {
 				</div>
 			</div>
 
-			<div className="border border-l border-gray m-[2rem] "></div>
+			{/* <div className="border border-l border-gray m-[2rem] "></div> */}
 		</div>
 	);
 };

@@ -145,35 +145,7 @@ const Title2 = () => {
 					</div>
 				</div>
 
-				{/* <div className="flex mt-4 items-center">
-					<div className="flex mt-4 items-center">
-						<div className="mr-4">
-							<span className="mb-0 ml-2 font-extrabold whitespace-nowrap">
-								Add Button
-							</span>
-							<Switch
-								checked={inputEnabled}
-								onChange={handleToggleChange}
-								color="primary"
-							/>
-							<span></span>
-						</div>
-						<div className="relative flex items-center">
-							<input
-								type="text"
-								className="border ml-[28rem] border-gray-300 px-3 py-2 focus:outline-none focus:border-black"
-								placeholder="Input Field"
-								onChange={handleInputChange}
-								disabled={!inputEnabled}
-							/>
-						</div>
-						{inputEnabled && (
-							<div className="bg-black text-white px-3 py-2 border whitespace-nowrap rounded-lg ml-[2rem]">
-								{inputText}
-							</div>
-						)}
-					</div>
-				</div> */}
+				
 			</div>
 
 			<div>

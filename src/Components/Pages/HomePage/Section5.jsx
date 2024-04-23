@@ -2,18 +2,19 @@ import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import uploadsvg from "../../../../Images/UploadIcons.png";
+import uploadsvg from "../../../Images/UploadIcons.png";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import Title2 from "./Title2";
-import Title3 from "./Title3";
+import { Switch } from "@mui/material";
 
 const Section5 = () => {
   const [editorContent, setEditorContent] = useState("");
   const [charCount, setCharCount] = useState(0);
   const [image1, setImage1] = useState(null); // State for image 1
   const [supportiveImages, setSupportiveImages] = useState([]); // State for supportive images
+  const [inputEnabled, setInputEnabled] = useState(false);
+  const [inputText, setInputText] = useState("");
   const maxChars = 500;
 
   const onDropImage1 = useCallback((acceptedFiles) => {
@@ -55,6 +56,14 @@ const Section5 = () => {
     setSupportiveImages((prevImages) =>
       prevImages.filter((image, index) => index !== indexToRemove)
     );
+  };
+
+  const handleToggleChange = () => {
+    setInputEnabled(!inputEnabled); // Toggle the input field enable/disable state
+  };
+
+  const handleInputChange = (e) => {
+    setInputText(e.target.value);
   };
 
   // Quill modules to attach to editor
@@ -115,7 +124,7 @@ const Section5 = () => {
 
           <div className="flex items-center">
             <label className="block text-lg font-semibold mb-1 mr-[32rem] whitespace-nowrap">
-              Title 1
+              Name
             </label>
             <div className="flex">
               <input
@@ -131,66 +140,126 @@ const Section5 = () => {
             </div>
           </div>
 
-          <div className="flex mt-[2rem]">
-            <label
-              htmlFor="bio"
-              className="text-lg font-medium text-gray-900 mr-[24rem]"
-            >
-              Bio
-              <br />
-              <span className="font-light text-sm whitespace-nowrap">
-                Write a short introduction.
-              </span>
-            </label>
-            <div className="flex flex-col">
-              <ReactQuill
-                theme="snow"
-                value={editorContent}
-                onChange={handleEditorChange}
-                modules={modules}
-                formats={formats}
-                placeholder="Write a short introduction."
-                style={{
-                  height: "200px",
-                  marginBottom: "40px",
-                  width: "600px",
-                }}
-              />
-              <div className="text-sm ml-1 text-gray-600">
-                {`${maxChars - charCount} characters left`}
-              </div>
-            </div>
-          </div>
-
-          {/* <div className="flex mt-4 items-center">
-						<div className="flex mt-4 items-center">
-							<div className="mr-4">
-								<span className="mb-0 ml-2 font-extrabold whitespace-nowrap">
-									Add Button
-								</span>
-								<Switch
-									checked={inputEnabled}
-									onChange={handleToggleChange}
-									color="primary"
-								/>
-								<span></span>
+          {/* <div className="flex mt-[2rem]">
+						<label
+							htmlFor="bio"
+							className="text-lg font-medium text-gray-900 mr-[24rem]"
+						>
+							Bio
+							<br />
+							<span className="font-light text-sm whitespace-nowrap">
+								Write a short introduction.
+							</span>
+						</label>
+						<div className="flex flex-col">
+							<ReactQuill
+								theme="snow"
+								value={editorContent}
+								onChange={handleEditorChange}
+								modules={modules}
+								formats={formats}
+								placeholder="Write a short introduction."
+								style={{
+									height: "200px",
+									marginBottom: "40px",
+									width: "600px",
+								}}
+							/>
+							<div className="text-sm ml-1 text-gray-600">
+								{`${maxChars - charCount} characters left`}
 							</div>
-							<div className="relative flex items-center">
-								<input
-									type="text"
-									className="border ml-[28rem] border-gray-300 px-3 py-2 focus:outline-none focus:border-black"
-									placeholder="Input Field"
-									onChange={handleInputChange}
-									disabled={!inputEnabled}
-								/>
-							</div>
-							{inputEnabled && (
-								<div className="bg-black text-white px-3 py-2 border whitespace-nowrap rounded-lg ml-[2rem]">
-									{inputText}
-								</div>
-							)}
 						</div>
 					</div> */}
+
+          <div className="flex mt-4 items-center">
+            <div className="flex mt-4 items-center">
+              <div className="mr-4">
+                <span className="mb-0 ml-2 font-extrabold whitespace-nowrap">
+                  Add Supportive Dot
+                </span>
+                <Switch
+                  checked={inputEnabled}
+                  onChange={handleToggleChange}
+                  color="primary"
+                />
+                <span></span>
+              </div>
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  className="border ml-[28rem] border-gray-300 px-3 py-2 focus:outline-none focus:border-black"
+                  placeholder="Input Field"
+                  onChange={handleInputChange}
+                  disabled={!inputEnabled}
+                />
+              </div>
+              {inputEnabled && (
+                <div className="bg-black text-white px-3 py-2 border whitespace-nowrap rounded-lg ml-[2rem]">
+                  {inputText}
+                </div>
+              )}
+            </div>
+          </div>
+          {/* Second toggle */}
+          <div className="flex mt-4 items-center">
+            <div className="flex mt-4 items-center">
+              <div className="mr-4">
+                <span className="mb-0 ml-2 font-extrabold whitespace-nowrap">
+                  Add Supportive Dot
+                </span>
+                <Switch
+                  checked={inputEnabled}
+                  onChange={handleToggleChange}
+                  color="primary"
+                />
+                <span></span>
+              </div>
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  className="border ml-[28rem] border-gray-300 px-3 py-2 focus:outline-none focus:border-black"
+                  placeholder="Input Field"
+                  onChange={handleInputChange}
+                  disabled={!inputEnabled}
+                />
+              </div>
+              {inputEnabled && (
+                <div className="bg-black text-white px-3 py-2 border whitespace-nowrap rounded-lg ml-[2rem]">
+                  {inputText}
+                </div>
+              )}
+            </div>
+          </div>
+          {/* Third Toggle  */}
+          <div className="flex mt-4 items-center">
+            <div className="flex mt-4 items-center">
+              <div className="mr-4">
+                <span className="mb-0 ml-2 font-extrabold whitespace-nowrap">
+                  Add Supportive Dot
+                </span>
+                <Switch
+                  checked={inputEnabled}
+                  onChange={handleToggleChange}
+                  color="primary"
+                />
+                <span></span>
+              </div>
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  className="border ml-[28rem] border-gray-300 px-3 py-2 focus:outline-none focus:border-black"
+                  placeholder="Input Field"
+                  onChange={handleInputChange}
+                  disabled={!inputEnabled}
+                />
+              </div>
+              {inputEnabled && (
+                <div className="bg-black text-white px-3 py-2 border whitespace-nowrap rounded-lg ml-[2rem]">
+                  {inputText}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         <div>
@@ -198,7 +267,7 @@ const Section5 = () => {
           <div className="flex items-center justify-between">
             <div className="w-1/3">
               <label className="block text-lg ml-[2rem] mt-[2rem] font-semibold mb-1">
-                Image 2{" "}
+                Image 1{" "}
                 <HelpOutlineIcon
                   style={{
                     fontSize: 16,
@@ -301,8 +370,6 @@ const Section5 = () => {
 
         <div className="border border-l border-gray m-[2rem] "></div>
       </div>
-      <Title2 />
-      <Title3 />
     </>
   );
 };

@@ -126,6 +126,33 @@ function NavBar() {
 					}	>
 					Events
 				</Link>
+				<Link
+					to="/privacyPolicy"
+					className={
+						location.pathname === "/event"
+							? "nav-link active whitespace-nowrap"
+							: "nav-link whitespace-nowrap"
+					}	>
+					Privacy Policy
+				</Link>
+				<Link
+					to="/termsAndConditions"
+					className={
+						location.pathname === "/event"
+							? "nav-link active whitespace-nowrap"
+							: "nav-link whitespace-nowrap"
+					}	>
+					Terms and Conditions
+				</Link>
+				<Link
+					to="/notFound"
+					className={
+						location.pathname === "/event"
+							? "nav-link active whitespace-nowrap"
+							: "nav-link whitespace-nowrap"
+					}	>
+					Not Found
+				</Link>
 			</div>
 		</div>
 	);

@@ -12,6 +12,9 @@ import { Catalog } from './Components/Pages/Catalog.jsx/Catalog';
 import { CollectionsProvider } from "./CollectionsContext";
 import { Product } from './Components/Pages/Product/Product';
 import { Event } from './Components/Pages/Event/Event';
+import { PrivacyPolicy } from './Components/Pages/PrivacyPolicy/PrivacyPolicy';
+import { TermsAndConditions } from './Components/Pages/TermsAndConditions/TermsAndConditions';
+import { NotFound } from './Components/Pages/NotFound/NotFound';
 
 function App() {
 
@@ -30,6 +33,9 @@ function App() {
 					<Route path="/catalog" element={<Catalog />} />
 					<Route path="/product" element={<Product />} />
 					<Route path="/event" element={<Event />} />
+					<Route path="/privacyPolicy" element={<PrivacyPolicy />} />
+					<Route path="/termsAndConditions" element={<TermsAndConditions />} />
+					<Route path="/notFound" element={<NotFound />} />
 				</Routes>
 			</CollectionsProvider>
 		</BrowserRouter>
