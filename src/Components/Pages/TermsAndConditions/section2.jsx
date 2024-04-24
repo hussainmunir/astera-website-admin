@@ -68,12 +68,12 @@ export function Section2() {
         </div>
       </div>
       <div className="flex flex-row">
-        <label className="block text-lg font-semibold mt-[2rem] ml-[9rem] whitespace-nowrap">
+        <label className="block text-lg font-semibold mt-[2rem] ml-[2rem] whitespace-nowrap">
           Title
         </label>
         <input
           type="text"
-          className="mt-8 w-[25rem] ml-[12rem] border-2 border-black-500 border-solid p-3 rounded-lg"
+          className="mt-8 w-[25rem] ml-[19rem] border-2 border-black-500 border-solid p-3 rounded-lg"
           placeholder="TERM AND CONDITIONS"
         />
       </div>

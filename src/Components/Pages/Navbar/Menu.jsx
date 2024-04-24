@@ -129,7 +129,7 @@ function NavBar() {
 				<Link
 					to="/privacyPolicy"
 					className={
-						location.pathname === "/event"
+						location.pathname === "/privacyPolicy"
 							? "nav-link active whitespace-nowrap"
 							: "nav-link whitespace-nowrap"
 					}	>
@@ -138,7 +138,7 @@ function NavBar() {
 				<Link
 					to="/termsAndConditions"
 					className={
-						location.pathname === "/event"
+						location.pathname === "/termsAndConditions"
 							? "nav-link active whitespace-nowrap"
 							: "nav-link whitespace-nowrap"
 					}	>
@@ -147,7 +147,7 @@ function NavBar() {
 				<Link
 					to="/notFound"
 					className={
-						location.pathname === "/event"
+						location.pathname === "/notFound"
 							? "nav-link active whitespace-nowrap"
 							: "nav-link whitespace-nowrap"
 					}	>
