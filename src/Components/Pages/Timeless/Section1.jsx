@@ -77,7 +77,7 @@ export function Section1() {
 					<input
 						type="text"
 						className="mt-6 w-[14rem] ml-[20rem] border-2 border-black-500 border-solid p-3 rounded-lg"
-						placeholder="WHAT'S NEW"
+						placeholder="TIMELESSNESS"
 						value={title}
 						onChange={(e) => setTitle(e.target.value)}
 					/>
