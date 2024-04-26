@@ -1,10 +1,47 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
-import uploadsvg from "../../../Images/UploadIcons.png";
+import axios from "axios";
+import CircularProgress from "@mui/material/CircularProgress";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import uploadsvg from "../../../Images/UploadIcons.png";
+import { baseUrl } from "../../../api/base_urls";
+
 
 const Section1 = () => {
+  const [sectionTitle, setSectionTitle] = useState("");
+  const [sectionSubTitle, setSectionSubTitle] = useState("");
+  const [sectionData, setSectionData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [resetMessage, setResetMessage] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
+
+  const maxChars = 500;
+
+  useEffect(() => {
+    const fetchSectionData = async () => {
+      try {
+        const response = await axios.get(
+          `${baseUrl}homescreen/getAllCollections`
+        );
+        if (
+          response.data &&
+          response.data.data &&
+          response.data.data.contactPage &&
+          response.data.data.contactPage.section1
+        ) {
+          const { section1 } = response.data.data.contactPage;
+          setSectionData(section1);
+          setSectionTitle(section1.title);
+          setSectionSubTitle(section1.subTitle);
+        }
+      } catch (error) {
+        console.error("Error fetching section data:", error);
+      }
+    };
+
+    fetchSectionData();
+  }, []);
 
   const onDrop = useCallback((acceptedFiles) => {
     setSelectedImage(acceptedFiles[0]);
@@ -12,6 +49,51 @@ const Section1 = () => {
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
+  const handleSave = async () => {
+    setLoading(true);
+
+    const formData = new FormData();
+    formData.append("title", sectionTitle);
+    formData.append("subTitle", sectionSubTitle);
+    if (selectedImage) {
+      formData.append("backgroundImage", selectedImage);
+    }
+
+    try {
+      const response = await axios.post(
+        "https://backend.asteraporcelain.com/api/v1/contactScreen/updateSection1",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("Update successful:", response.data);
+      setSaveSuccess(true);
+    } catch (error) {
+      console.error("Error updating section:", error);
+    } finally {
+      setLoading(false);
+      setTimeout(() => {
+        setSaveSuccess(false);
+      }, 3000);
+    }
+  };
+
+  const handleCancel = () => {
+    if (sectionData) {
+      setSectionTitle(sectionData.title);
+      setSectionSubTitle(sectionData.subTitle);
+      setSelectedImage(null);
+
+      setResetMessage("Fields reset successfully");
+
+      setTimeout(() => {
+        setResetMessage("");
+      }, 3000);
+    }
+  };
   return (
     <div>
       <div className="max-w-lg ml-[2rem] mt-[2rem]">
@@ -24,12 +106,32 @@ const Section1 = () => {
               Update desired photo and details here.
             </div>
           </div>
-          <button className="text-white bg-purple-600 rounded-lg px-3 py-2 absolute -mt-[10rem] ml-[87rem] ">
-            Save
-          </button>
-          <button className="text-black bg-white rounded-lg px-3 py-2 absolute -mt-[10rem] ml-[81rem]">
+          {loading ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            <button
+            className="text-white bg-purple-600 rounded-lg px-3 py-2 absolute ml-[87rem]"
+              onClick={handleSave}
+            >
+              Save
+            </button>
+          )}
+          {saveSuccess && (
+            <div className="text-green-600 mt-2 absolute top-[25rem] ml-[85%]">
+              Save successful!
+            </div>
+          )}
+          <button
+            className="text-black bg-white rounded-lg px-3 py-2 absolute ml-[81rem]"
+            onClick={handleCancel}
+          >
             Cancel
           </button>
+          {resetMessage && (
+            <div className="text-red-600 mt-2 absolute top-[25rem] ml-[85%]">
+              {resetMessage}
+            </div>
+          )}
         </div>
 
         <div className="flex items-center">
@@ -37,16 +139,24 @@ const Section1 = () => {
             Hero Section Title
           </label>
           <div className="flex">
-            <input
-              type="text"
-              className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black mr-[2rem]"
-              placeholder="HEADING"
-            />
-            <input
-              type="text"
-              className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black"
-              placeholder="PARAGRAPH"
-            />
+            <div className="flex">
+              <input
+                type="text"
+                className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black mr-[2rem]"
+                value={sectionTitle}
+                placeholder="Title"
+                onChange={(e) => setSectionTitle(e.target.value)}
+              />
+            </div>
+            <div className="flex">
+              <input
+                type="text"
+                className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black mr-[2rem]"
+                value={sectionSubTitle}
+                placeholder="Sub-Title"
+                onChange={(e) => setSectionSubTitle(e.target.value)}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -68,13 +178,19 @@ const Section1 = () => {
             </p>
           </div>
           <div className="w-full mt-[2rem] ml-[22rem] flex justify-start">
-            {selectedImage && (
+            {selectedImage ? (
               <img
                 src={URL.createObjectURL(selectedImage)}
                 alt="Uploaded"
-                className="w-auto h-40 object-cover rounded-lg mr-[2rem]"
+                className="w-auto h-40 object-cover rounded-lg mr-2"
               />
-            )}
+            ) : sectionData && sectionData.backgroundImageUrl ? (
+              <img
+                src={sectionData.backgroundImageUrl}
+                alt="Initial Image"
+                className="w-auto h-40 object-cover rounded-lg mr-2"
+              />
+            ) : null}
             <div
               className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center"
               {...getRootProps()}

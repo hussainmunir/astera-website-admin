@@ -1,16 +1,22 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import uploadsvg from "../../../Images/UploadIcons.png";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
-export function Section2() {
+export function Section2({data3}) {
   const [newImages, setNewImages] = useState([]);
   const [imageTextPairs, setImageTextPairs] = useState([]);
-  const [subtitle, setSubtitle] = useState("");
   const [title, setTitle] = useState("");
+  const [name, setName]=useState("");
 
+
+  useEffect(() => {
+    if (data3) {
+      setTitle(data3.title || "");
+    }
+  }, [data3]);
   const handleRegularImageUpload = (event) => {
     const files = event.target.files;
     const updatedNewImages = [];
@@ -83,12 +89,14 @@ export function Section2() {
           type="text"
           className="mt-8 w-[25rem] ml-[12rem] border-2 border-black-500 border-solid p-3 rounded-lg"
           placeholder="BURGEN BLUE"
+        
         />
 
         <input
           type="text"
           className="mt-8 w-[25rem] ml-[1rem] border-2 border-black-500 border-solid p-3 rounded-lg"
           placeholder="ASTERA COLORED RANGES"
+         
         />
       </div>
       <div className="flex flex-row">
@@ -119,12 +127,19 @@ export function Section2() {
           </div>
           {imageTextPairs.map((pair, index) => (
             <div key={index} className="flex flex-col items-center">
-              <img
-                src={URL.createObjectURL(pair.image)}
-                alt={`Uploaded ${index}`}
-                className="w-40 h-40 object-cover"
-                style={{ marginBottom: "1rem" }}
-              />
+              {selectedImage ? (
+                <img
+                  src={URL.createObjectURL(selectedImage)}
+                  alt="Uploaded"
+                  className="w-auto h-40 object-cover rounded-lg mr-2"
+                />
+              ) : data3 && data3.backgroundImageUrl ? (
+                <img
+                  src={data3.backgroundImageUrl} // <-- Corrected
+                  alt="Initial Image"
+                  className="w-auto h-40 object-cover rounded-lg mr-2"
+                />
+              ) : null}
               <input
                 type="text"
                 className="border-2 border-gray-300 p-2 rounded-lg"

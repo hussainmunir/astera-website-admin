@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import uploadsvg from "../../../Images/UploadIcons.png";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
@@ -8,7 +8,7 @@ import CloseIcon from "@mui/icons-material/Close";
 export function Section1() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [supportiveImages, setSupportiveImages] = useState([]);
-
+  
   const onDropImage1 = useCallback((acceptedFiles) => {
     setSelectedImage(acceptedFiles[0]);
   }, []);
@@ -20,6 +20,7 @@ export function Section1() {
     [] // No dependencies, as the state update is based only on acceptedFiles
   );
 
+  
   const {
     getRootProps: getRootPropsImage1,
     getInputProps: getInputPropsImage1,
@@ -55,13 +56,13 @@ export function Section1() {
         </p>
       </div>
       <div className="flex ml-[80rem] -mt-8 space-x-5">
-          <button className="border-solid border-2 p-2 w-[5rem] border-black text-blue bg-white rounded-xl">
-            Close
-          </button>
-          <button className="border-1 border-solid border-blue w-[5rem] text-white bg-blue-700 p-2 rounded-xl">
-            Save
-          </button>
-        </div>
+        <button className="border-solid border-2 p-2 w-[5rem] border-black text-blue bg-white rounded-xl">
+          Close
+        </button>
+        <button className="border-1 border-solid border-blue w-[5rem] text-white bg-blue-700 p-2 rounded-xl">
+          Save
+        </button>
+      </div>
       <div className="flex flex-row">
         <label className="block text-lg ml-[2.5rem]  font-semibold mb-1">
           SlideShow Images{" "}
@@ -116,7 +117,8 @@ export function Section1() {
             </div>
           </div>
         </div>
-      </div><div className="border border-l border-gray m-[2rem] "></div>
+      </div>
+      <div className="border border-l border-gray m-[2rem] "></div>
     </div>
   );
 }
