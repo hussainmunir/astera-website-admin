@@ -1,377 +1,188 @@
-import React, { useCallback, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import axios from "axios";
 import uploadsvg from "../../../Images/UploadIcons.png";
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import { IconButton } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import { Switch } from "@mui/material";
 
 const Section5 = () => {
-  const [editorContent, setEditorContent] = useState("");
-  const [charCount, setCharCount] = useState(0);
-  const [image1, setImage1] = useState(null); // State for image 1
-  const [supportiveImages, setSupportiveImages] = useState([]); // State for supportive images
-  const [inputEnabled, setInputEnabled] = useState(false);
-  const [inputText, setInputText] = useState("");
-  const maxChars = 500;
+	const [title, setTitle] = useState("");
+	const [images, setImages] = useState([]);
+	const [saveSuccess, setSaveSuccess] = useState(false);
 
-  const onDropImage1 = useCallback((acceptedFiles) => {
-    setImage1(acceptedFiles[0]);
-  }, []);
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const response = await axios.get(
+					"https://backend.asteraporcelain.com/api/v1/homescreen/getAllCollections"
+				);
+				const section5Data = response.data.data.homePage.section5;
+				setTitle(section5Data.title);
 
-  const onDropSupportiveImages = useCallback(
-    (acceptedFiles) => {
-      setSupportiveImages([...supportiveImages, ...acceptedFiles]);
-    },
-    [supportiveImages]
-  );
+				// Update image URLs to use absolute paths
+				const formattedImages = section5Data.images.map((image) => ({
+					imageUrl: `https://backend.asteraporcelain.com/${image.imageUrl}`,
+					imageTitle: image.imageTitle,
+					imageSubtitle: image.imageSubtitle,
+					_id: image._id,
+				}));
+				setImages(formattedImages);
+			} catch (error) {
+				console.error("Error fetching data:", error);
+			}
+		};
 
-  const {
-    getRootProps: getRootPropsImage1,
-    getInputProps: getInputPropsImage1,
-  } = useDropzone({
-    onDrop: onDropImage1,
-    accept: "image/*",
-    multiple: false,
-  });
+		fetchData();
+	}, []);
 
-  const {
-    getRootProps: getRootPropsSupportiveImages,
-    getInputProps: getInputPropsSupportiveImages,
-  } = useDropzone({
-    onDrop: onDropSupportiveImages,
-    accept: "image/*",
-    multiple: true,
-  });
+	const handleSave = async () => {
+		try {
+			const formData = new FormData();
+			formData.append("title", title);
+			formData.append("image", JSON.stringify(images)); // Convert images array to JSON string
 
-  // Handler for the editor change
-  const handleEditorChange = (content, delta, source, editor) => {
-    setEditorContent(content);
-    setCharCount(editor.getLength() - 1); // Minus 1 to not count the trailing newline
-  };
+			const response = await axios.post(
+				"https://backend.asteraporcelain.com/api/v1/homescreen/addSection5Item",
+				formData,
+				{
+					headers: {
+						"Content-Type": "multipart/form-data",
+					},
+				}
+			);
 
-  const handleDeleteImage = (indexToRemove) => {
-    setSupportiveImages((prevImages) =>
-      prevImages.filter((image, index) => index !== indexToRemove)
-    );
-  };
+			console.log("Save successful:", response.data);
+			setSaveSuccess(true);
 
-  const handleToggleChange = () => {
-    setInputEnabled(!inputEnabled); // Toggle the input field enable/disable state
-  };
+			setTimeout(() => {
+				setSaveSuccess(false);
+			}, 3000);
+		} catch (error) {
+			console.error("Error saving data:", error);
+		}
+	};
 
-  const handleInputChange = (e) => {
-    setInputText(e.target.value);
-  };
+	const updateImageTitle = (index, value) => {
+		const updatedImages = [...images];
+		updatedImages[index].imageTitle = value;
+		setImages(updatedImages);
+	};
 
-  // Quill modules to attach to editor
-  // Add your desired modules here
-  const modules = {
-    toolbar: [
-      [{ header: "1" }, { header: "2" }, { font: [] }],
-      [{ size: [] }],
-      ["bold", "italic", "underline", "strike", "blockquote"],
-      [{ list: "ordered" }, { list: "bullet" }],
-      ["link", "image", "video"],
-      ["clean"],
-    ],
-    clipboard: {
-      // Extend default configuration to handle pasted text
-      matchVisual: false,
-    },
-  };
+	const updateImageSubtitle = (index, value) => {
+		const updatedImages = [...images];
+		updatedImages[index].imageSubtitle = value;
+		setImages(updatedImages);
+	};
 
-  // Quill formats to attach to editor
-  // Add your desired formats here
-  const formats = [
-    "header",
-    "font",
-    "size",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "blockquote",
-    "list",
-    "bullet",
-    "link",
-    "image",
-    "video",
-  ];
+	const onDrop = (acceptedFiles) => {
+		const updatedImages = acceptedFiles.map((file) => ({
+			imageUrl: URL.createObjectURL(file),
+			imageTitle: "",
+			imageSubtitle: "",
+			file: file,
+		}));
+		setImages([...images, ...updatedImages]);
+	};
 
-  return (
-    <>
-      <div>
-        <div className="max-w-lg ml-[2rem] mt-[2rem]">
-          <div className="hidden md:flex items-center justify-between mb-[1rem]">
-            <div className="w-full flex flex-col">
-              <div className="w-full text-lg font-semibold leading-7 text-gray-900 max-md:max-w-full">
-                Section 5
-              </div>
-              <div className="mt-1 w-full text-sm leading-5 text-ellipsis text-slate-600 max-md:max-w-full">
-                Update desired photo and details here.
-              </div>
-            </div>
-            <button className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute ml-[87%] ">
-              Save
-            </button>
-            <button className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute ml-[80%]">
-              Cancel
-            </button>
-          </div>
+	const { getRootProps, getInputProps } = useDropzone({
+		onDrop,
+		accept: "image/*",
+		multiple: true,
+	});
 
-          <div className="flex items-center">
-            <label className="block text-lg font-semibold mb-1 mr-[32rem] whitespace-nowrap">
-              Name
-            </label>
-            <div className="flex">
-              <input
-                type="text"
-                className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black mr-[2rem]"
-                placeholder="HEADING"
-              />
-              <input
-                type="text"
-                className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black"
-                placeholder="PARAGRAPH"
-              />
-            </div>
-          </div>
-
-          {/* <div className="flex mt-[2rem]">
-						<label
-							htmlFor="bio"
-							className="text-lg font-medium text-gray-900 mr-[24rem]"
-						>
-							Bio
-							<br />
-							<span className="font-light text-sm whitespace-nowrap">
-								Write a short introduction.
-							</span>
-						</label>
-						<div className="flex flex-col">
-							<ReactQuill
-								theme="snow"
-								value={editorContent}
-								onChange={handleEditorChange}
-								modules={modules}
-								formats={formats}
-								placeholder="Write a short introduction."
-								style={{
-									height: "200px",
-									marginBottom: "40px",
-									width: "600px",
-								}}
-							/>
-							<div className="text-sm ml-1 text-gray-600">
-								{`${maxChars - charCount} characters left`}
-							</div>
+	return (
+		<>
+			<div className="max-w-lg ml-8 mt-8">
+				<div className="flex items-center justify-between mb-4">
+					<div className="w-full flex flex-col">
+						<div className="text-lg font-semibold leading-7 text-gray-900">
+							Section 5
 						</div>
-					</div> */}
+						<div className="mt-1 text-sm leading-5 text-gray-600">
+							Update desired photos and details here.
+						</div>
+					</div>
+					<button
+						className="text-white bg-purple-600 rounded-lg px-5 py-2.5"
+						onClick={handleSave}
+					>
+						Save
+					</button>
+				</div>
 
-          <div className="flex mt-4 items-center">
-            <div className="flex mt-4 items-center">
-              <div className="mr-4">
-                <span className="mb-0 ml-2 font-extrabold whitespace-nowrap">
-                  Add Supportive Dot
-                </span>
-                <Switch
-                  checked={inputEnabled}
-                  onChange={handleToggleChange}
-                  color="primary"
-                />
-                <span></span>
-              </div>
-              <div className="relative flex items-center">
-                <input
-                  type="text"
-                  className="border ml-[28rem] border-gray-300 px-3 py-2 focus:outline-none focus:border-black"
-                  placeholder="Input Field"
-                  onChange={handleInputChange}
-                  disabled={!inputEnabled}
-                />
-              </div>
-              {inputEnabled && (
-                <div className="bg-black text-white px-3 py-2 border whitespace-nowrap rounded-lg ml-[2rem]">
-                  {inputText}
-                </div>
-              )}
-            </div>
-          </div>
-          {/* Second toggle */}
-          <div className="flex mt-4 items-center">
-            <div className="flex mt-4 items-center">
-              <div className="mr-4">
-                <span className="mb-0 ml-2 font-extrabold whitespace-nowrap">
-                  Add Supportive Dot
-                </span>
-                <Switch
-                  checked={inputEnabled}
-                  onChange={handleToggleChange}
-                  color="primary"
-                />
-                <span></span>
-              </div>
-              <div className="relative flex items-center">
-                <input
-                  type="text"
-                  className="border ml-[28rem] border-gray-300 px-3 py-2 focus:outline-none focus:border-black"
-                  placeholder="Input Field"
-                  onChange={handleInputChange}
-                  disabled={!inputEnabled}
-                />
-              </div>
-              {inputEnabled && (
-                <div className="bg-black text-white px-3 py-2 border whitespace-nowrap rounded-lg ml-[2rem]">
-                  {inputText}
-                </div>
-              )}
-            </div>
-          </div>
-          {/* Third Toggle  */}
-          <div className="flex mt-4 items-center">
-            <div className="flex mt-4 items-center">
-              <div className="mr-4">
-                <span className="mb-0 ml-2 font-extrabold whitespace-nowrap">
-                  Add Supportive Dot
-                </span>
-                <Switch
-                  checked={inputEnabled}
-                  onChange={handleToggleChange}
-                  color="primary"
-                />
-                <span></span>
-              </div>
-              <div className="relative flex items-center">
-                <input
-                  type="text"
-                  className="border ml-[28rem] border-gray-300 px-3 py-2 focus:outline-none focus:border-black"
-                  placeholder="Input Field"
-                  onChange={handleInputChange}
-                  disabled={!inputEnabled}
-                />
-              </div>
-              {inputEnabled && (
-                <div className="bg-black text-white px-3 py-2 border whitespace-nowrap rounded-lg ml-[2rem]">
-                  {inputText}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+				<div className="flex items-center">
+					<label className="block text-lg font-semibold mb-1 mr-8">Title</label>
+					<input
+						type="text"
+						className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black ml-[32rem]"
+						placeholder="Title"
+						value={title}
+						onChange={(e) => setTitle(e.target.value)}
+					/>
+				</div>
 
-        <div>
-          {/* Image 1 */}
-          <div className="flex items-center justify-between">
-            <div className="w-1/3">
-              <label className="block text-lg ml-[2rem] mt-[2rem] font-semibold mb-1">
-                Image 1{" "}
-                <HelpOutlineIcon
-                  style={{
-                    fontSize: 16,
-                    color: "gray",
-                    backgroundColor: "white",
-                  }}
-                />
-              </label>
-              <p className="text-xs text-gray-500 mb-2 ml-[2rem]">
-                This will be displayed on your Section 3.
-              </p>
-            </div>
-            <div className="w-full mt-[2rem] ml-[22rem] flex justify-start">
-              {image1 && (
-                <img
-                  src={URL.createObjectURL(image1)}
-                  alt="Uploaded"
-                  className="w-auto h-40 object-cover rounded-lg mr-[2rem]"
-                />
-              )}
-              <div
-                {...getRootPropsImage1()}
-                className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center"
-              >
-                <input {...getInputPropsImage1()} />
-                <img
-                  src={uploadsvg}
-                  alt="Upload Icon"
-                  className="w-12 h-12 mb-2"
-                />
-                <p className="text-sm text-gray-600 mb-2">
-                  Click to upload or drag and drop
-                </p>
-                <p className="text-sm text-gray-600">
-                  SVG, PNG, JPG or GIF (max. 800x400px)
-                </p>
-              </div>
-            </div>
-          </div>
+				<div className="flex flex-wrap mt-4">
+					{images.map((image, index) => (
+						<div key={index} className="relative mr-4 mb-4">
+							<img
+								src={image.imageUrl}
+								alt={image.imageTitle}
+								className="w-40 h-40 object-cover rounded-lg"
+							/>
+							<input
+								type="text"
+								className="absolute top-0 left-0 w-full border border-gray-300 rounded-t-lg px-2 py-1 bg-white bg-opacity-80 backdrop-filter backdrop-blur"
+								placeholder="Image Title"
+								value={image.imageTitle}
+								onChange={(e) => updateImageTitle(index, e.target.value)}
+							/>
+							<input
+								type="text"
+								className="absolute bottom-0 left-0 w-full border border-gray-300 rounded-b-lg px-2 py-1 bg-white bg-opacity-80 backdrop-filter backdrop-blur"
+								placeholder="Image Subtitle"
+								value={image.imageSubtitle}
+								onChange={(e) => updateImageSubtitle(index, e.target.value)}
+							/>
+						</div>
+					))}
+				</div>
 
-          {/* Supportive Images */}
-          <div className="flex items-center justify-between">
-            <div className="w-1/3">
-              <label className="block text-lg ml-[2rem] mt-[2rem] font-semibold mb-1 whitespace-nowrap">
-                Supportive Images{" "}
-                <HelpOutlineIcon
-                  style={{
-                    fontSize: 16,
-                    color: "gray",
-                    backgroundColor: "white",
-                  }}
-                />
-              </label>
-              <p className="text-xs text-gray-500 mb-2 ml-[2rem]">
-                This will be displayed on your Section 3.
-              </p>
-            </div>
-            <div className="w-full mt-[2rem] ml-[22rem] flex justify-start">
-              <div className="flex gap-4">
-                {supportiveImages.map((image, index) => (
-                  <div
-                    key={index}
-                    className="relative overflow-hidden rounded-lg"
-                  >
-                    <img
-                      src={URL.createObjectURL(image)}
-                      alt="Uploaded"
-                      className="w-40 h-40 object-cover"
-                      style={{ objectFit: "cover" }}
-                    />
-                    <IconButton
-                      className="absolute top-1 right-0 m-2 bg-white"
-                      onClick={() => handleDeleteImage(index)}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </div>
-                ))}
-              </div>
-              <div
-                {...getRootPropsSupportiveImages()}
-                className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center ml-4"
-              >
-                <input {...getInputPropsSupportiveImages()} />
-                <img
-                  src={uploadsvg}
-                  alt="Upload Icon"
-                  className="w-12 h-12 mb-2"
-                />
-                <p className="text-sm text-gray-600 mb-2">
-                  Click to upload or drag and drop
-                </p>
-                <p className="text-sm text-gray-600">
-                  SVG, PNG, JPG or GIF (max. 800x400px)
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+				<div className="flex items-center mt-4">
+					<div className="w-1/3">
+						<label className="block text-lg font-semibold mb-1">
+							Add Image
+						</label>
+						<p className="text-xs text-gray-500 mb-2 whitespace-nowrap">
+							Upload new image here.
+						</p>
+					</div>
 
-        <div className="border border-l border-gray m-[2rem] "></div>
-      </div>
-    </>
-  );
+					<div className="w-full mt-2 flex justify-start ml-[24rem]">
+						<div
+							{...getRootProps()}
+							className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center"
+						>
+							<input {...getInputProps()} />
+							<img
+								src={uploadsvg}
+								alt="Upload Icon"
+								className="w-12 h-12 mb-2"
+							/>
+							<p className="text-sm text-gray-600 mb-2 whitespace-nowrap">
+								Click to upload or drag and drop
+							</p>
+							<p className="text-sm text-gray-600">
+								SVG, PNG, JPG, or GIF (max. 800x400px)
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div className="border-b mt-[1rem]"></div>
+
+			{saveSuccess && (
+				<div className="text-green-600 mt-4 ml-8">Save successful!</div>
+			)}
+		</>
+	);
 };
 
 export default Section5;
