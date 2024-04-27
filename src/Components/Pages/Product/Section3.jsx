@@ -7,7 +7,7 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
 
-export function Section1({ data1 }) {
+export function Section1({ id, data1 }) {
   const [selectedImage, setSelectedImage] = useState(null);
   const [editorContent, setEditorContent] = useState("");
   const [charCount, setCharCount] = useState(0);
@@ -32,38 +32,6 @@ export function Section1({ data1 }) {
     setCharCount(editor.getLength() - 1); // Minus 1 to not count the trailing newline
   };
 
-  // Quill modules to attach to editor
-  const modules = {
-    toolbar: [
-      [{ header: "1" }, { header: "2" }, { font: [] }],
-      [{ size: [] }],
-      ["bold", "italic", "underline", "strike", "blockquote"],
-      [{ list: "ordered" }, { list: "bullet" }],
-      ["link", "image", "video"],
-      ["clean"],
-    ],
-    clipboard: {
-      matchVisual: false,
-    },
-  };
-
-  // Quill formats to attach to editor
-  const formats = [
-    "header",
-    "font",
-    "size",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "blockquote",
-    "list",
-    "bullet",
-    "link",
-    "image",
-    "video",
-  ];
-
   const onDrop = (acceptedFiles) => {
     setSelectedImage(acceptedFiles[0]);
   };
@@ -72,9 +40,10 @@ export function Section1({ data1 }) {
     setLoading(true);
 
     const formData = new FormData();
-    formData.append("title", data1.title);
-    formData.append("subTitle", data1.subTitle);
+    formData.append("title", title);
+    formData.append("subTitle", subTitle);
     formData.append("description", editorContent);
+    formData.append("id", id);
 
     if (selectedImage) {
       formData.append("backgroundImage", selectedImage);
@@ -82,7 +51,7 @@ export function Section1({ data1 }) {
 
     try {
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/discoverScreen/updateSection1",
+        "https://backend.asteraporcelain.com/api/v1/productsScreen/addProductToSection3/",
         formData,
         {
           headers: {
@@ -102,11 +71,41 @@ export function Section1({ data1 }) {
     }
   };
 
+  const modules = {
+    toolbar: [
+      [{ header: "1" }, { header: "2" }, { font: [] }],
+      [{ size: [] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["link", "image", "video"],
+      ["clean"],
+    ],
+    clipboard: {
+      matchVisual: false,
+    },
+  };
+
+  const formats = [
+    "header",
+    "font",
+    "size",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "link",
+    "image",
+    "video",
+  ];
+
   const handleCancel = () => {
     if (data1) {
-      setTitle(data1.title);
-      setSubTitle(data1.subTitle);
-      setEditorContent(data1.description);
+      setTitle(data1.title || "");
+      setSubTitle(data1.subTitle || "");
+      setEditorContent(data1.description || "");
       setSelectedImage(null);
 
       // Set reset message
@@ -146,8 +145,7 @@ export function Section1({ data1 }) {
             <CircularProgress size={24} color="inherit" />
           ) : (
             <button
-              className="border-1 border-solid border-blue w-[5rem] text-white
-              bg-blue-700 p-2 rounded-xl"
+              className="border-1 border-solid border-blue w-[5rem] text-white bg-blue-700 p-2 rounded-xl"
               onClick={handleSave}
             >
               Save
@@ -169,14 +167,16 @@ export function Section1({ data1 }) {
           type="text"
           className="mt-8 w-[25rem] ml-[12rem] border-2 border-black-500 border-solid p-3 rounded-lg"
           placeholder="BURGEN BLUE"
-          defaultValue={title}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
 
         <input
           type="text"
           className="mt-8 w-[25rem] ml-[1rem] border-2 border-black-500 border-solid p-3 rounded-lg"
           placeholder="ASTERA COLORED RANGES"
-          defaultValue={subTitle}
+          value={subTitle}
+          onChange={(e) => setSubTitle(e.target.value)}
         />
       </div>
       <div>
@@ -239,7 +239,7 @@ export function Section1({ data1 }) {
                 />
               ) : data1 && data1.backgroundImageUrl ? (
                 <img
-                  src={data1.backgroundImageUrl} // <-- Corrected
+                  src={data1.backgroundImageUrl}
                   alt="Initial Image"
                   className="w-auto h-40 object-cover rounded-lg mr-2"
                 />

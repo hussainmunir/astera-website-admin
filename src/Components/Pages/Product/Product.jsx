@@ -4,7 +4,6 @@ import Section2 from "./Section1";
 import Section3 from "./Section2";
 import Section1 from "./Section3";
 import { baseUrl } from "../../../api/base_urls";
-import { ClassSharp } from "@mui/icons-material";
 
 export function Product() {
   const [products, setProducts] = useState([]);
@@ -12,16 +11,17 @@ export function Product() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`${baseUrl}productsScreen/getProductsPage`);
+        const response = await axios.get(
+          `${baseUrl}productsScreen/getProductsPage`
+        );
         console.log("response", response);
         if (
           response.data &&
           response.data.data &&
-          response.data.data.productPages && // Corrected to productPages
+          response.data.data.productPages &&
           response.data.data.productPages.length > 0
         ) {
-          setProducts(response.data.data.productPages); // Corrected to productPages
-          console.log("products", products);
+          setProducts(response.data.data.productPages);
         }
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -45,9 +45,9 @@ export function Product() {
       <div>
         {products.map((product, index) => (
           <div key={index}>
-            <Section1 data1={product.section1} />
-            <Section2 data2={product.section2} />
-            <Section3 data3={product.section3} />
+            <Section1 id={product._id} data1={product.section1} />
+            <Section2 id={product._id} data2={product.section2} />
+            <Section3 id={product._id} data3={product.section3} />
           </div>
         ))}
       </div>
