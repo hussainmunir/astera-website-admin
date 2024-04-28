@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Section2 from "./Section1";
-import Section3 from "./Section2";
-import Section1 from "./Section3";
+import Section2 from "./Section2";
+import Section3 from "./Section3";
+import Section1 from "./Section1";
 import { baseUrl } from "../../../api/base_urls";
 
 export function Product() {

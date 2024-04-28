@@ -1,82 +1,121 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import uploadsvg from "../../../Images/UploadIcons.png";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { baseUrlImage } from "../../../api/base_urls";
+import LazyLoad from "react-lazyload";
+import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
-import axios from "axios"; // Import axios for HTTP requests
 
-export function Section2({ data3 }) {
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [imageTextPairs, setImageTextPairs] = useState([]);
-  const [title, setTitle] = useState("");
-  const [name, setName] = useState("");
-  const [measurement, setMeasurement] = useState("");
-  const [serialNo, setSerialNo] = useState("");
+
+
+
+export function Section2({ id, data2 }) {
+  // const [selectedImage, setSelectedImage] = useState(null);
+  const [supportiveImages, setSupportiveImages] = useState([]);
+  const [imageUrl, setImageUrl] = useState([]);
+  const [selectedUpdateFile, setSelectedUpdateFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [resetMessage, setResetMessage] = useState("");
 
+  
+  // const onDropImage1 = useCallback((acceptedFiles) => {
+  //   setSelectedImage(acceptedFiles[0]);
+  // }, []);
+
   useEffect(() => {
-    if (data3) {
-      setTitle(data3.title || "");
-      if (data3.products && data3.products.length > 0) {
-        const product = data3.products[0]; // Assuming only one product is allowed
-        setName(product.name || "");
-        setMeasurement(product.measurement || "");
-        setSerialNo(product.serialNo || "");
-      }
+    if (data2) {
+      console.log("data2",data2)
+      setImageUrl(data2 || "");
     }
-  }, [data3]);
+  }, [data2]);
 
-  const handleRegularImageUpload = (event) => {
-    const files = event.target.files;
-    const updatedNewImages = [];
+  const onDropSupportiveImages = useCallback(
+    (acceptedFiles) => {
+      setSupportiveImages((prevImages) => [...prevImages, ...acceptedFiles]);
+    },
+    [] // No dependencies, as the state update is based only on acceptedFiles
+  );
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const reader = new FileReader();
+  
+  // const {
+  //   getRootProps: getRootPropsImage1,
+  //   getInputProps: getInputPropsImage1,
+  // } = useDropzone({
+  //   onDrop: onDropImage1,
+  //   accept: "image/*",
+  //   multiple: false,
+  // });
 
-      reader.onload = () => {
-        const imageDataUrl = reader.result;
-        setSelectedImage(imageDataUrl);
-      };
+  const {
+    getRootProps: getRootPropsSupportiveImages,
+    getInputProps: getInputPropsSupportiveImages,
+  } = useDropzone({
+    onDrop: onDropSupportiveImages,
+    accept: "image/*",
+    multiple: true,
+  });
 
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleSupportiveImageUpload = useCallback((acceptedFiles) => {
-    const updatedPairs = acceptedFiles.map((file) => ({
-      image: file,
-      text: "", // Initialize text as empty
-    }));
-    setImageTextPairs((prevPairs) => [...prevPairs, ...updatedPairs]);
-  }, []);
-
-  const handleDeletePair = (indexToRemove) => {
-    setImageTextPairs((prevPairs) =>
-      prevPairs.filter((pair, index) => index !== indexToRemove)
+  const handleDeleteImage = (indexToRemove) => {
+    setSupportiveImages((prevImages) =>
+      prevImages.filter((image, index) => index !== indexToRemove)
     );
   };
 
-  const handleSave = async () => {
-    setLoading(true);
+  const handleDeleteImageApiUi = (indexToRemove) => {
+    setImageUrl((prevImages) =>
+    imageUrl.filter((image, index) => index !== indexToRemove)
+    );
+  };
+  const indexRef = useRef();
+  const handleFileUpdate = async (event, index) => {
+    console.log("event.target.files[0]",event.target.files[0])
+    setSelectedUpdateFile(event.target.files[0]);
+    indexRef.current = index;
 
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("name", name);
-    formData.append("measurement", measurement);
-    formData.append("serialNo", serialNo);
-    if (selectedImage) {
-      formData.append("image", selectedImage);
+  };
+
+  useEffect(() => {
+    if (selectedUpdateFile) {
+      console.log("selectedUpdateFile", selectedUpdateFile);
+      handleUpdateImage(indexRef.current);
     }
+  }, [selectedUpdateFile]);
 
+  const handleCancel = () => {
+    if (data2) {
+      setSupportiveImages([]);
+
+      // Set reset message
+      setResetMessage("Fields reset successfully");
+
+      // Clear reset message after 3 seconds
+      setTimeout(() => {
+        setResetMessage("");
+      }, 3000);
+    }
+  };
+
+
+  const handleUploadImages = async () => {
+    if (supportiveImages.length == 0) return;
+    setLoading(true);
     try {
-      // Make an HTTP request to save the data
+      const formData = new FormData();
+      formData.append("productId", id);
+      supportiveImages.forEach((image) => {
+        formData.append("imageFile", image);
+      });
+
+      for (let pair of formData.entries()) {
+        console.log(pair[0] + ', ' + pair[1]);
+      }
+
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/productsScreen/addProductToSection3/",
+        "https://backend.asteraporcelain.com/api/v1/productsScreen/addToSection2",
         formData,
         {
           headers: {
@@ -84,115 +123,112 @@ export function Section2({ data3 }) {
           },
         }
       );
-      console.log("Save successful:", response.data);
       setSaveSuccess(true);
+      setSupportiveImages([]);
+      // Handle success response
+      console.log("Image uploaded successfully:", response.data);
     } catch (error) {
-      console.error("Error saving data:", error);
-    } finally {
+      // Handle error
+      console.error("Error uploading image:", error);
+    }
+    finally {
       setLoading(false);
       setTimeout(() => {
         setSaveSuccess(false);
       }, 3000);
     }
   };
+  
 
-  const handleCancel = () => {
-    if (data3) {
-      setTitle(data3.title || "");
-      if (data3.products && data3.products.length > 0) {
-        const product = data3.products[0]; // Assuming only one product is allowed
-        setName(product.name || "");
-        setMeasurement(product.measurement || "");
-        setSerialNo(product.serialNo || "");
+  const handleUpdateImage = async (index) => {
+    try {
+      const formData = new FormData();
+      formData.append("productId", id);
+      formData.append("itemId", imageUrl[index]._id);
+      formData.append("imageFile", selectedUpdateFile);
+
+      for (let pair of formData.entries()) {
+        console.log(pair[0] + ', ' + pair[1]);
       }
-      setSelectedImage(null);
-      setResetMessage("Fields reset successfully");
-      setTimeout(() => {
-        setResetMessage("");
-      }, 3000);
+
+      const response = await axios.post(
+        "https://backend.asteraporcelain.com/api/v1/productsScreen/updateSection2Item",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      // Handle success response
+      console.log("Image updated successfully:", response.data);
+    } catch (error) {
+      // Handle error
+      console.error("Error updating image:", error);
     }
   };
 
-  const {
-    getRootProps: getRootPropsSupportiveImages,
-    getInputProps: getInputPropsSupportiveImages,
-  } = useDropzone({
-    onDrop: handleSupportiveImageUpload,
-    accept: "image/*",
-    multiple: true,
-  });
+
+  const handleDeleteImageApi = async (index) => {
+    try {
+      const itemId = imageUrl[index]._id;
+      const productId = id;
+      const response = await axios.post(
+        "https://backend.asteraporcelain.com/api/v1/productsScreen/deleteSection2Item",
+        { itemId, productId }
+      );
+      // Handle success response
+      console.log("Image deleted successfully:", response.data);
+      // Call the handleDeleteImage function to update the UI
+      handleDeleteImageApiUi(index);
+    } catch (error) {
+      // Handle error
+      console.error("Error deleting image:", error);
+    }
+  };
 
   return (
-    <div className="h-[100vh]">
-      <div className="w-full flex flex-col ml-[2rem]">
-        <p className="w-full text-gray-600 text-lg max-md:max-w-full">
-          <b>Section 3</b>
+    <div className="flex flex-col">
+      <div className="flex flex-col  ml-[2.5rem]">
+        <p className=" text-gray-600 text-lg ">
+          <b>Section 2</b>
         </p>
-        <div className="mt-1 w-full text-sm leading-5 text-ellipsis text-slate-600 max-md:max-w-full">
-          Update desired photo and details here.
-        </div>
+        <p className="mt-1 w-full text-sm leading-5 text-ellipsis text-slate-600 max-md:max-w-full">
+          Update desired photo and details here
+        </p>
       </div>
-      <div className="flex ml-[80rem] space-x-5 -mt-8">
-        <button
-          className="border-solid border-2 p-2 w-[5rem] border-black text-blue bg-white rounded-xl"
-          onClick={handleCancel}
-        >
-          Cancel
-        </button>
-        {resetMessage && (
-          <div className="text-red-600 mt-2 absolute top-[25rem] ml-[85%]">
-            {resetMessage}
-          </div>
-        )}
-        {loading ? (
-          <CircularProgress size={24} color="inherit" />
-        ) : (
-          <button
-            className="border-1 border-solid border-blue w-[5rem] text-white bg-blue-700 p-2 rounded-xl"
-            onClick={handleSave}
+      <div className="flex ml-[80rem] -mt-8 space-x-5">
+      <button
+            className="border-solid border-2 p-2 w-[5rem] border-black text-blue bg-white rounded-xl"
+            onClick={handleCancel}
           >
-            Save
+            Cancel
           </button>
-        )}
-        {saveSuccess && (
-          <div className="text-green-600 mt-2 absolute top-[25rem] ml-[85%]">
-            Save successful!
-          </div>
-        )}
-      </div>
-      <div className="flex flex-col">
-        <input
-          type="text"
-          className="mt-8 w-[25rem] ml-[12rem] border-2 border-black-500 border-solid p-3 rounded-lg"
-          placeholder="TITLE"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <input
-          type="text"
-          className="mt-8 w-[25rem] ml-[12rem] border-2 border-black-500 border-solid p-3 rounded-lg"
-          placeholder="NAME"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <input
-          type="text"
-          className="mt-8 w-[25rem] ml-[12rem] border-2 border-black-500 border-solid p-3 rounded-lg"
-          placeholder="MEASUREMENT"
-          value={measurement}
-          onChange={(e) => setMeasurement(e.target.value)}
-        />
-        <input
-          type="text"
-          className="mt-8 w-[25rem] ml-[12rem] border-2 border-black-500 border-solid p-3 rounded-lg"
-          placeholder="SERIAL NO"
-          value={serialNo}
-          onChange={(e) => setSerialNo(e.target.value)}
-        />
+          {resetMessage && (
+            <div className="text-red-600 mt-2 absolute top-[25rem] ml-[85%]">
+              {resetMessage}
+            </div>
+          )}
+        {loading ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            <button
+              className="border-1 border-solid border-blue w-[5rem] text-white bg-blue-700 p-2 rounded-xl"
+              onClick={handleUploadImages}
+            >
+              Save
+            </button>
+          )}
+          {saveSuccess && (
+            <div className="text-green-600 mt-2 absolute top-[25rem] ml-[85%]">
+              Save successful!
+            </div>
+          )}
       </div>
       <div className="flex flex-row">
-        <label className="block text-lg ml-[2rem] mt-[3rem] w-[15rem] font-semibold mb-1">
-          Product Images{" "}
+        <label className="block text-lg ml-[2.5rem]  font-semibold mb-1">
+          SlideShow Images{" "}
           <HelpOutlineIcon
             style={{
               fontSize: 16,
@@ -201,11 +237,13 @@ export function Section2({ data3 }) {
             }}
           />
         </label>{" "}
-        <div className="w-full flex justify-start">
-          <div className="flex mt-[4rem] ml-[7rem] gap-4">
+        {/* Supportive Images */}
+        <div className="flex flex-row">
+          <div className="mt-[2rem] ml-[8rem] flex justify-start gap-8">
+            <div className="flex items-center">
             <div
               {...getRootPropsSupportiveImages()}
-              className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center ml-4"
+              className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center ml-0"
             >
               <input {...getInputPropsSupportiveImages()} />
               <img
@@ -220,40 +258,66 @@ export function Section2({ data3 }) {
                 SVG, PNG, JPG or GIF (max. 800x400px)
               </p>
             </div>
-            {selectedImage && (
-              <img
-                src={selectedImage}
-                alt="Selected"
-                className="w-auto h-40 object-cover rounded-lg mr-2"
-              />
-            )}
-            {data3 && data3.backgroundImageUrl && !selectedImage && (
-              <img
-                src={data3.backgroundImageUrl}
-                alt="Initial Image"
-                className="w-auto h-40 object-cover rounded-lg mr-2"
-              />
-            )}
-            {imageTextPairs.map((pair, index) => (
-              <div key={index} className="flex flex-col items-center">
-                <img
-                  src={URL.createObjectURL(pair.image)}
-                  alt="Uploaded"
-                  className="w-auto h-40 object-cover rounded-lg mr-2"
-                />
-                {/* Inputs for image details */}
-                {/* You can implement the input fields for image details here */}
-                <IconButton
-                  className="mt-2 bg-white border border-black"
-                  onClick={() => handleDeletePair(index)}
+            </div>
+
+            <div className="overflow-x-auto mx-14 mt-10" >
+            <div className="flex gap-4 "  style={{ width: `calc(315px * ${supportiveImages?.length})` }}>
+              {supportiveImages?.map((image, index) => (
+                <div
+                  key={index}
+                  className="relative overflow-hidden rounded-lg"
                 >
-                  <CloseIcon />
-                </IconButton>
-              </div>
-            ))}
+                  <img
+                    src={URL.createObjectURL(image)}
+                    alt="Uploaded"
+                    className="w-[300px] h-[150px] object-fit cursor-pointer"
+                  />
+                  <IconButton
+                    className="absolute top-1 right-0 m-2 bg-white"
+                    onClick={() => handleDeleteImage(index)}
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                </div>
+              ))}
+            </div>
+            </div>
+
+            
           </div>
+          
         </div>
       </div>
+    
+      <div className="overflow-x-auto mx-14 mt-10" >
+      <div className="flex gap-4 h-full mb-2" style={{ width: `calc(315px * ${imageUrl?.length})` }}>
+        {imageUrl?.map((image, index) => (
+         <div key={index} className="">
+         <label>
+           <input type="file" onChange={(event) => handleFileUpdate(event, index)} className="hidden" />
+           <div className="relative">
+             <LazyLoad>
+               <img
+                 src={`${baseUrlImage}uploads/1714039817215-Avatar.png`}
+                 alt="Uploaded"
+                 loading="lazy"
+                 className="w-[300px] h-[150px] object-fit cursor-pointer"
+                //  onClick={(event) => event.target.previousSibling.click()}
+               />
+             </LazyLoad>
+           </div>
+         </label>
+       
+            <IconButton
+              className="absolute top-1 left-[45%] bg-white"
+              onClick={() => handleDeleteImageApi(index)}
+            >
+              <CloseIcon />
+            </IconButton>
+          </div>
+        ))}
+      </div>
+    </div>
       <div className="border border-l border-gray m-[2rem] "></div>
     </div>
   );
