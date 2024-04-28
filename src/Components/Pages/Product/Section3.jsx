@@ -331,7 +331,7 @@ export function Section3({ id, data3 }) {
                 <div className="relative">
                   <LazyLoad>
                     <img
-                      src={`${baseUrlImage}uploads/1714039817215-Avatar.png`}
+                      src={`${baseUrlImage}${product.imageUrl}`}
                       alt="Uploaded"
                       loading="lazy"
                       className="w-[300px] h-[150px] object-fit cursor-pointer"
