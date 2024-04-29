@@ -207,7 +207,7 @@ export function Section3({ id, data3 }) {
           Update desired photo and details here.
         </div>
       </div>
-      <div className="flex ml-[80rem] space-x-5 -mt-8">
+      <div className="flex ml-[80%] space-x-5 -mt-8">
         <button
           className="border-solid border-2 p-2 w-[5rem] border-black text-blue bg-white rounded-xl"
           onClick={handleCancel}
