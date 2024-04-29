@@ -101,7 +101,7 @@ const Section5 = () => {
 						</div>
 					</div>
 					<button
-						className="text-white bg-purple-600 rounded-lg px-5 py-2.5"
+						className="flex absolute ml-[80%] text-white bg-purple-600 rounded-lg px-5 py-2.5"
 						onClick={handleSave}
 					>
 						Save

@@ -1,50 +1,41 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import uploadsvg from "../../../Images/UploadIcons.png";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import UpdateIcon from "@mui/icons-material/Update";
 import CircularProgress from "@mui/material/CircularProgress";
-import axios from "axios"; // Import axios for HTTP requests
+import axios from "axios";
 import LazyLoad from "react-lazyload";
 import { baseUrlImage } from "../../../api/base_urls";
-
 
 export function Section3({ id, data3 }) {
   const [selectedImage, setSelectedImage] = useState(null);
   const [products, setProducts] = useState([]);
-  const [title, setTitle] = useState("");
+
   const [name, setName] = useState("");
   const [measurement, setMeasurement] = useState("");
   const [serialNo, setSerialNo] = useState("");
   const [loading, setLoading] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [resetMessage, setResetMessage] = useState("");
+  const [title, setTitle] = useState(""); // Define the title state variable
+
 
   useEffect(() => {
     if (data3) {
       if (data3.products && data3.products.length > 0) {
         setProducts(data3.products);
       }
+      if (data3.title) {
+        setTitle(data3.title);
+      }
     }
   }, [data3]);
 
   const handleRegularImageUpload = (event) => {
-    const files = event.target.files;
-    const updatedNewImages = [];
-
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const reader = new FileReader();
-
-      reader.onload = () => {
-        const imageDataUrl = reader.result;
-        setSelectedImage(imageDataUrl);
-      };
-
-      reader.readAsDataURL(file);
-    }
+    const file = event.target.files[0];
+    setSelectedImage(file);
   };
 
   const onDrop = (acceptedFiles) => {
@@ -53,28 +44,21 @@ export function Section3({ id, data3 }) {
 
   const updateProductName = (name, index) => {
     const updatedProducts = [...products];
-
-    // Update the name field of the product at index 1
     updatedProducts[index].name = name;
-
-    // Update the state with the new array
     setProducts(updatedProducts);
-  }
+  };
+
   const updateProductMeasurement = (measurement, index) => {
     const updatedProducts = [...products];
-
     updatedProducts[index].measurement = measurement;
-
     setProducts(updatedProducts);
-  }
+  };
+
   const updateProductSerialNo = (serialNo, index) => {
     const updatedProducts = [...products];
-
     updatedProducts[index].serialNo = serialNo;
-
     setProducts(updatedProducts);
-  }
-
+  };
 
   const handleDeletePair = () => {
     setSelectedImage(null);
@@ -85,18 +69,17 @@ export function Section3({ id, data3 }) {
 
   const handleSave = async () => {
     setLoading(true);
-
     const formData = new FormData();
     formData.append("productId", id);
     formData.append("name", name);
     formData.append("measurement", measurement);
     formData.append("serialNo", serialNo);
+    formData.append("title", title);
     if (selectedImage) {
       formData.append("imageFile", selectedImage);
     }
 
     try {
-      // Make an HTTP request to save the data
       const response = await axios.post(
         "https://backend.asteraporcelain.com/api/v1/productsScreen/addProductToSection3",
         formData,
@@ -119,10 +102,8 @@ export function Section3({ id, data3 }) {
     }
   };
 
-
   const handleUpdate = async (index) => {
     setLoading(true);
-
     const formData = new FormData();
     formData.append("productId", products[index]._id);
     formData.append("productPageId", id);
@@ -133,13 +114,7 @@ export function Section3({ id, data3 }) {
       formData.append("imageUrl", selectedImage);
     }
 
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ', ' + pair[1]);
-    }
-
-
     try {
-      // Make an HTTP request to save the data
       const response = await axios.post(
         "https://backend.asteraporcelain.com/api/v1/productsScreen/updateProductInSection3",
         formData,
@@ -149,11 +124,11 @@ export function Section3({ id, data3 }) {
           },
         }
       );
-      console.log("Save successful:", response.data);
+      console.log("Update successful:", response.data);
       handleDeletePair();
       setSaveSuccess(true);
     } catch (error) {
-      console.error("Error saving data:", error);
+      console.error("Error updating data:", error);
     } finally {
       setLoading(false);
       setTimeout(() => {
@@ -172,18 +147,36 @@ export function Section3({ id, data3 }) {
     try {
       const productId = products[index]._id;
       const productPagesId = id;
-      console.log(productId, productPagesId);
       const response = await axios.post(
         "https://backend.asteraporcelain.com/api/v1/productsScreen/deleteProductFromSection3",
         { productPagesId, productId }
       );
-      // Handle success response
       console.log("Image deleted successfully:", response.data);
-      // Call the handleDeleteImage function to update the UI
       handleDeleteImageApiUi(index);
     } catch (error) {
-      // Handle error
       console.error("Error deleting image:", error);
+    }
+  };
+
+  const handleUpdateTitle = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        "https://backend.asteraporcelain.com/api/v1/productsScreen/updateSection3Title",
+        {
+          productId: id,
+          title: title,
+        }
+      );
+      console.log("Update successful:", response.data);
+      setSaveSuccess(true);
+    } catch (error) {
+      console.error("Error updating title:", error);
+    } finally {
+      setLoading(false);
+      setTimeout(() => {
+        setSaveSuccess(false);
+      }, 3000);
     }
   };
 
@@ -242,7 +235,33 @@ export function Section3({ id, data3 }) {
           </div>
         )}
       </div>
-
+      <div className="flex">
+        <label className="block text-lg font-semibold mt-[2rem] ml-[2rem] whitespace-nowrap">
+          Section Title
+        </label>
+        <input
+          className="mt-8 w-[25rem] border-2 border-black-500 border-solid p-3 ml-[16rem] rounded-lg"
+          placeholder="TITLE"
+          type="text"
+          value={title} // Assuming title is stored in the state
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        {loading ? (
+          <CircularProgress size={24} color="inherit" />
+        ) : (
+          <button
+            className="border-solid mt-10 border-2 p-2 ml-[3rem]  h-[3rem] w-[5rem] border-black text-blue bg-white rounded-xl"
+            onClick={handleUpdateTitle} // Call the function on button click
+          >
+            Update
+          </button>
+        )}
+        {saveSuccess && (
+          <div className="text-green-600 mt-2 absolute top-[25rem] ml-[85%]">
+            Save successful!
+          </div>
+        )}
+      </div>
       <div className="flex flex-row">
         <label className="block text-lg ml-[2rem] mt-[3rem] w-[15rem] font-semibold mb-1">
           Product Images{" "}
@@ -257,7 +276,6 @@ export function Section3({ id, data3 }) {
         <div className=" flex flex-row">
           <div className="flex mt-[4rem] ml-[7rem] gap-4">
             <div className="flex items-start">
-
               <div
                 {...getRootProps()}
                 className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center"
@@ -276,10 +294,8 @@ export function Section3({ id, data3 }) {
                 </p>
               </div>
             </div>
-
-
-            {selectedImage ? (
-              <div className="flex flex-col items-center justify-center">
+            {selectedImage && (
+              <div className="flex flex-col items-center">
                 <img
                   src={URL.createObjectURL(selectedImage)}
                   alt="Uploaded"
@@ -315,19 +331,20 @@ export function Section3({ id, data3 }) {
                   />
                 </div>
               </div>
-            ) : null}
-
+            )}
           </div>
         </div>
       </div>
 
-      <div className="overflow-x-auto mx-14 mt-10" >
-        <div className="flex gap-4 h-full mb-2" style={{ width: `calc(315px * ${products?.length})` }}>
+      <div className="overflow-x-auto mx-14 mt-10">
+        <div
+          className="flex gap-4 h-full mb-2"
+          style={{ width: `calc(315px * ${products?.length})` }}
+        >
           {products?.map((product, index) => (
             <div key={index} className="flex flex-col items-center">
               <label>
-              <input {...getInputProps()} multiple={false} />
-                {/* <input type="file" onChange={(event) => handleFileUpdate(event, index)} className="hidden" /> */}
+                <input {...getInputProps()} multiple={false} />
                 <div className="relative">
                   <LazyLoad>
                     <img
@@ -339,18 +356,18 @@ export function Section3({ id, data3 }) {
                   </LazyLoad>
                 </div>
               </label>
-
               <IconButton
                 className="absolute top-2  bg-white"
                 onClick={() => handleDeleteImageApi(index)}
               >
                 <CloseIcon />
               </IconButton>
-              <button className="border-solid mt-5 border-2 p-2 w-[5rem] border-black text-blue bg-white rounded-xl"
-              onClick={() => handleUpdate(index)}
-              >update</button>
-              
-
+              <button
+                className="border-solid mt-5 border-2 p-2 w-[5rem] border-black text-blue bg-white rounded-xl"
+                onClick={() => handleUpdate(index)}
+              >
+                Update
+              </button>
               <div className="flex flex-col items-center">
                 <input
                   type="text"
@@ -364,7 +381,9 @@ export function Section3({ id, data3 }) {
                   className="mt-8 w-[20rem] border-2 border-black-500 border-solid p-3 rounded-lg"
                   placeholder="MEASUREMENT"
                   value={product.measurement}
-                  onChange={(e) => updateProductMeasurement(e.target.value, index)}
+                  onChange={(e) =>
+                    updateProductMeasurement(e.target.value, index)
+                  }
                 />
                 <input
                   type="text"
@@ -373,10 +392,6 @@ export function Section3({ id, data3 }) {
                   value={product.serialNo}
                   onChange={(e) => updateProductSerialNo(e.target.value, index)}
                 />
-
-                
-                 
-
               </div>
             </div>
           ))}

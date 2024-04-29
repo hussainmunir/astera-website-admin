@@ -126,7 +126,7 @@ const Section6 = () => {
 				<CircularProgress size={24} color="inherit" />
 			) : (
 				<button
-					className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute top-[360rem] ml-[90%]"
+					className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute top-[360rem] ml-[80%]"
 					onClick={handleSave}
 				>
 					Save
