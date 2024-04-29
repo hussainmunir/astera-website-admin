@@ -7,7 +7,7 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import CircularProgress from "@mui/material/CircularProgress";
 import uploadsvg from "../../../Images/UploadIcons.png";
 import { useCollections } from "../../../CollectionsContext";
-import { baseUrl } from "../../../api/base_urls";
+import { baseUrl,baseUrlImage } from "../../../api/base_urls";
 
 export function Discoversection2() {
 	const collections = useCollections();
@@ -36,7 +36,6 @@ export function Discoversection2() {
 					const { section2 } = response.data.data.discoverPage;
 					setSectionData(section2);
 					setEditorContent(section2.description);
-					// Set the title state here
 					setSectionTitle(section2.title);
 				}
 			} catch (error) {
@@ -56,18 +55,18 @@ export function Discoversection2() {
 	const handleSave = async () => {
 		setLoading(true);
 
-		const formData = new FormData();
-		formData.append("title", sectionData.title);
-		formData.append("description", editorContent);
-
+		const requestData={
+			title:sectionTitle,
+			description:editorContent,
+		}
 		if (selectedImage) {
-			formData.append("backgroundImage", selectedImage);
+			requestData.append("backgroundImage", selectedImage);
 		}
 
 		try {
 			const response = await axios.post(
 				"https://backend.asteraporcelain.com/api/v1/discoverScreen/updateSection2",
-				formData,
+				requestData,
 				{
 					headers: {
 						"Content-Type": "multipart/form-data",
@@ -84,6 +83,7 @@ export function Discoversection2() {
 				setSaveSuccess(false);
 			}, 3000);
 		}
+	
 	};
 
 	const handleCancel = () => {
@@ -125,7 +125,7 @@ export function Discoversection2() {
 						<CircularProgress size={24} color="inherit" />
 					) : (
 						<button
-							className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute top-[60rem] ml-[90%]"
+							className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute top-[60rem] ml-[86%]"
 							onClick={handleSave}
 						>
 							Save
@@ -137,7 +137,7 @@ export function Discoversection2() {
 						</div>
 					)}
 					<button
-						className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute top-[60rem] ml-[85%]"
+						className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute top-[60rem] ml-[80%]"
 						onClick={handleCancel}
 					>
 						Cancel
@@ -229,13 +229,13 @@ export function Discoversection2() {
 										alt="Uploaded"
 										className="w-auto h-40 object-cover rounded-lg mr-2"
 									/>
-								) : (
+								) : sectionData && sectionData.backgroundImageUrl ?  (
 									<img
-										src={sectionData.backgroundImageUrl}
+										src={`${baseUrlImage}${sectionData.backgroundImageUrl}`}
 										alt="Initial Image"
 										className="w-auto h-40 object-cover rounded-lg mr-2"
 									/>
-								)}
+								):[null]}
 								<div
 									{...getRootProps()}
 									className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center"

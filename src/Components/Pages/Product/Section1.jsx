@@ -50,7 +50,7 @@ export function Section1({ id, data1 }) {
       formData.append("backgroundImage", selectedImage);
     }
 
-    console.log("formData",formData)
+
 
     try {
       const response = await axios.post(
