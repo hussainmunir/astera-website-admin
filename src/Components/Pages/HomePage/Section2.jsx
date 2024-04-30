@@ -7,7 +7,7 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { CircularProgress, Switch } from "@mui/material";
 import axios from "axios";
 
-const Section2 = () => {
+export const Section2 = () => {
 	const [selectedImage, setSelectedImage] = useState(null);
 	const [editorContent, setEditorContent] = useState("");
 	const [charCount, setCharCount] = useState(0);
@@ -145,25 +145,25 @@ const Section2 = () => {
 					<CircularProgress size={24} color="inherit" />
 				) : (
 					<button
-						className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute top-[130rem] ml-[90%]"
+						className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute top-[210rem] ml-[90%]"
 						onClick={handleSave}
 					>
 						Save
 					</button>
 				)}
 				{saveSuccess && (
-					<div className="text-green-600 mt-2 absolute top-[90rem] ml-[85%]">
+					<div className="text-green-600 mt-2 absolute top-[215rem] ml-[85%]">
 						Save successful!
 					</div>
 				)}
 				<button
-					className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute top-[130rem] ml-[85%]"
+					className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute top-[210rem] ml-[85%]"
 					onClick={handleCancel}
 				>
 					Cancel
 				</button>
 				{resetMessage && (
-					<div className="text-red-600 mt-2 absolute top-[90rem] ml-[85%]">
+					<div className="text-red-600 mt-2 absolute top-[215rem] ml-[85%]">
 						{resetMessage}
 					</div>
 				)}
@@ -249,13 +249,13 @@ const Section2 = () => {
 
 			<div className="flex items-center justify-between mt-[2rem]">
 				<div className="w-1/3">
-					<label className="block text-lg ml-[2rem] mt-[2rem] font-semibold mb-1">
+					<label className="block text-lg ml-[0rem] mt-[2rem] font-semibold mb-1">
 						Image{" "}
 						<HelpOutlineIcon
 							style={{ fontSize: 16, color: "gray", backgroundColor: "white" }}
 						/>
 					</label>
-					<p className="text-xs text-gray-500 mb-2 ml-[2rem] whitespace-nowrap">
+					<p className="text-xs text-gray-500 mb-2 ml-[0rem] whitespace-nowrap">
 						This will be displayed on your Hero Section.
 					</p>
 				</div>
@@ -286,4 +286,4 @@ const Section2 = () => {
 	);
 };
 
-export default Section2;
+// export default Section2;

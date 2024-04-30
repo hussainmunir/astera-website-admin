@@ -100,12 +100,12 @@ const Section5 = () => {
 							Update desired photos and details here.
 						</div>
 					</div>
-					<button
+					{/* <button
 						className="flex absolute ml-[80%] text-white bg-purple-600 rounded-lg px-5 py-2.5"
 						onClick={handleSave}
 					>
 						Save
-					</button>
+					</button> */}
 				</div>
 
 				<div className="flex items-center">

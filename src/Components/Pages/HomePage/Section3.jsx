@@ -135,13 +135,13 @@ const Section3 = () => {
 			<div className="flex items-center justify-between mb-[1rem]">
 				<div className="w-full flex flex-col">
 					<div className="w-full text-lg font-semibold leading-7 text-gray-900">
-						Section 2
+						Section 3
 					</div>
 					<div className="mt-1 w-full text-sm leading-5 text-slate-600">
 						Update desired photo and details here.
 					</div>
 				</div>
-				{loading ? (
+				{/* {loading ? (
 					<CircularProgress size={24} color="inherit" />
 				) : (
 					<button
@@ -166,7 +166,7 @@ const Section3 = () => {
 					<div className="text-red-600 mt-2 absolute top-[90rem] ml-[85%]">
 						{resetMessage}
 					</div>
-				)}
+				)} */}
 			</div>
 
 			<div className="flex items-center">

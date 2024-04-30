@@ -70,7 +70,7 @@ const Section4 = () => {
   return (
     <div>
       <div className="max-w-lg ml-[2rem] mt-[2rem]">
-        <div className="hidden md:flex items-center justify-between mb-[1rem]">
+        {/* <div className="hidden md:flex items-center justify-between mb-[1rem]">
           <div className="w-full flex flex-col">
             <div className="w-full text-lg font-semibold leading-7 text-gray-900 max-md:max-w-full">
               Section 4
@@ -85,7 +85,7 @@ const Section4 = () => {
           <button className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute top-[130rem] ml-[85%]">
             Cancel
           </button>
-        </div>
+        </div> */}
 
         <div className="flex items-center">
           <label className="block text-lg font-semibold mb-1 mr-[32rem] whitespace-nowrap">

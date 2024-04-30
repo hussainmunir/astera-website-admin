@@ -122,7 +122,7 @@ const Section6 = () => {
 			<div className="mt-1 text-sm leading-5 text-gray-600">
 				Update desired details here.
 			</div>
-			{loading ? (
+			{/* {loading ? (
 				<CircularProgress size={24} color="inherit" />
 			) : (
 				<button
@@ -131,7 +131,7 @@ const Section6 = () => {
 				>
 					Save
 				</button>
-			)}
+			)} */}
 
 			<div className="flex items-center mt-4">
 				<label htmlFor="name" className="block text-lg font-semibold mb-1 mr-4">
