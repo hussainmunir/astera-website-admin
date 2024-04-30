@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -6,12 +6,100 @@ import uploadsvg from "../../../Images/UploadIcons.png";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import AddIcon from "@mui/icons-material/Add";
 import Button from "@mui/material/Button";
+import { baseUrl,baseUrlImage } from "../../../api/base_urls";
+import axios from "axios";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Section3 = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [editorContent, setEditorContent] = useState("");
+  const [sectionData, setSectionData] = useState(null);
   const [charCount, setCharCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [resetMessage, setResetMessage] = useState("");
   const maxChars = 500; // Set the max characters allowed
+  const [title, setTitle] = useState("");
+  const [fields, setFields] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${baseUrl}homescreen/getAllCollections`
+        );
+        if (
+          response.data &&
+          response.data.data &&
+          response.data.data.contactPage &&
+          response.data.data.contactPage.section3
+        ) {
+          const { section3 } = response.data.data.contactPage;
+          setSectionData(section3);
+          setTitle(section3.title);
+          setEditorContent(section3.subTitle);
+          setFields(
+            section3 && section3.contactFields && section3.contactFields
+          );
+        }
+      } catch (error) {
+        console.log("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+
+
+  const handleSave = async () => {
+    setLoading(true);
+    
+    const requestData={
+      title:title,
+      subTitle:editorContent, 
+    }
+    if (selectedImage) {
+      requestData.append("backgroundImage", selectedImage);
+    }
+
+    try {
+      const response = await axios.post(
+        "https://backend.asteraporcelain.com/api/v1/contactScreen/updateSection3",
+        requestData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("Update successful:", response.data);
+      setSaveSuccess(true);
+    } catch (error) {
+      console.error("Error updating section:", error);
+    } finally {
+      setLoading(false);
+      setTimeout(() => {
+        setSaveSuccess(false);
+      }, 3000);
+    }
+  };
+
+  const handleCancel = () => {
+    if (sectionData) {
+      setTitle(sectionData.title);
+      setEditorContent(sectionData.subTitle);
+      setSelectedImage(null);
+
+      // Set reset message
+      setResetMessage("Fields reset successfully");
+
+      // Clear reset message after 3 seconds
+      setTimeout(() => {
+        setResetMessage("");
+      }, 3000);
+    }
+  };
+
 
   const onDrop = useCallback((acceptedFiles) => {
     setSelectedImage(acceptedFiles[0]);
@@ -56,25 +144,44 @@ const Section3 = () => {
     "image",
     "video",
   ];
-
   return (
     <div>
       <div className="max-w-lg ml-[2rem] mt-[2rem]">
         <div className="hidden md:flex items-center justify-between mb-[1rem]">
           <div className="w-full flex flex-col">
             <div className="w-full text-lg font-semibold leading-7 text-gray-900 max-md:max-w-full">
-              Section 2
+              Section 3
             </div>
             <div className="mt-1 w-full text-sm leading-5 text-ellipsis text-slate-600 max-md:max-w-full">
               Update desired photo and details here.
             </div>
-          </div>
-          <button className="text-white bg-purple-600 rounded-lg px-3 py-2 absolute ml-[87rem] ">
-            Save
-          </button>
-          <button className="text-black bg-white rounded-lg px-3 py-2 absolute ml-[81rem]">
+          </div>{loading ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            <button
+            className="text-white bg-purple-600 rounded-lg px-3 py-2 absolute ml-[87rem]"
+              onClick={handleSave}
+            >
+              Save
+            </button>
+          )}
+          {saveSuccess && (
+            <div className="text-green-600 mt-2 absolute top-[25rem] ml-[85%]">
+              Save successful!
+            </div>
+          )}
+          <button
+            className="text-black bg-white rounded-lg px-3 py-2 absolute ml-[81rem]"
+            onClick={handleCancel}
+          >
             Cancel
           </button>
+          {resetMessage && (
+            <div className="text-red-600 mt-2 absolute top-[25rem] ml-[85%]">
+              {resetMessage}
+            </div>
+          )}
+          
         </div>
 
         <div className="flex items-center">
@@ -86,11 +193,7 @@ const Section3 = () => {
               type="text"
               className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black mr-[2rem]"
               placeholder="HEADING"
-            />
-            <input
-              type="text"
-              className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black"
-              placeholder="PARAGRAPH"
+              value={title}
             />
           </div>
         </div>
@@ -131,32 +234,18 @@ const Section3 = () => {
           >
             Fields
           </label>
-          <div className="flex flex-col">
-            <input
-              type="text"
-              className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black mb-2"
-              placeholder="Name"
-            />
-            <input
-              type="text"
-              className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black mb-2"
-              placeholder="Email"
-            />
-            <input
-              type="text"
-              className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black mb-2"
-              placeholder="Phone"
-            />
-            <input
-              type="text"
-              className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black mb-2"
-              placeholder="Goals"
-            />
-            <input
-              type="text"
-              className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black"
-              placeholder="Budget"
-            />
+          <div>
+            {fields.map((item, index) => (
+              <div key={index} className="flex flex-col">
+                <input
+                  type="text"
+                  className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black mb-2"
+                  placeholder="Name"
+                  value={item.name}
+                  onChange={(e) => handleFieldChange(e, index)}
+                />
+              </div>
+            ))}
           </div>
         </div>
         {/* Add button */}
@@ -191,13 +280,19 @@ const Section3 = () => {
           </p>
         </div>
         <div className="w-full mt-[2rem] ml-[22rem] flex justify-start">
-          {selectedImage && (
-            <img
-              src={URL.createObjectURL(selectedImage)}
-              alt="Uploaded"
-              className="w-auto h-40 object-cover rounded-lg mr-[2rem]"
-            />
-          )}
+        {selectedImage ? (
+              <img
+                src={URL.createObjectURL(selectedImage)}
+                alt="Uploaded"
+                className="w-auto h-40 object-cover rounded-lg mr-2"
+              />
+            ) : sectionData && sectionData.backgroundImageUrl ? (
+              <img
+                src={`${baseUrlImage}${sectionData.backgroundImageUrl}`}
+                alt="Initial Image"
+                className="w-auto h-40 object-cover rounded-lg mr-2"
+              />
+            ) : null}
           <div
             {...getRootProps()}
             className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center"

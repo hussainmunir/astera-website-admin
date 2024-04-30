@@ -6,7 +6,7 @@ import axios from "axios";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import CircularProgress from "@mui/material/CircularProgress";
 import uploadsvg from "../../../Images/UploadIcons.png";
-import { baseUrl } from "../../../api/base_urls";
+import { baseUrl, baseUrlImage } from "../../../api/base_urls";
 
 const Section2 = () => {
   const [sectionTitle, setSectionTitle] = useState("");
@@ -59,26 +59,25 @@ const Section2 = () => {
 
   const handleSave = async () => {
     setLoading(true);
-
-    const formData = new FormData();
-    formData.append("title", sectionData.title);
-    formData.append("description", sectionData.subTitle);
-    formData.append("description", editorContent);
-    formData.append("supportTitle", sectionData.supportTitle);
-    formData.append("supportSubTitle", sectionData.supportSubTitle);
-    formData.append("salesTitle", sectionData.salesTitle);
-    formData.append("salesSubTitle", sectionData.salesSubTitle);
-    formData.append("phoneTitle", sectionData.phoneTitle);
-    formData.append("phoneSubTitle", sectionData.phoneSubTitle);
-
+    
+    const requestData={
+      title:sectionTitle,
+      description:editorContent,
+      supportTitle:supportTitle,
+      supportSubTitle:supportSubTitle,
+      salesTitle:salesTitle,
+      salesSubTitle:salesSubTitle,
+      phoneTitle:phoneTitle,
+      phoneSubTitle:phoneSubTitle, 
+    }
     if (selectedImage) {
-      formData.append("backgroundImage", selectedImage);
+      requestData.append("backgroundImage", selectedImage);
     }
 
     try {
       const response = await axios.post(
         "https://backend.asteraporcelain.com/api/v1/contactScreen/updateSection2",
-        formData,
+        requestData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -347,7 +346,7 @@ const Section2 = () => {
               />
             ) : sectionData && sectionData.backgroundImageUrl ? (
               <img
-                src={sectionData.backgroundImageUrl}
+                src={`${baseUrlImage}${sectionData.backgroundImageUrl}`}
                 alt="Initial Image"
                 className="w-auto h-40 object-cover rounded-lg mr-2"
               />

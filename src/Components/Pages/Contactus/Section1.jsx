@@ -4,7 +4,7 @@ import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import uploadsvg from "../../../Images/UploadIcons.png";
-import { baseUrl } from "../../../api/base_urls";
+import { baseUrl, baseUrlImage } from "../../../api/base_urls";
 
 
 const Section1 = () => {
@@ -52,17 +52,18 @@ const Section1 = () => {
   const handleSave = async () => {
     setLoading(true);
 
-    const formData = new FormData();
-    formData.append("title", sectionTitle);
-    formData.append("subTitle", sectionSubTitle);
+    const requestData={
+      title:sectionTitle,
+      subTitle:sectionSubTitle,
+    }
     if (selectedImage) {
-      formData.append("backgroundImage", selectedImage);
+      requestData.append("backgroundImage", selectedImage);
     }
 
     try {
       const response = await axios.post(
         "https://backend.asteraporcelain.com/api/v1/contactScreen/updateSection1",
-        formData,
+        requestData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -186,7 +187,7 @@ const Section1 = () => {
               />
             ) : sectionData && sectionData.backgroundImageUrl ? (
               <img
-                src={sectionData.backgroundImageUrl}
+                src={`${baseUrlImage}${sectionData.backgroundImageUrl}`}
                 alt="Initial Image"
                 className="w-auto h-40 object-cover rounded-lg mr-2"
               />
