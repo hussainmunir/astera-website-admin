@@ -185,7 +185,7 @@ const Section3 = () => {
   };
 
   // Quill formats to attach to editor
-  const formats = [
+  const textInputTypes = [
     "text",
     "textarea",
     "phone",
@@ -196,6 +196,22 @@ const Section3 = () => {
     "date",
     "time",
 
+];
+
+const formats = [
+  "header",
+  "font",
+  "size",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "blockquote",
+  "list",
+  "bullet",
+  "link",
+  "image",
+  "video",
 ];
   return (
     <div>
@@ -364,7 +380,7 @@ const Section3 = () => {
   value={item.type}
   onChange={(e) => updateFieldType(e.target.value, index)}
 >
-  {formats.map((format, formatIndex) => (
+  {textInputTypes.map((format, formatIndex) => (
     <option key={formatIndex} value={format}>
       {format}
     </option>
