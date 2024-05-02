@@ -1,63 +1,95 @@
-import React, { useState, useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { IconButton } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import uploadsvg from "../../../Images/UploadIcons.png";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import axios from "axios";
+import { baseUrlImage, baseUrl } from "../../../api/base_urls";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export function Section1() {
-  const [newImages, setNewImages] = useState([]);
-  const [imageTextPairs, setImageTextPairs] = useState([]);
-  const [subtitle, setSubtitle] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [sectionData, setSectionData] = useState(null);
   const [title, setTitle] = useState("");
+  const [subTitle, setSubTitle] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [resetMessage, setResetMessage] = useState("");
 
-  const handleRegularImageUpload = (event) => {
-    const files = event.target.files;
-    const updatedNewImages = [];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${baseUrl}homescreen/getAllCollections`
+        );
+        if (
+          response.data &&
+          response.data.data &&
+          response.data.data.noveltiesCollection
+        ) {
+          const noveltiesCollection = response.data.data.noveltiesCollection;
+          if (noveltiesCollection.section1) {
+            const { section1 } = noveltiesCollection;
+            setTitle(section1.title || "");
+            setSubTitle(section1.subTitle || "");
+            setSectionData(section1);
+          } else {
+            console.log("section 1 value not available");
+          }
+        } else {
+          console.log("No data or collectionPage found in response");
+        }
+      } catch (error) {
+        console.log("Error Fetching Data", error);
+      }
+    };
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const reader = new FileReader();
+    fetchData();
+  }, []);
 
-      reader.onload = () => {
-        const imageDataUrl = reader.result;
-        updatedNewImages.push({
-          id: i,
-          dataUrl: imageDataUrl,
-          title: "",
-          subtitle: "",
-        });
-        setNewImages((prevImages) => [...prevImages, ...updatedNewImages]);
+  const handleSave = async () => {
+    try {
+      const requestData = {
+        title: title,
+        subTitle: subTitle,
       };
+      if (selectedImage) {
+        requestData.append("backgroundImage", selectedImage);
+      }
+      const response = await axios.post(
+        "https://backend.asteraporcelain.com/api/v1/noveltiesCollectionScreen/updateSection1",
+        requestData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-      reader.readAsDataURL(file);
+      console.log("Save successful:", response.data);
+      setSaveSuccess(true);
+      setTimeout(() => {
+        setSaveSuccess("");
+      }, 3000);
+      // Optionally add logic to display a success message or perform other actions
+    } catch (error) {
+      console.error("Error saving data:", error);
+      // Handle error scenarios, e.g., display an error message to the user
     }
   };
 
-  const handleSupportiveImageUpload = useCallback((acceptedFiles) => {
-    const updatedPairs = acceptedFiles.map((file) => ({
-      image: file,
-      text: "", // Initialize text as empty
-    }));
-    setImageTextPairs((prevPairs) => [...prevPairs, ...updatedPairs]);
-  }, []);
+  const handleCancel = () => {
+    if (sectionData) {
+      setTitle(sectionData.title);
+      setSubTitle(sectionData.subTitle);
+      setSelectedImage(null);
 
-  const handleDeletePair = (indexToRemove) => {
-    setImageTextPairs((prevPairs) =>
-      prevPairs.filter((pair, index) => index !== indexToRemove)
-    );
+      setResetMessage("Fields reset successfully");
+
+      setTimeout(() => {
+        setResetMessage("");
+      }, 3000);
+    }
   };
-
-  const {
-    getRootProps: getRootPropsSupportiveImages,
-    getInputProps: getInputPropsSupportiveImages,
-  } = useDropzone({
-    onDrop: handleSupportiveImageUpload,
-    accept: "image/*",
-    multiple: true,
-  });
-
-  const [selectedImage, setSelectedImage] = useState(null);
 
   const onDrop = useCallback((acceptedFiles) => {
     setSelectedImage(acceptedFiles[0]);
@@ -66,159 +98,114 @@ export function Section1() {
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   return (
-    <div className="w-full h-screen">
-      <div>
-        <p className="font-bold ml-8 mt-8 text-lg">Section 2</p>
-        <p className="ml-8 mt-1 text-ellipsis text-slate-600">
-          Update desired photo and details here
-        </p>
-        <div className="flex">
-          <p className="ml-8 mt-6 font-bold text-lg">Title</p>
-          <input
-            type="text"
-            className="mt-6 w-[14rem] ml-[20rem] border-2 border-black-500 border-solid p-3 rounded-lg"
-            placeholder="NOVELTIES"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <input
-            type="text"
-            className="mt-6 w-[14rem] ml-[1rem] border-2 border-black-500 border-solid p-3 rounded-lg"
-            placeholder="COLLECTION 2024"
-            value={subtitle}
-            onChange={(e) => setSubtitle(e.target.value)}
-          />
-        </div>
-        <div>
-          <div className="flex items-center justify-between">
-            <div className="w-1/3">
-              <label className="block text-lg ml-[2rem] mt-[2rem] font-semibold mb-1">
-                Image{" "}
-                <HelpOutlineIcon
-                  style={{
-                    fontSize: 16,
-                    color: "gray",
-                    backgroundColor: "white",
-                  }}
-                />
-              </label>
-              <p className="text-xs text-gray-500 mb-2 ml-[2rem]">
-                This will be displayed on your Hero Section.
-              </p>
+    <div>
+      <div className="max-w-lg ml-[2rem] mt-[2rem]">
+        <div className="hidden md:flex items-center justify-between mb-[1rem]">
+          <div className="w-full flex flex-col">
+            <div className="w-full text-lg font-semibold leading-7 text-gray-900 max-md:max-w-full">
+              Section 2
             </div>
-            <div className="w-full mt-[2rem] ml-[8rem] flex justify-start">
-              {selectedImage && (
-                <img
-                  src={URL.createObjectURL(selectedImage)}
-                  alt="Uploaded"
-                  className="w-auto h-40 object-cover rounded-lg mr-[2rem]"
-                />
-              )}
-              <div
-                className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center"
-                {...getRootProps()}
-              >
-                <input {...getInputProps()} />
-                <img
-                  src={uploadsvg} // Replace with your upload icon path
-                  alt="Upload Icon"
-                  className="w-12 h-12 mb-2"
-                />
-                <p className="text-sm text-gray-600 mb-2">
-                  Click to upload or drag and drop
-                </p>
-                <p className="text-sm text-gray-600">
-                  SVG, PNG, JPG or GIF (max. 800x400px)
-                </p>
-              </div>
+            <div className="mt-1 w-full text-sm leading-5 text-ellipsis text-slate-600 max-md:max-w-full">
+              Update desired photo and details here.
             </div>
           </div>
-        </div>
-        <div className="ml-8 mt-8 gap-20">
-          <div className="flex items-center justify-between">
-            <div className="w-1/3">
-              <label className="block text-lg font-semibold mb-1 whitespace-nowrap">
-                Supportive Images{" "}
-                <HelpOutlineIcon
-                  style={{
-                    fontSize: 16,
-                    color: "gray",
-                    backgroundColor: "white",
-                  }}
-                />
-              </label>
-              <p className="text-xs text-gray-500 mb-2">
-                This will be displayed on your Section 3.
-              </p>
+          {loading ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            <button
+              className="text-white bg-purple-600 rounded-lg px-3 py-2 absolute ml-[87%] "
+              onClick={handleSave}
+            >
+              Save
+            </button>
+          )}
+          {saveSuccess && (
+            <div className="text-green-600 absolute mt-[5rem] ml-[87%]">
+              Save successful!
             </div>
-            <div className="w-full flex justify-start">
-              <div className="flex gap-4">
-                {imageTextPairs.map((pair, index) => (
-                  <div key={index} className="flex flex-col items-center">
-                    <img
-                      src={URL.createObjectURL(pair.image)}
-                      alt={`Uploaded ${index}`}
-                      className="w-40 h-40 object-cover"
-                      style={{ marginBottom: "1rem" }}
-                    />
-                    <input
-                      type="text"
-                      className="border-2 border-gray-300 p-2 rounded-lg"
-                      placeholder="Enter Category"
-                      value={pair.text}
-                      onChange={(e) =>
-                        setImageTextPairs((prevPairs) =>
-                          prevPairs.map((prevPair, idx) =>
-                            idx === index
-                              ? { ...prevPair, text: e.target.value }
-                              : prevPair
-                          )
-                        )
-                      }
-                    />
-                    <div className="mt-2">
-                      <input
-                        type="text"
-                        className="border-2 border-gray-300 p-2 rounded-lg"
-                        placeholder="Enter description"
-                        value={pair.text}
-                        onChange={(e) =>
-                          setImageTextPairs((prevPairs) =>
-                            prevPairs.map((prevPair, idx) =>
-                              idx === index
-                                ? { ...prevPair, text: e.target.value }
-                                : prevPair
-                            )
-                          )
-                        }
-                      />
-                    </div>
-                    <IconButton
-                      className="mt-2 bg-white border border-black"
-                      onClick={() => handleDeletePair(index)}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </div>
-                ))}
-              </div>
-              <div
-                {...getRootPropsSupportiveImages()}
-                className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center ml-4"
-              >
-                <input {...getInputPropsSupportiveImages()} />
-                <img
-                  src={uploadsvg}
-                  alt="Upload Icon"
-                  className="w-12 h-12 mb-2"
-                />
-                <p className="text-sm text-gray-600 mb-2">
-                  Click to upload or drag and drop
-                </p>
-                <p className="text-sm text-gray-600">
-                  SVG, PNG, JPG or GIF (max. 800x400px)
-                </p>
-              </div>
+          )}
+          <button
+            className="text-black bg-white rounded-lg px-3 py-2 absolute ml-[80%] "
+            onClick={handleCancel}
+          >
+            Cancel
+          </button>
+          {resetMessage && (
+            <div className="text-red-600 mt-[5rem] absolute ml-[80%]">
+              {resetMessage}
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center">
+          <label className="block text-lg font-semibold mb-1 mr-[32rem] whitespace-nowrap">
+            Title
+          </label>
+          <div className="flex">
+            <input
+              type="text"
+              className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black mr-[2rem]"
+              placeholder="HEADING"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+            <input
+              type="text"
+              className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black"
+              placeholder="PARAGRAPH"
+              value={subTitle}
+              onChange={(e) => setSubTitle(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div className="flex items-center justify-between">
+          <div className="w-1/3">
+            <label className="block text-lg ml-[2rem] mt-[2rem] font-semibold mb-1">
+              Image{" "}
+              <HelpOutlineIcon
+                style={{
+                  fontSize: 16,
+                  color: "gray",
+                  backgroundColor: "white",
+                }}
+              />
+            </label>
+            <p className="text-xs text-gray-500 mb-2 ml-[2rem]">
+              This will be displayed on your Hero Section.
+            </p>
+          </div>
+          <div className="w-full mt-[2rem] ml-[22rem] flex justify-start">
+            {selectedImage ? (
+              <img
+                src={URL.createObjectURL(selectedImage)}
+                alt="Uploaded"
+                className="w-auto h-40 object-cover rounded-lg mr-2"
+              />
+            ) : sectionData && sectionData.backgroundImageUrl ? (
+              <img
+                src={`${baseUrlImage}${sectionData.backgroundImageUrl}`}
+                alt="Initial Image"
+                className="w-auto h-40 object-cover rounded-lg mr-2"
+              />
+            ) : null}
+            <div
+              {...getRootProps()}
+              className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center"
+            >
+              <input {...getInputProps()} />
+              <img
+                src={uploadsvg}
+                alt="Upload Icon"
+                className="w-12 h-12 mb-2"
+              />
+              <p className="text-sm text-gray-600 mb-2">
+                Click to upload or drag and drop
+              </p>
+              <p className="text-sm text-gray-600">
+                SVG, PNG, JPG or GIF (max. 800x400px)
+              </p>
             </div>
           </div>
         </div>
@@ -226,3 +213,5 @@ export function Section1() {
     </div>
   );
 }
+
+export default Section1;

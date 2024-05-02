@@ -9,7 +9,7 @@ import axios from "axios";
 import LazyLoad from "react-lazyload";
 import { baseUrlImage, baseUrl } from "../../../api/base_urls";
 
-export function Section3({ id, data3 }) {
+export function Section2() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [addSelectedImage, setAddSelectedImage] = useState(null);
   const [products, setProducts] = useState([]);
@@ -29,11 +29,11 @@ export function Section3({ id, data3 }) {
         if (
           response.data &&
           response.data.data &&
-          response.data.data.whatsnewCollection
+          response.data.data.timelessCollection
         ) {
-          const whatsnewCollection = response.data.data.whatsnewCollection;
-          if (whatsnewCollection.section2) {
-            const { section2 } = whatsnewCollection;
+          const timelessCollection = response.data.data.timelessCollection;
+          if (timelessCollection.section2) {
+            const { section2 } = timelessCollection;
             setTitle(section2.title || "");
             setSubTitle(section2.subTitle || "");
             setProducts(section2);
@@ -115,7 +115,7 @@ export function Section3({ id, data3 }) {
     }
     try {
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/whatsnewCollectionScreen/updateSection2Item",
+        "https://backend.asteraporcelain.com/api/v1/timelessCollectionScreen/updateSection2Item",
         requestData,
         {
           headers: {
@@ -180,7 +180,7 @@ export function Section3({ id, data3 }) {
 
     try {
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/whatsnewCollectionScreen/addSection2Item",
+        "https://backend.asteraporcelain.com/api/v1/timelessCollectionScreen/addSection2Item",
         addRequestData,
         {
           headers: {
@@ -213,7 +213,7 @@ export function Section3({ id, data3 }) {
       const itemId = products[index]._id;
       console.log(itemId);
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/whatsnewCollectionScreen/deleteSection2Item",
+        "https://backend.asteraporcelain.com/api/v1/timelessCollectionScreen/deleteSection2Item",
         { itemId }
       );
       console.log("Image deleted successfully:", response.data);
@@ -361,4 +361,4 @@ export function Section3({ id, data3 }) {
   );
 }
 
-export default Section3;
+export default Section2;

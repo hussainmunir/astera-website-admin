@@ -5,10 +5,10 @@ import Section3 from './Section3';
 
 export function NewCollection () {
   return (
-    <div>
+    <div className='h-[100vh]'>
       <FirstTitle />
       <SecondSection/>
-      {/* <Section3 /> */}
+      <Section3 />
     </div>
   );
 };

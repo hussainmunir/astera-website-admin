@@ -13,14 +13,6 @@ export function FirstTitle() {
 					elementum accumsan dignissim tempus in. Pretium nibh venenatis urna
 					sed.
 				</p>
-				<div className="flex ml-[80rem] space-x-5 -mt-[1.5rem]">
-					<button className="border-solid border-2 p-2 w-[5rem] border-black text-blue bg-white rounded-xl">
-						Close
-					</button>
-					<button className="border-1 border-solid border-blue w-[5rem] text-white bg-blue-700 p-2 rounded-xl">
-						Save
-					</button>
-				</div>
 			</div>
 		</div>
 	);
