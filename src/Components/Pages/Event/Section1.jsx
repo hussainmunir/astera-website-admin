@@ -1,18 +1,106 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import uploadsvg from "../../../Images/UploadIcons.png";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import CircularProgress from "@mui/material/CircularProgress";
+import axios from "axios";
+import { baseUrl, baseUrlImage } from "../../../api/base_urls";
 
 export function Section1() {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [sectionData,setSectionData]=useState(null);
   const [editorContent, setEditorContent] = useState("");
   const [charCount, setCharCount] = useState(0);
   const maxChars = 500; // Set the max characters allowed
+  const [title, setTitle] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [resetMessage, setResetMessage] = useState("");
+  const [subTitle, setSubTitle] = useState("");
+  const [id, setId] = useState(""); // Define id state if used in handleSave function
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}homescreen/getAllCollections`);
+        if (response.data && response.data.data && response.data.data.eventsPage) {
+          const events = response.data.data.eventsPage;
+          if (events.section1) {
+            const { section1 } = events;
+            setTitle(section1.title || "");
+            setSubTitle(section1.subTitle || "");
+            setEditorContent(section1.description || "");
+            setSectionData(section1);
+          } else {
+            console.log("section 1 value not available");
+          }
+        } else {
+          console.log("No data or collectionPage found in response");
+        }
+      } catch (error) {
+        console.log("Error Fetching Data", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleSave = async () => {
+    setLoading(true);
+
+    const requestData = {
+      title: title,
+      subTitle: subTitle,
+      description:editorContent,
+      id:id,
+    }
+    if (selectedImage) {
+      requestData.append("backgroundImage", selectedImage);
+    }
+
+    try {
+      const response = await axios.post(
+        "https://backend.asteraporcelain.com/api/v1/eventsScreen/updateSection1",
+        requestData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("Update successful:", response.data);
+      setSaveSuccess(true);
+    } catch (error) {
+      console.error("Error updating section:", error);
+    } finally {
+      setLoading(false);
+      setTimeout(() => {
+        setSaveSuccess(false);
+      }, 3000);
+    }
+  };
+
+  const handleCancel = () => {
+   if(sectionData){
+    setTitle(sectionData.title || "");
+    setSubTitle(sectionData.subTitle || "");
+    setEditorContent(sectionData.description || "");
+    setSelectedImage(null);
+   }
+    // Set reset message
+    setResetMessage("Fields reset successfully");
+
+    // Clear reset message after 3 seconds
+    setTimeout(() => {
+      setResetMessage("");
+    }, 3000);
+  };
 
   const onDrop = useCallback((acceptedFiles) => {
-    setSelectedImage(acceptedFiles[0]);
+    if (acceptedFiles.length > 0) {
+      setSelectedImage(acceptedFiles[0]);
+    }
   }, []);
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
@@ -61,35 +149,59 @@ export function Section1() {
   return (
     <div>
       <div className="w-full flex flex-col ml-[2rem] mt-8">
-        <p className="w-full text-gray-600 text-lg max-md:max-w-full">
+        <p className="w-full text-gray-600 text-lg maxmd:max-w-full">
           <b>Section 1</b>
         </p>
-        <div className="mt-1 w-full text-sm leading-5 text-ellipsis text-slate-600 max-md:max-w-full">
+        <div className="mt-1 w-full text-sm leading-5 text-ellipsis text-slate-600 maxmd:max-w-full">
           Update desired photo and details here.
         </div>
       </div>
       <div className="flex ml-[80rem] space-x-5 -mt-8">
-          <button className="border-solid border-2 p-2 w-[5rem] border-black text-blue bg-white rounded-xl">
-            Close
-          </button>
-          <button className="border-1 border-solid border-blue w-[5rem] text-white bg-blue-700 p-2 rounded-xl">
+        <button
+          className="border-solid border-2 p-2 w-[5rem] border-black text-blue bg-white rounded-xl"
+          onClick={handleCancel}
+        >
+          Cancel
+        </button>
+        {resetMessage && (
+          <div className="text-red-600 mt-2 absolute top-[25rem] ml-[85%]">
+            {resetMessage}
+          </div>
+        )}
+        {loading ? (
+          <CircularProgress size={24} color="inherit" />
+        ) : (
+          <button
+            className="border-1 border-solid border-blue w-[5rem] text-white bg-blue-700 p-2 rounded-xl"
+            onClick={handleSave}
+          >
             Save
           </button>
-        </div>
+        )}
+        {saveSuccess && (
+          <div className="text-green-600 mt-2 absolute top-[25rem] ml-[85%]">
+            Save successful!
+          </div>
+        )}
+      </div>
       <div className="flex flex-row">
-      <label className="block text-lg font-semibold mt-[2rem] ml-[2rem] whitespace-nowrap">
-            Hero Section Title
-          </label>
+        <label className="block text-lg font-semibold mt-[2rem] ml-[2rem] whitespace-nowrap">
+          Hero Section Title
+        </label>
         <input
           type="text"
           className="mt-8 w-[25rem] ml-[12rem] border-2 border-black-500 border-solid p-3 rounded-lg"
           placeholder="AMBIENTE 2024"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
 
         <input
           type="text"
           className="mt-8 w-[25rem] ml-[1rem] border-2 border-black-500 border-solid p-3 rounded-lg"
           placeholder="JANUARY 26TH TO JANUARY 30TH"
+          value={subTitle}
+          onChange={(e) => setSubTitle(e.target.value)}
         />
       </div>
 
@@ -144,14 +256,20 @@ export function Section1() {
                 This will be displayed on your Hero Section.
               </p>
             </div>
-            <div className="w-full mt-[4rem] ml- [15rem] flex justify-start">
-              {selectedImage && (
+            <div className="w-full mt-[4rem] ml-[15rem] flex justify-start">
+            {selectedImage ? (
                 <img
                   src={URL.createObjectURL(selectedImage)}
                   alt="Uploaded"
-                  className="w-auto h-40 object-cover rounded-lg mr-[2rem]"
+                  className="w-auto h-40 object-cover rounded-lg mr-2"
                 />
-              )}
+              ) : sectionData && sectionData.backgroundImageUrl ? (
+                <img
+                  src={`${baseUrlImage}${sectionData.backgroundImageUrl}`}
+                  alt="Initial Image"
+                  className="w-auto h-40 object-cover rounded-lg mr-2"
+                />
+              ) : null}
               <div
                 {...getRootProps()}
                 className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center"
@@ -172,7 +290,8 @@ export function Section1() {
             </div>
           </div>
         </div>
-      </div><div className="border border-l border-gray m-[2rem] "></div>
+      </div>
+      <div className="border border-l border-gray m-[2rem] "></div>
     </div>
   );
 }
