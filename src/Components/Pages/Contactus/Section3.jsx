@@ -9,6 +9,8 @@ import Button from "@mui/material/Button";
 import { baseUrl,baseUrlImage } from "../../../api/base_urls";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
+import { IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 const Section3 = () => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -20,6 +22,7 @@ const Section3 = () => {
   const [resetMessage, setResetMessage] = useState("");
   const maxChars = 500; // Set the max characters allowed
   const [title, setTitle] = useState("");
+  const [backgroundColor, setBackgroundColor] = useState("");
   const [fields, setFields] = useState([]);
 
   useEffect(() => {
@@ -38,6 +41,7 @@ const Section3 = () => {
           setSectionData(section3);
           setTitle(section3.title);
           setEditorContent(section3.subTitle);
+          setBackgroundColor(section3.backgroundColor);
           setFields(
             section3 && section3.contactFields && section3.contactFields
           );
@@ -50,28 +54,58 @@ const Section3 = () => {
   }, []);
 
 
+  const handleAddFields = () => {
+    setFields([...fields, { name: "", type: "" }]);
+  };
+
 
   const handleSave = async () => {
     setLoading(true);
+  
+    // const requestData = new FormData();
+    // requestData.append("title", title);
+    // requestData.append("subTitle", editorContent);
+    // requestData.append("backgroundColor", backgroundColor);
     
-    const requestData={
-      title:title,
-      subTitle:editorContent, 
-    }
+    // Append each contact field individually
+    // fields.forEach((field, index) => {
+    //   requestData.append(`contactFields[${index}][name]`, field.name);
+    //   requestData.append(`contactFields[${index}][type]`, field.type);
+    // });
+
+    const updatedFields = fields.map(field => {
+      // Extract only the "name" and "type" properties
+      const { name, type } = field;
+      // Create a new object with the extracted properties
+      return { name, type };
+  });
+  // requestData.append("contactFields", updatedFields);
+
+  const requestData = {
+    title: title,
+    subTitle: editorContent,
+    backgroundColor: backgroundColor,
+    contactFields: updatedFields,
+  };
+
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  
     if (selectedImage) {
       requestData.append("backgroundImage", selectedImage);
     }
 
+  
     try {
-      const response = await axios.post(
+      console.log("fields",fields)
+     const response = await axios.post(
         "https://backend.asteraporcelain.com/api/v1/contactScreen/updateSection3",
         requestData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+        config
+     );
       console.log("Update successful:", response.data);
       setSaveSuccess(true);
     } catch (error) {
@@ -83,6 +117,9 @@ const Section3 = () => {
       }, 3000);
     }
   };
+  
+  
+  
 
   const handleCancel = () => {
     if (sectionData) {
@@ -100,6 +137,25 @@ const Section3 = () => {
     }
   };
 
+  const updateFieldTitle = (name, index) => {
+    const updatedFields = [...fields];
+    updatedFields[index].name = name;
+    console.log("name",name)
+    setFields(updatedFields);
+  };
+
+  const updateFieldType = (name, index) => {
+    const updatedFields = [...fields];
+    updatedFields[index].type = name;
+    setFields(updatedFields);
+  };
+
+  const removeField = (index) => {
+    const updatedFields = [...fields];
+    updatedFields.splice(index, 1);
+    setFields(updatedFields);
+  };
+  
 
   const onDrop = useCallback((acceptedFiles) => {
     setSelectedImage(acceptedFiles[0]);
@@ -130,20 +186,17 @@ const Section3 = () => {
 
   // Quill formats to attach to editor
   const formats = [
-    "header",
-    "font",
-    "size",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "blockquote",
-    "list",
-    "bullet",
-    "link",
-    "image",
-    "video",
-  ];
+    "text",
+    "textarea",
+    "phone",
+    "password",
+    "email",
+    "tel",
+    "number",
+    "date",
+    "time",
+
+];
   return (
     <div>
       <div className="max-w-lg ml-[2rem] mt-[2rem]">
@@ -194,6 +247,22 @@ const Section3 = () => {
               className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black mr-[2rem]"
               placeholder="HEADING"
               value={title}
+              onChange={(e) => setTitle(e.target.value)}
+
+            />
+          </div>
+        </div>
+        <div className="flex items-center">
+          <label className="block text-lg font-semibold mb-1 mr-[25rem] mt-10 whitespace-nowrap">
+            Background Color
+          </label>
+          <div className="flex">
+            <input
+              type="text"
+              className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black mr-[2rem]"
+              placeholder="Background Color"
+              value={backgroundColor}
+              onChange={(e) => setBackgroundColor(e.target.value)}
             />
           </div>
         </div>
@@ -226,47 +295,10 @@ const Section3 = () => {
         </div>
       </div>
 
-      <div className="max-w-lg ml-[2rem] mt-[2rem]">
-        <div className="flex items-center">
-          <label
-            htmlFor="fields"
-            className="block text-lg font-semibold mb-1 mr-[32rem] whitespace-nowrap"
-          >
-            Fields
-          </label>
-          <div>
-            {fields.map((item, index) => (
-              <div key={index} className="flex flex-col">
-                <input
-                  type="text"
-                  className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black mb-2"
-                  placeholder="Name"
-                  value={item.name}
-                  onChange={(e) => handleFieldChange(e, index)}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-        {/* Add button */}
-        <div className="flex justify-end mt-4 ml-[40rem]">
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              // Add your logic here to handle the button click
-              console.log("Add button clicked");
-            }}
-          >
-            Add <AddIcon />
-          </Button>
-        </div>
-      </div>
-
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mt-10">
         <div className="w-1/3">
           <label className="block text-lg ml-[2rem] mt-[2rem] font-semibold mb-1">
-            Hero Image{" "}
+            Background Image{" "}
             <HelpOutlineIcon
               style={{
                 fontSize: 16,
@@ -276,10 +308,10 @@ const Section3 = () => {
             />
           </label>
           <p className="text-xs text-gray-500 mb-2 ml-[2rem]">
-            This will be displayed on your Hero Section.
+            This will be displayed on section3 background.
           </p>
         </div>
-        <div className="w-full mt-[2rem] ml-[22rem] flex justify-start">
+        <div className="w-full mt-[2rem] ml-[16rem] flex justify-start">
         {selectedImage ? (
               <img
                 src={URL.createObjectURL(selectedImage)}
@@ -308,6 +340,70 @@ const Section3 = () => {
           </div>
         </div>
       </div>
+
+      <div className="max-w-lg ml-[2rem] mt-[5rem]">
+        <div className="flex items-center">
+          <label
+            htmlFor="fields"
+            className="block text-lg font-semibold mb-1 mr-[32rem] whitespace-nowrap"
+          >
+           Update Fields
+          </label>
+          <div>
+            {fields.map((item, index) => (
+              <div key={index} className="flex flex-row">
+                <input
+                  type="text"
+                  className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black mb-2"
+                  placeholder="Name"
+                  value={item.name}
+                  onChange={(e) => updateFieldTitle(e.target.value, index)}
+                />
+               <select
+  className="w-auto border border-gray-300 rounded-lg px-3 py-2 mx-5 focus:outline-none focus:border-black mb-2"
+  value={item.type}
+  onChange={(e) => updateFieldType(e.target.value, index)}
+>
+  {formats.map((format, formatIndex) => (
+    <option key={formatIndex} value={format}>
+      {format}
+    </option>
+  ))}
+</select>
+                <IconButton
+                className="absolute bottom-1 bg-white"
+                onClick={() => removeField(index)}
+              >
+                <CloseIcon />
+              </IconButton>
+              </div>
+            ))}
+          </div>
+        </div>
+        <label
+            htmlFor="fields"
+            className="block text-lg font-semibold mb-1 mr-[32rem] whitespace-nowrap"
+          >
+           Add New Field
+          </label>
+        
+        {/* Add button */}
+        <div>
+      <div className="flex mt-4 ml-[39rem]">
+        <div className="flex flex-row justify-center">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleAddFields}
+          >
+            Add <AddIcon />
+          </Button>
+        </div>
+      </div>
+    </div>
+      </div>
+
+     
 
       <div className="border border-l border-black m-[2rem] "></div>
     </div>

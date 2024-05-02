@@ -1,18 +1,101 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
 import uploadsvg from "../../../Images/UploadIcons.png";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { Switch } from "@mui/material";
+import axios from "axios";
+import { baseUrlImage, baseUrl } from "../../../api/base_urls";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Section4 = () => {
   const [selectedImage, setSelectedImage] = useState(null);
-  const [editorContent, setEditorContent] = useState("");
-  const [charCount, setCharCount] = useState(0);
   const [inputEnabled, setInputEnabled] = useState(false);
-  const [inputText, setInputText] = useState("");
-  const maxChars = 500;
+  const [sectionData, setSectionData] = useState(null);
+  const [title, setTitle] = useState("");
+  const [subTitle, setSubTitle] = useState("");
+  const [addButton, setAddButton] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [resetMessage, setResetMessage] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${baseUrl}homescreen/getAllCollections`
+        );
+        if (
+          response.data &&
+          response.data.data &&
+          response.data.data.collectionPage
+        ) {
+          const collectionPage = response.data.data.collectionPage;
+          if (collectionPage.section4) {
+            const { section4 } = collectionPage;
+            setTitle(section4.title || "");
+            setSubTitle(section4.subTitle || "");
+            setAddButton(section4.addButton || "");
+            setSectionData(section4);
+          } else {
+            console.log("section4 value not available");
+          }
+        } else {
+          console.log("No data or collectionPage found in response");
+        }
+      } catch (error) {
+        console.log("Error Fetching Data", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleSave = async () => {
+    try {
+      const requestData = {
+        title: title,
+        subTitle: subTitle,
+        addButton: addButton,
+      };
+      if (selectedImage) {
+        requestData.append("backgroundImage", selectedImage);
+      }
+      const response = await axios.post(
+        "https://backend.asteraporcelain.com/api/v1/collectionScreen/updateSection2",
+        requestData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log("Save successful:", response.data);
+      setSaveSuccess(true);
+      setTimeout(() => {
+        setSaveSuccess("");
+      }, 3000);
+      // Optionally add logic to display a success message or perform other actions
+    } catch (error) {
+      console.error("Error saving data:", error);
+      // Handle error scenarios, e.g., display an error message to the user
+    }
+  };
+
+  const handleCancel = () => {
+    if (sectionData) {
+      setTitle(sectionData.title);
+      setSubTitle(sectionData.subTitle);
+      setAddButton(sectionData.addButton);
+      setSelectedImage(null);
+
+      setResetMessage("Fields reset successfully");
+
+      setTimeout(() => {
+        setResetMessage("");
+      }, 3000);
+    }
+  };
 
   const onDrop = useCallback((acceptedFiles) => {
     setSelectedImage(acceptedFiles[0]);
@@ -20,52 +103,18 @@ const Section4 = () => {
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
-  // Handler for the editor change
-  const handleEditorChange = (content, delta, source, editor) => {
-    setEditorContent(content);
-    setCharCount(editor.getLength() - 1); // Minus 1 to not count the trailing newline
-  };
   const handleToggleChange = () => {
-    setInputEnabled(!inputEnabled); // Toggle the input field enable/disable state
-  };
+    setInputEnabled(!inputEnabled);
 
-  const handleInputChange = (e) => {
-    setInputText(e.target.value);
+    // Toggle addButton state based on current value
+    if (!addButton && !inputEnabled) {
+      // If addButton is false and user toggles switch from off to on
+      setAddButton("true"); // Set addButton to true
+    } else if (addButton && inputEnabled) {
+      // If addButton is true and user toggles switch from on to off
+      setAddButton("false"); // Set addButton to false
+    }
   };
-  // Quill modules to attach to editor
-  // Add your desired modules here
-  const modules = {
-    toolbar: [
-      [{ header: "1" }, { header: "2" }, { font: [] }],
-      [{ size: [] }],
-      ["bold", "italic", "underline", "strike", "blockquote"],
-      [{ list: "ordered" }, { list: "bullet" }],
-      ["link", "image", "video"],
-      ["clean"],
-    ],
-    clipboard: {
-      // Extend default configuration to handle pasted text
-      matchVisual: false,
-    },
-  };
-
-  // Quill formats to attach to editor
-  // Add your desired formats here
-  const formats = [
-    "header",
-    "font",
-    "size",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "blockquote",
-    "list",
-    "bullet",
-    "link",
-    "image",
-    "video",
-  ];
 
   return (
     <div>
@@ -79,12 +128,32 @@ const Section4 = () => {
               Update desired photo and details here.
             </div>
           </div>
-          <button className="text-white bg-purple-600 rounded-lg px-3 py-2 absolute ml-[87%] ">
-            Save
-          </button>
-          <button className="text-black bg-white rounded-lg px-3 py-2 absolute ml-[80%] ">
+          {loading ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            <button
+              className="text-white bg-purple-600 rounded-lg px-3 py-2 absolute ml-[87%] "
+              onClick={handleSave}
+            >
+              Save
+            </button>
+          )}
+          {saveSuccess && (
+            <div className="text-green-600 absolute mt-[5rem] ml-[87%]">
+              Save successful!
+            </div>
+          )}
+          <button
+            className="text-black bg-white rounded-lg px-3 py-2 absolute ml-[80%] "
+            onClick={handleCancel}
+          >
             Cancel
           </button>
+          {resetMessage && (
+            <div className="text-red-600 mt-[5rem] absolute ml-[80%]">
+              {resetMessage}
+            </div>
+          )}
         </div>
 
         <div className="flex items-center">
@@ -96,69 +165,29 @@ const Section4 = () => {
               type="text"
               className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black mr-[2rem]"
               placeholder="HEADING"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
             />
             <input
               type="text"
               className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black"
               placeholder="PARAGRAPH"
+              value={subTitle}
+              onChange={(e) => setSubTitle(e.target.value)}
             />
           </div>
         </div>
-
-        {/* <div className="flex mt-[2rem]">
-					<label
-						htmlFor="bio"
-						className="text-lg font-medium text-gray-900 mr-[24rem]"
-					>
-						Bio
-						<br />
-						<span className="font-light text-sm whitespace-nowrap">
-							Write a short introduction.
-						</span>
-					</label>
-					<div className="flex flex-col">
-						<ReactQuill
-							theme="snow"
-							value={editorContent}
-							onChange={handleEditorChange}
-							modules={modules}
-							formats={formats}
-							placeholder="Write a short introduction."
-							style={{ height: "200px", marginBottom: "40px", width: "600px" }}
-						/>
-						<div className="text-sm ml-1 text-gray-600">
-							{`${maxChars - charCount} characters left`}
-						</div>
-					</div>
-				</div> */}
-
         <div className="flex mt-4 items-center">
-          <div className="flex mt-4 items-center">
-            <div className="mr-4">
-              <span className="mb-0 ml-2 font-extrabold whitespace-nowrap">
-                Add Button
-              </span>
-              <Switch
-                checked={inputEnabled}
-                onChange={handleToggleChange}
-                color="primary"
-              />
-              <span></span>
-            </div>
-            <div className="relative flex items-center">
-              <input
-                type="text"
-                className="border ml-[28rem] border-gray-300 px-3 py-2 focus:outline-none focus:border-black"
-                placeholder="Input Field"
-                onChange={handleInputChange}
-                disabled={!inputEnabled}
-              />
-            </div>
-            {inputEnabled && (
-              <div className="bg-gray-300  text-black px-3 py-2 border whitespace-nowrap rounded-lg ml-[2rem]">
-                {inputText}
-              </div>
-            )}
+          <div className="mr-4">
+            <span className="mb-0 ml-2 font-extrabold whitespace-nowrap">
+              Add Button
+            </span>
+            <Switch
+              checked={inputEnabled}
+              onChange={handleToggleChange}
+              color="primary"
+            />
+            <span></span>
           </div>
         </div>
       </div>
@@ -181,13 +210,19 @@ const Section4 = () => {
             </p>
           </div>
           <div className="w-full mt-[2rem] ml-[22rem] flex justify-start">
-            {selectedImage && (
+            {selectedImage ? (
               <img
                 src={URL.createObjectURL(selectedImage)}
                 alt="Uploaded"
-                className="w-auto h-40 object-cover rounded-lg mr-[2rem]"
+                className="w-auto h-40 object-cover rounded-lg mr-2"
               />
-            )}
+            ) : sectionData && sectionData.backgroundImageUrl ? (
+              <img
+                src={`${baseUrlImage}${sectionData.backgroundImageUrl}`}
+                alt="Initial Image"
+                className="w-auto h-40 object-cover rounded-lg mr-2"
+              />
+            ) : null}
             <div
               {...getRootProps()}
               className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center"
