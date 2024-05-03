@@ -1,12 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { useDropzone } from "react-dropzone";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useDropzone } from "react-dropzone";
 import uploadsvg from "../../../Images/UploadIcons.png";
+import { CircularProgress } from "@mui/material";
 
 const Section5 = () => {
-	const [title, setTitle] = useState("");
-	const [images, setImages] = useState([]);
-	const [saveSuccess, setSaveSuccess] = useState(false);
+	const [section5Data, setSection5Data] = useState([]);
+	const [originalData, setOriginalData] = useState([]);
+	const [selectedFile, setSelectedFile] = useState(null); 
+	const [resetMessage, setResetMessage] = useState("");
+	const [loading, setLoading] = useState(false);
+	const [newItemData, setNewItemData] = useState({
+		image: null,
+		imageTitle: "",
+		imageSubtitle: "",
+	});
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -14,17 +22,18 @@ const Section5 = () => {
 				const response = await axios.get(
 					"https://backend.asteraporcelain.com/api/v1/homescreen/getAllCollections"
 				);
-				const section5Data = response.data.data.homePage.section5;
-				setTitle(section5Data.title);
-
-				// Update image URLs to use absolute paths
-				const formattedImages = section5Data.images.map((image) => ({
-					imageUrl: `https://backend.asteraporcelain.com/${image.imageUrl}`,
-					imageTitle: image.imageTitle,
-					imageSubtitle: image.imageSubtitle,
-					_id: image._id,
-				}));
-				setImages(formattedImages);
+				if (
+					response.data &&
+					response.data.data &&
+					response.data.data.homePage &&
+					response.data.data.homePage.section5 &&
+					response.data.data.homePage.section5.images &&
+					response.data.data.homePage.section5.images.length > 0
+				) {
+					const images = response.data.data.homePage.section5.images;
+					setSection5Data(images);
+					setOriginalData(images);
+				}
 			} catch (error) {
 				console.error("Error fetching data:", error);
 			}
@@ -33,11 +42,75 @@ const Section5 = () => {
 		fetchData();
 	}, []);
 
-	const handleSave = async () => {
+	const handleUpdate = async (itemId, newImage, newTitle, newSubtitle) => {
 		try {
 			const formData = new FormData();
-			formData.append("title", title);
-			formData.append("image", JSON.stringify(images)); // Convert images array to JSON string
+			formData.append("id", itemId);
+			formData.append("image", newImage);
+			formData.append("imageTitle", newTitle);
+			formData.append("imageSubtitle", newSubtitle);
+
+			const response = await axios.post(
+				"https://backend.asteraporcelain.com/api/v1/homescreen/updateSection5",
+				formData,
+				{
+					headers: {
+						"Content-Type": "multipart/form-data",
+					},
+				}
+			);
+
+			console.log("Update successful:", response.data);
+			// Optionally update state or show success message
+		} catch (error) {
+			console.error("Error updating data:", error);
+			// Handle error state or show error message
+		}
+	};
+
+	const { getRootProps, getInputProps } = useDropzone({
+		accept: "image/*",
+		onDrop: async (acceptedFiles) => {
+			const file = acceptedFiles[0];
+			if (file) {
+				setSelectedFile(file); // Store the selected file in state
+				// Optionally update the first image item with the dropped file
+				await handleUpdate(
+					section5Data[0]._id,
+					file,
+					section5Data[0].imageTitle,
+					section5Data[0].imageSubtitle
+				);
+				// Refresh data after update
+				const updatedData = await fetchData();
+				setSection5Data(updatedData);
+			}
+		},
+	});
+
+	const handleCancel = (itemId) => {
+		// Find the original data for the specified item ID
+		const originalItem = originalData.find((item) => item._id === itemId);
+		if (!originalItem) return;
+
+		// Reset the item data back to its original state
+		setSection5Data((prevData) =>
+			prevData.map((item) => (item._id === itemId ? { ...originalItem } : item))
+		);
+		setResetMessage("Fields reset successfully");
+		setTimeout(() => {
+			setResetMessage("");
+		}, 3000);
+	};
+
+	// For Add 
+
+	const handleAddItem = async () => {
+		try {
+			const formData = new FormData();
+			formData.append("image", newItemData.image);
+			formData.append("imageTitle", newItemData.imageTitle);
+			formData.append("imageSubtitle", newItemData.imageSubtitle);
 
 			const response = await axios.post(
 				"https://backend.asteraporcelain.com/api/v1/homescreen/addSection5Item",
@@ -49,116 +122,100 @@ const Section5 = () => {
 				}
 			);
 
-			console.log("Save successful:", response.data);
-			setSaveSuccess(true);
+			console.log("Add item successful:", response.data);
+			// Optionally update state or show success message
 
-			setTimeout(() => {
-				setSaveSuccess(false);
-			}, 3000);
+			// Refresh data after adding
+			const updatedData = await fetchData();
+			setSection5Data(updatedData);
+
+			// Reset newItemData state
+			setNewItemData({
+				image: null,
+				imageTitle: "",
+				imageSubtitle: "",
+			});
 		} catch (error) {
-			console.error("Error saving data:", error);
+			console.error("Error adding item:", error);
+			// Handle error state or show error message
 		}
 	};
 
-	const updateImageTitle = (index, value) => {
-		const updatedImages = [...images];
-		updatedImages[index].imageTitle = value;
-		setImages(updatedImages);
-	};
-
-	const updateImageSubtitle = (index, value) => {
-		const updatedImages = [...images];
-		updatedImages[index].imageSubtitle = value;
-		setImages(updatedImages);
-	};
-
-	const onDrop = (acceptedFiles) => {
-		const updatedImages = acceptedFiles.map((file) => ({
-			imageUrl: URL.createObjectURL(file),
-			imageTitle: "",
-			imageSubtitle: "",
-			file: file,
-		}));
-		setImages([...images, ...updatedImages]);
-	};
-
-	const { getRootProps, getInputProps } = useDropzone({
-		onDrop,
-		accept: "image/*",
-		multiple: true,
+	const {
+		getRootProps: getRootPropsForAdd,
+		getInputProps: getInputPropsForAdd,
+	} = useDropzone({
+		onDrop: (acceptedFiles) => {
+			if (acceptedFiles.length > 0) {
+				const file = acceptedFiles[0];
+				setNewItemData((prevData) => ({ ...prevData, image: file }));
+			}
+		},
 	});
 
 	return (
-		<>
-			<div className="max-w-lg ml-8 mt-8">
-				<div className="flex items-center justify-between mb-4">
-					<div className="w-full flex flex-col">
-						<div className="text-lg font-semibold leading-7 text-gray-900">
-							Section 5
-						</div>
-						<div className="mt-1 text-sm leading-5 text-gray-600">
-							Update desired photos and details here.
-						</div>
-					</div>
-					{/* <button
-						className="flex absolute ml-[80%] text-white bg-purple-600 rounded-lg px-5 py-2.5"
-						onClick={handleSave}
-					>
-						Save
-					</button> */}
-				</div>
-
-				<div className="flex items-center">
-					<label className="block text-lg font-semibold mb-1 mr-8">Title</label>
-					<input
-						type="text"
-						className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black ml-[32rem]"
-						placeholder="Title"
-						value={title}
-						onChange={(e) => setTitle(e.target.value)}
-					/>
-				</div>
-
-				<div className="flex flex-wrap mt-4">
-					{images.map((image, index) => (
-						<div key={index} className="relative mr-4 mb-4">
-							<img
-								src={image.imageUrl}
-								alt={image.imageTitle}
-								className="w-40 h-40 object-cover rounded-lg"
-							/>
-							<input
-								type="text"
-								className="absolute top-0 left-0 w-full border border-gray-300 rounded-t-lg px-2 py-1 bg-white bg-opacity-80 backdrop-filter backdrop-blur"
-								placeholder="Image Title"
-								value={image.imageTitle}
-								onChange={(e) => updateImageTitle(index, e.target.value)}
-							/>
-							<input
-								type="text"
-								className="absolute bottom-0 left-0 w-full border border-gray-300 rounded-b-lg px-2 py-1 bg-white bg-opacity-80 backdrop-filter backdrop-blur"
-								placeholder="Image Subtitle"
-								value={image.imageSubtitle}
-								onChange={(e) => updateImageSubtitle(index, e.target.value)}
-							/>
-						</div>
-					))}
-				</div>
-
-				<div className="flex items-center mt-4">
-					<div className="w-1/3">
-						<label className="block text-lg font-semibold mb-1">
-							Add Image
+		<div className="max-w-lg ml-4 mt-4">
+			<div className="text-lg font-semibold leading-7 text-gray-900">
+				Section 5
+				<span className="mt-1 text-lg text-bold ml-4 whitespace-nowrap text-red-600">
+					Update Item For Section 5
+				</span>
+			</div>
+			<div className="mt-1 text-sm leading-5 text-slate-600">
+				Update desired photo and details here.
+			</div>
+			{section5Data.map((item) => (
+				<div key={item._id} className="mt-6">
+					<div className="flex items-center mb-4">
+						<label className="mr-2 font-semibold whitespace-nowrap">
+							Image Title:
 						</label>
-						<p className="text-xs text-gray-500 mb-2 whitespace-nowrap">
-							Upload new image here.
-						</p>
+						<input
+							type="text"
+							className="border rounded-lg px-3 py-2 w-64 ml-[28rem]"
+							value={item.imageTitle}
+							onChange={(e) => {
+								const updatedTitle = e.target.value;
+								setSection5Data((prevData) =>
+									prevData.map((prevItem) =>
+										prevItem._id === item._id
+											? { ...prevItem, imageTitle: updatedTitle }
+											: prevItem
+									)
+								);
+							}}
+						/>
 					</div>
-
-					<div className="w-full mt-2 flex justify-start ml-[24rem]">
+					<div className="flex items-center mb-4">
+						<label className="mr-2 font-semibold whitespace-nowrap">
+							Image Subtitle:
+						</label>
+						<input
+							type="text"
+							className="border rounded-lg px-3 py-2 w-64 ml-[28rem]"
+							value={item.imageSubtitle}
+							onChange={(e) => {
+								const updatedSubtitle = e.target.value;
+								setSection5Data((prevData) =>
+									prevData.map((prevItem) =>
+										prevItem._id === item._id
+											? { ...prevItem, imageSubtitle: updatedSubtitle }
+											: prevItem
+									)
+								);
+							}}
+						/>
+					</div>
+					<div className="w-full mt-4  flex items-center">
+						<label className="mr-2 font-semibold">Image</label>
+						<img
+							src={`https://backend.asteraporcelain.com/${item.imageUrl}`}
+							alt="Uploaded"
+							className="w-auto whitespace-nowrap h-40 object-cover rounded-lg mr-4  ml-[30rem]"
+						/>
 						<div
 							{...getRootProps()}
-							className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center"
+							className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center whitespace-nowrap"
 						>
 							<input {...getInputProps()} />
 							<img
@@ -166,22 +223,120 @@ const Section5 = () => {
 								alt="Upload Icon"
 								className="w-12 h-12 mb-2"
 							/>
-							<p className="text-sm text-gray-600 mb-2 whitespace-nowrap">
+							<p className="text-sm text-gray-600 mb-2">
 								Click to upload or drag and drop
 							</p>
 							<p className="text-sm text-gray-600">
-								SVG, PNG, JPG, or GIF (max. 800x400px)
+								SVG, PNG, JPG or GIF (max. 800x400px)
 							</p>
 						</div>
 					</div>
+					<button
+						className="text-white bg-purple-600 rounded-lg px-5 py-2.5"
+						onClick={() =>
+							handleUpdate(
+								item._id,
+								selectedFile,
+								item.imageTitle,
+								item.imageSubtitle
+							)
+						}
+						disabled={loading}
+					>
+						{loading ? (
+							<CircularProgress size={24} color="inherit" />
+						) : (
+							"Update"
+						)}
+					</button>
+					<button
+						className="text-black bg-white border-2 border-black rounded-lg px-5 py-2.5 mt-4 ml-4"
+						onClick={() => handleCancel(item._id)}
+					>
+						Cancel
+					</button>
+					{resetMessage && (
+						<div className="text-red-600 ml-4">{resetMessage}</div>
+					)}
+					<hr className="my-6 border-gray-300" style={{ width: "350%" }} />
 				</div>
-			</div>
-			<div className="border-b mt-[1rem]"></div>
+			))}
+			<div className="mt-6">
+				<div className="text-lg font-semibold leading-7 text-gray-900">
+					Section 5
+					<span className="mt-1 text-lg text-bold ml-4 whitespace-nowrap text-red-600">
+						Add Item For Section 5
+					</span>
+				</div>
+				<div className="mt-1 text-sm leading-5 text-slate-600">
+					Update desired photo and details here.
+				</div>
+				<div className="flex items-center mb-4">
+					<label className="mr-2 font-semibold">Title:</label>
+					<input
+						type="text"
+						className="border rounded-lg px-3 py-2 w-64 ml-[30rem]"
+						value={newItemData.imageTitle}
+						placeholder="Image title"
+						onChange={(e) =>
+							setNewItemData((prevData) => ({
+								...prevData,
+								imageTitle: e.target.value,
+							}))
+						}
+					/>
+				</div>
 
-			{saveSuccess && (
-				<div className="text-green-600 mt-4 ml-8">Save successful!</div>
-			)}
-		</>
+				<div className="flex items-center mb-4">
+					<label className="mr-2 font-semibold">Subtitle:</label>
+					<input
+						type="text"
+						className="border rounded-lg px-3 py-2 w-64 ml-[28rem]"
+						value={newItemData.imageSubtitle}
+						placeholder="Image Subtitle"
+						onChange={(e) =>
+							setNewItemData((prevData) => ({
+								...prevData,
+								imageSubtitle: e.target.value,
+							}))
+						}
+					/>
+				</div>
+				<div className="w-full ml-[30rem] mt-4  flex items-center">
+					{/* Render the uploaded image */}
+					{newItemData.image && (
+						<img
+							src={URL.createObjectURL(newItemData.image)}
+							alt="Uploaded"
+							className="w-auto whitespace-nowrap h-40 object-cover rounded-lg mr-4"
+						/>
+					)}
+					<div
+						{...getRootPropsForAdd()}
+						className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center whitespace-nowrap"
+					>
+						<input {...getInputPropsForAdd()} />
+						<img src={uploadsvg} alt="Upload Icon" className="w-12 h-12 mb-2" />
+						<p className="text-sm text-gray-600 mb-2">
+							Click to upload or drag and drop
+						</p>
+						<p className="text-sm text-gray-600">
+							SVG, PNG, JPG or GIF (max. 800x400px)
+						</p>
+					</div>
+				</div>
+				<button
+					className="text-white bg-purple-600 rounded-lg px-5 py-2.5 mt-4"
+					onClick={handleAddItem}
+				>
+					Save
+				</button>
+			</div>
+			<hr
+				className="my-4 border-black border-empty border-1"
+				style={{ width: "350%" }}
+			/>
+		</div>
 	);
 };
 

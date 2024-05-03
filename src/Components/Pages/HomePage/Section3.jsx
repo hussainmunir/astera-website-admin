@@ -141,32 +141,32 @@ const Section3 = () => {
 						Update desired photo and details here.
 					</div>
 				</div>
-				{/* {loading ? (
+				{loading ? (
 					<CircularProgress size={24} color="inherit" />
 				) : (
 					<button
-						className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute top-[85rem] ml-[90%]"
+						className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute top-[310rem] ml-[90%]"
 						onClick={handleSave}
 					>
 						Save
 					</button>
 				)}
 				{saveSuccess && (
-					<div className="text-green-600 mt-2 absolute top-[90rem] ml-[85%]">
+					<div className="text-green-600 mt-2 absolute top-[315rem] ml-[85%]">
 						Save successful!
 					</div>
 				)}
 				<button
-					className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute top-[85rem] ml-[85%]"
+					className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute top-[310rem] ml-[85%]"
 					onClick={handleCancel}
 				>
 					Cancel
 				</button>
 				{resetMessage && (
-					<div className="text-red-600 mt-2 absolute top-[90rem] ml-[85%]">
+					<div className="text-red-600 mt-2 absolute top-[315rem] ml-[85%]">
 						{resetMessage}
 					</div>
-				)} */}
+				)}
 			</div>
 
 			<div className="flex items-center">
@@ -282,6 +282,10 @@ const Section3 = () => {
 					</div>
 				</div>
 			</div>
+			<hr
+				className="my-4 border-black border-empty border-1"
+				style={{ width: "350%" }}
+			/>
 		</div>
 	);
 };

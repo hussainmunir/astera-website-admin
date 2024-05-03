@@ -145,25 +145,25 @@ export const Section2 = () => {
 					<CircularProgress size={24} color="inherit" />
 				) : (
 					<button
-						className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute top-[210rem] ml-[90%]"
+						className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute top-[260rem] ml-[90%]"
 						onClick={handleSave}
 					>
 						Save
 					</button>
 				)}
 				{saveSuccess && (
-					<div className="text-green-600 mt-2 absolute top-[215rem] ml-[85%]">
+					<div className="text-green-600 mt-2 absolute top-[265rem] ml-[85%]">
 						Save successful!
 					</div>
 				)}
 				<button
-					className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute top-[210rem] ml-[85%]"
+					className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute top-[260rem] ml-[85%]"
 					onClick={handleCancel}
 				>
 					Cancel
 				</button>
 				{resetMessage && (
-					<div className="text-red-600 mt-2 absolute top-[215rem] ml-[85%]">
+					<div className="text-red-600 mt-2 absolute top-[265rem] ml-[85%]">
 						{resetMessage}
 					</div>
 				)}
@@ -282,6 +282,10 @@ export const Section2 = () => {
 					</div>
 				</div>
 			</div>
+			<hr
+				className="my-4 border-black border-empty border-1"
+				style={{ width: "350%" }}
+			/>
 		</div>
 	);
 };

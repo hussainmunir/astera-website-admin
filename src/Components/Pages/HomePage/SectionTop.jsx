@@ -190,6 +190,10 @@ export function SectionTop() {
 					{resetMessage && <p className="text-green-500">{resetMessage}</p>} */}
 				</div>
 			)}
+			<hr
+				className="my-4 border-black border-empty border-1"
+				style={{ width: "100%" }}
+			/>
 		</div>
 	);
 }

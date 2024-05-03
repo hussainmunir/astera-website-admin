@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import uploadsvg from "../../../Images/UploadIcons.png";
 import { CircularProgress } from "@mui/material";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import Section6Update from "./Section6Update";
 
 const Section6 = () => {
-	const [loading, setLoading] = useState(false);
-	const [formData, setFormData] = useState({
+	const [section6Data, setSection6Data] = useState([]);
+	const [newItemData, setNewItemData] = useState({
 		name: "",
 		occupation: "",
 		bio: "",
-		avatarImage: null,
-		backgroundImage: null,
+		avatarImageUrl: "",
+		backgroundImageUrl: "",
 	});
+	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -27,25 +28,10 @@ const Section6 = () => {
 					response.data &&
 					response.data.data &&
 					response.data.data.homePage &&
-					response.data.data.homePage.section6 &&
-					response.data.data.homePage.section6.length > 0
+					response.data.data.homePage.section6
 				) {
-					const section6Data =
-						response.data.data.homePage.section6[
-							response.data.data.homePage.section6.length - 1
-						]; // Get the latest item from the section6 array
-
-					setFormData({
-						name: section6Data.name || "",
-						occupation: section6Data.occupation || "",
-						bio: section6Data.bio || "",
-						avatarImage: section6Data.avatarImgUrl
-							? `https://backend.asteraporcelain.com/${section6Data.avatarImgUrl}`
-							: null,
-						backgroundImage: section6Data.backgroundImageUrl
-							? `https://backend.asteraporcelain.com/${section6Data.backgroundImageUrl}`
-							: null,
-					});
+					const section6Items = response.data.data.homePage.section6;
+					setSection6Data(section6Items);
 				}
 			} catch (error) {
 				console.error("Error fetching data:", error);
@@ -55,22 +41,18 @@ const Section6 = () => {
 		fetchData();
 	}, []);
 
-	const handleSave = async () => {
+	const handleAddItem = async () => {
 		try {
-			const formDataToSend = new FormData();
-			formDataToSend.append("name", formData.name);
-			formDataToSend.append("occupation", formData.occupation);
-			formDataToSend.append("bio", formData.bio);
-			if (formData.avatarImage) {
-				formDataToSend.append("avatarImage", formData.avatarImage);
-			}
-			if (formData.backgroundImage) {
-				formDataToSend.append("backgroundImage", formData.backgroundImage);
-			}
+			const formData = new FormData();
+			formData.append("name", newItemData.name);
+			formData.append("occupation", newItemData.occupation);
+			formData.append("bio", newItemData.bio);
+			formData.append("avatarImage", newItemData.avatarImageUrl);
+			formData.append("backgroundImage", newItemData.backgroundImageUrl);
 
 			const response = await axios.post(
 				"https://backend.asteraporcelain.com/api/v1/homescreen/addSection6Item",
-				formDataToSend,
+				formData,
 				{
 					headers: {
 						"Content-Type": "multipart/form-data",
@@ -78,180 +60,191 @@ const Section6 = () => {
 				}
 			);
 
-			console.log("Data saved successfully:", response.data);
+			console.log("Add item successful:", response.data);
+
+			// Clear newItemData and update state
+			setNewItemData({
+				name: "",
+				occupation: "",
+				bio: "",
+				avatarImageUrl: "",
+				backgroundImageUrl: "",
+			});
 		} catch (error) {
-			console.error("Error saving data:", error);
+			console.error("Error adding item:", error);
+			// Handle error state or show error message
 		}
-	};
-
-	const handleEditorChange = (content) => {
-		setFormData({ ...formData, bio: content });
-	};
-
-	const onDropAvatar = (acceptedFiles) => {
-		const avatarImageFile = acceptedFiles[0];
-		setFormData({ ...formData, avatarImage: avatarImageFile });
-	};
-
-	const onDropBackground = (acceptedFiles) => {
-		const backgroundImageFile = acceptedFiles[0];
-		setFormData({ ...formData, backgroundImage: backgroundImageFile });
 	};
 
 	const {
 		getRootProps: getAvatarRootProps,
 		getInputProps: getAvatarInputProps,
 	} = useDropzone({
-		onDrop: onDropAvatar,
 		accept: "image/*",
+		onDrop: (acceptedFiles) => {
+			const file = acceptedFiles[0];
+			if (file) {
+				setNewItemData({
+					...newItemData,
+					avatarImage: file,
+					avatarImageUrl: URL.createObjectURL(file), // Store local URL for preview
+				});
+			}
+		},
 	});
 
 	const {
 		getRootProps: getBackgroundRootProps,
 		getInputProps: getBackgroundInputProps,
 	} = useDropzone({
-		onDrop: onDropBackground,
 		accept: "image/*",
+		onDrop: (acceptedFiles) => {
+			const file = acceptedFiles[0];
+			if (file) {
+				setNewItemData({
+					...newItemData,
+					backgroundImage: file,
+					backgroundImageUrl: URL.createObjectURL(file), // Store local URL for preview
+				});
+			}
+		},
 	});
 
 	return (
-		<div className="w-full max-w-lg ml-8 mt-8">
+		<div className="max-w-lg ml-4 mt-4">
+			<Section6Update/>
 			<div className="text-lg font-semibold leading-7 text-gray-900">
-				Section 6
-			</div>
-			<div className="mt-1 text-sm leading-5 text-gray-600">
-				Update desired details here.
-			</div>
-			{/* {loading ? (
-				<CircularProgress size={24} color="inherit" />
-			) : (
-				<button
-					className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute top-[360rem] ml-[80%]"
-					onClick={handleSave}
-				>
-					Save
-				</button>
-			)} */}
-
-			<div className="flex items-center mt-4">
-				<label htmlFor="name" className="block text-lg font-semibold mb-1 mr-4">
-					Name
-				</label>
-				<input
-					id="name"
-					type="text"
-					className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black ml-[30rem]"
-					value={formData.name}
-					onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-				/>
+				Section 6{" "}
+				<span className="text-red-500 ml-1">- Add New Item for Section 6</span>
 			</div>
 
-			<div className="flex items-center mt-[4rem]">
-				<label
-					htmlFor="occupation"
-					className="block text-lg font-semibold mb-1 mr-4"
-				>
-					Occupation
-				</label>
-				<input
-					id="occupation"
-					type="text"
-					className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black ml-[28rem] "
-					value={formData.occupation}
-					onChange={(e) =>
-						setFormData({ ...formData, occupation: e.target.value })
-					}
-				/>
-			</div>
-
-			<div className="mt-[4rem]">
-				<label htmlFor="bio" className="block text-lg font-semibold mb-1">
-					Bio
-				</label>
-				<ReactQuill
-					theme="snow"
-					value={formData.bio}
-					onChange={handleEditorChange}
-					placeholder="Write a short introduction."
-					style={{
-						height: "200px",
-						marginBottom: "40px",
-						width: "100%",
-						marginLeft: "30rem",
-					}}
-				/>
-			</div>
-
-			<div className="flex items-center mt-[4rem]">
-				<div className="w-1/3">
-					<label className="block text-lg font-semibold mb-1 whitespace-nowrap">Set Avatar</label>
+			<div className="mt-6">
+				<div className="flex items-center mb-4">
+					<label className="mr-2 font-semibold">Name:</label>
+					<input
+						type="text"
+						className="border rounded-lg px-3 py-2 w-64 ml-[30rem]"
+						value={newItemData.name}
+						placeholder="Enter Name"
+						onChange={(e) =>
+							setNewItemData({ ...newItemData, name: e.target.value })
+						}
+					/>
 				</div>
-				<div className="mt-2 flex justify-start items-center">
-					{formData.avatarImage && (
+				<div className="flex items-center mb-4">
+					<label className="mr-2 font-semibold">Occupation:</label>
+					<input
+						type="text"
+						className="border rounded-lg px-3 py-2 w-64 ml-[28rem]"
+						placeholder="Enter Occupation"
+						value={newItemData.occupation}
+						onChange={(e) =>
+							setNewItemData({ ...newItemData, occupation: e.target.value })
+						}
+					/>
+				</div>
+				{/* <div className="flex mt-4">
+					<label htmlFor="bio" className=" font-semibold mr-[30rem]">
+						Bio:
+					</label>
+					<ReactQuill
+						theme="snow"
+						value={newItemData.bio}
+						onChange={(content) =>
+							setNewItemData({ ...newItemData, bio: content })
+						}
+						placeholder="Write a short introduction."
+						style={{ height: "200px", width: "400px", marginLeft: "30rem" }}
+					/>
+				</div> */}
+
+				<div className="flex mt-[2rem]">
+					<label
+						htmlFor="bio"
+						className="text-lg font-medium text-gray-900 mr-[24rem]"
+					>
+						Bio
+						<br />
+						<span className="font-light text-sm whitespace-nowrap">
+							Write a short introduction.
+						</span>
+					</label>
+					<div className="flex flex-col">
+						<ReactQuill
+							theme="snow"
+							value={newItemData.bio}
+							onChange={(e) =>
+								setNewItemData({ ...newItemData, bio: e.target.value })
+							}
+							placeholder="Write a short introduction."
+							style={{
+								height: "200px",
+								marginBottom: "40px",
+								width: "600px",
+							}}
+						/>
+					</div>
+				</div>
+				<div className="w-auto mt-[2rem]  flex">
+					<label className="mr-2 font-semibold">Avatar:</label>
+					{newItemData.avatarImageUrl && (
 						<img
-							src={formData.avatarImage}
-							alt="Avatar"
-							className="w-32 h-32 rounded-full mr-4 ml-[24rem] "
+							src={newItemData.avatarImageUrl}
+							alt="Avatar Preview"
+							className="w-auto h-40 object-cover rounded-lg ml-[30rem]"
 						/>
 					)}
 					<div
 						{...getAvatarRootProps()}
-						className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center cursor-pointer"
+						className="bg-white rounded-lg border border-gray-200 p-4 ml-[2rem]  flex flex-col items-center whitespace-nowrap"
 					>
 						<input {...getAvatarInputProps()} />
 						<img src={uploadsvg} alt="Upload Icon" className="w-12 h-12 mb-2" />
-						<p className="text-sm text-gray-600 mb-2 whitespace-nowrap">
+						<p className="text-sm text-gray-600 mb-2">
 							Click to upload or drag and drop
 						</p>
-						<p className="text-xs text-gray-600">
-							(Supported formats: SVG, PNG, JPG, or GIF)
+						<p className="text-sm text-gray-600">
+							SVG, PNG, JPG or GIF (max. 800x400px)
 						</p>
 					</div>
 				</div>
-			</div>
-
-			<div className="flex items-center mt-4">
-				<div className="w-1/3">
-					<label className="block text-lg font-semibold mb-1 whitespace-nowrap">
-						Set Background Image
-					</label>
-				</div>
-				<div className="mt-2 flex justify-start items-center ml-[24rem] mb-[4rem]">
-					{formData.backgroundImage && (
+				<div className="w-full mt-4 flex items-center">
+					<label className="mr-2 font-semibold whitespace-nowrap">Background Image:</label>
+					{newItemData.backgroundImageUrl && (
 						<img
-							src={formData.backgroundImage}
-							alt="Background"
-							className="w-64 h-32 rounded-lg mr-4"
+							src={newItemData.backgroundImageUrl}
+							alt="Background Preview"
+							className="w-auto h-40 object-cover rounded-lg ml-[30rem]"
 						/>
 					)}
 					<div
 						{...getBackgroundRootProps()}
-						className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center cursor-pointer"
+						className="bg-white rounded-lg border border-gray-200 p-4  ml-[4rem] flex flex-col items-center whitespace-nowrap"
 					>
 						<input {...getBackgroundInputProps()} />
 						<img src={uploadsvg} alt="Upload Icon" className="w-12 h-12 mb-2" />
-						<p className="text-sm text-gray-600 mb-2 whitespace-nowrap">
+						<p className="text-sm text-gray-600 mb-2">
 							Click to upload or drag and drop
 						</p>
-						<p className="text-xs text-gray-600">
-							(Supported formats: SVG, PNG, JPG, or GIF)
+						<p className="text-sm text-gray-600">
+							SVG, PNG, JPG or GIF (max. 800x400px)
 						</p>
 					</div>
 				</div>
-			</div>
-
-			{/* <div className="mt-8">
 				<button
-					className="text-white bg-purple-600 rounded-lg px-5 py-2.5"
-					onClick={handleSave}
+					className="text-white bg-purple-600 rounded-lg px-5 py-2.5 mt-4"
+					onClick={handleAddItem}
+					disabled={loading}
 				>
-					Save
+					{loading ? <CircularProgress size={24} color="inherit" /> : "Save"}
 				</button>
-			</div> */}
+			</div>
+			<hr
+				className="my-4 border-black border-empty border-1"
+				style={{ width: "350%" }}
+			/>
 		</div>
 	);
 };
 
 export default Section6;
-
-
