@@ -175,6 +175,10 @@ const Section6Update = () => {
 
 			{section6Data.map((item) => (
 				<div key={item._id} className="mt-6">
+						<hr
+				className="my-4 border-gray-200 border-empty border-1"
+				style={{ width: "250%" }}
+			/>
 					<div className="flex items-center mb-4">
 						<label className=" font-semibold mr-[30rem]">Name:</label>
 						{renderEditableInput(item, "name")}
@@ -279,11 +283,13 @@ const Section6Update = () => {
 							)}
 						</button>
 					</div>
+				
 				</div>
+				
 			))}
 			<hr
-				className="my-4 border-gray-200 border-empty border-1"
-				style={{ width: "350%" }}
+				className="my-4 border-gray-200 border-empty border-1 w-full"
+				style={{ width: '250%' }}
 			/>
 		</div>
 	);

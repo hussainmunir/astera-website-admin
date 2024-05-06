@@ -153,6 +153,15 @@ function NavBar() {
 					}>
 					Not Found
 				</Link>
+				<Link
+					to="/blog"
+					className={
+						location.pathname === "/blog"
+							? "nav-link active whitespace-nowrap"
+							: "nav-link whitespace-nowrap"
+					}>
+					Blogs
+				</Link>
 			</div>
 		</div>
 	);

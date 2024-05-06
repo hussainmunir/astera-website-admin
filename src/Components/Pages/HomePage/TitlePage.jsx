@@ -7,12 +7,10 @@ function TitlePage() {
 			{/* This div will be visible on screens larger than 'md' */}
 			<div className="hidden md:block">
 				<div className="w-full text-lg font-semibold leading-7 text-gray-900 max-md:max-w-full">
-					Title for Home Page
+					Home Page
 				</div>
 				<div className="mt-1 w-full text-sm leading-5 text-ellipsis text-slate-600 max-md:max-w-full">
-					Lorem ipsum dolor sit amet consectetur. Est lectus sit at bibendum
-					elementum accumsan dignissim tempus in. Pretium nibh venenatis urna
-					sed.
+					
 				</div>
 			</div>
 			{/* <div className="hidden md:block mt-[4rem]">
