@@ -6,6 +6,7 @@ import uploadsvg from "../../../Images/UploadIcons.png";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { CircularProgress, Switch } from "@mui/material";
 import axios from "axios";
+import { baseUrlImage } from "../../../api/base_urls";
 
 const Section3 = () => {
 	const [selectedImage, setSelectedImage] = useState(null);
@@ -260,13 +261,19 @@ const Section3 = () => {
 					</p>
 				</div>
 				<div className="w-auto mt-[2rem] ml-[22rem] flex">
-					{selectedImage && (
+					{selectedImage ? (
 						<img
-							src={selectedImage}
+							src={typeof selectedImage === 'string' ? selectedImage : URL.createObjectURL(selectedImage)}
 							alt="Uploaded"
 							className="w-auto h-40 object-cover rounded-lg mr-[2rem]"
 						/>
-					)}
+					):originalData && originalData.backgroundImageUrl ?(
+						<img
+						src={`${baseUrlImage}${originalData.backgroundImageUrl}`}
+						alt="uploaded"
+						className="w-auto h-40 object-cover rounded-lg mr-[2rem]"
+						/>
+					):null}
 					<div
 						{...getRootProps()}
 						className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center whitespace-nowrap"
