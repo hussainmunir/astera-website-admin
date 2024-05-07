@@ -1,7 +1,7 @@
-import './App.css'
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { HomePage } from './Components/Pages/HomePage/HomePage'
-import { Navbar } from './Components/Pages/Navbar/NavBar'
+import './App.css';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HomePage } from './Components/Pages/HomePage/HomePage';
+import { Navbar } from './Components/Pages/Navbar/NavBar';
 import { Collection } from './Components/Pages/Collection/Collection';
 import { NewCollection } from './Components/Pages/NewCollection/NewCollection';
 import { Novelties } from "./Components/Pages/Novelties/Novelties";
@@ -16,33 +16,47 @@ import { PrivacyPolicy } from './Components/Pages/PrivacyPolicy/PrivacyPolicy';
 import { TermsAndConditions } from './Components/Pages/TermsAndConditions/TermsAndConditions';
 import { NotFound } from './Components/Pages/NotFound/NotFound';
 import { Blog } from './Components/Pages/Blog/Blog';
+import { Login } from './Components/Pages/LogIN/login';
+
+import { useState, useEffect } from 'react';
 
 function App() {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const jwt = localStorage.getItem("jwt");
+    useEffect(() => {
+		console.log("localStorage.getItem", localStorage.getItem("jwt"))
+        if (jwt) {
+            setIsLoggedIn(true);
+        }
+        else {
+            setIsLoggedIn(false);
+        }
+    }, []); 
 
-	return (
-		<BrowserRouter>
-			<CollectionsProvider>
-				<Navbar />
-				<Routes>
-					<Route path="/" element={<HomePage />} />
-					<Route path="/collection" element={<Collection />} />
-					<Route path="/newcollection" element={<NewCollection />} />
-					<Route path="/novelties" element={<Novelties />} />
-					<Route path="/timeless" element={<Timeless />} />
-					<Route path="/contact" element={<Contactus />} />
-					<Route path="/discover" element={<Discover />} />
-					<Route path="/catalog" element={<Catalog />} />
-					<Route path="/product" element={<Product />} />
-					<Route path="/event" element={<Event />} />
-					<Route path="/privacyPolicy" element={<PrivacyPolicy />} />
-					<Route path="/termsAndConditions" element={<TermsAndConditions />} />
-					<Route path="/notFound" element={<NotFound />} />
-					<Route path="/blog" element={<Blog />} />
-				</Routes>
-			</CollectionsProvider>
-		</BrowserRouter>
-	);
+    return (
+        <BrowserRouter>
+            <CollectionsProvider>
+			{isLoggedIn ? <Navbar /> : null }
+                <Routes>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/" element={isLoggedIn ? <HomePage /> : <Navigate to="/login" />} />
+                    <Route path="/collection" element={isLoggedIn ? <Collection /> : <Navigate to="/login" />} />
+                    <Route path="/newcollection" element={isLoggedIn ? <NewCollection /> : <Navigate to="/login" />} />
+                    <Route path="/novelties" element={isLoggedIn ? <Novelties /> : <Navigate to="/login" />} />
+                    <Route path="/timeless" element={isLoggedIn ? <Timeless /> : <Navigate to="/login" />} />
+                    <Route path="/contact" element={isLoggedIn ? <Contactus /> : <Navigate to="/login" />} />
+                    <Route path="/discover" element={isLoggedIn ? <Discover /> : <Navigate to="/login" />} />
+                    <Route path="/catalog" element={isLoggedIn ? <Catalog /> : <Navigate to="/login" />} />
+                    <Route path="/product" element={isLoggedIn ? <Product /> : <Navigate to="/login" />} />
+                    <Route path="/event" element={isLoggedIn ? <Event /> : <Navigate to="/login" />} />
+                    <Route path="/privacyPolicy" element={isLoggedIn ? <PrivacyPolicy /> : <Navigate to="/login" />} />
+                    <Route path="/termsAndConditions" element={isLoggedIn ? <TermsAndConditions /> : <Navigate to="/login" />} />
+                    <Route path="/notFound" element={isLoggedIn ? <NotFound /> : <Navigate to="/login" />} />
+                    <Route path="/blog" element={isLoggedIn ? <Blog /> : <Navigate to="/login" />} />
+                </Routes>
+            </CollectionsProvider>
+        </BrowserRouter>
+    );
 }
 
-export default App
-
+export default App;

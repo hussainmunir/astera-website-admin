@@ -6,9 +6,14 @@ import "./Menu.css";
 function NavBar() {
 	const [showDropdown, setShowDropdown] = useState(false);
 	const location = useLocation();
+	
+	
 
 	return (
+		
+		
 		<div className="flex flex-col justify-center items-start border-b border-gray-200 border-solid max-md:pr-5 mt-[4rem] ml-[2rem]">
+			
 			<div className="flex gap-10 justify-between items-start max-w-full w-[500px] max-md:gap-4 max-md:flex-wrap ">
 				<Link
 					to="/"
