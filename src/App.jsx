@@ -8,7 +8,7 @@ import { Novelties } from "./Components/Pages/Novelties/Novelties";
 import { Timeless } from './Components/Pages/Timeless/Timeless';
 import { Contactus } from './Components/Pages/Contactus/Contactus';
 import { Discover } from './Components/Pages/Discover/Discover';
-import { Catalog } from './Components/Pages/Catalog.jsx/Catalog';
+import { Catalog } from './Components/Pages/Catalog/Catalog';
 import { CollectionsProvider } from "./CollectionsContext";
 import { Product } from './Components/Pages/Product/Product';
 import { Event } from './Components/Pages/Event/Event';
@@ -17,6 +17,7 @@ import { TermsAndConditions } from './Components/Pages/TermsAndConditions/TermsA
 import { NotFound } from './Components/Pages/NotFound/NotFound';
 import { Blog } from './Components/Pages/Blog/Blog';
 import { Login } from './Components/Pages/LogIN/login';
+import { BlogDetail } from './Components/Pages/Blog/BlogDetail';
 
 import { useState, useEffect } from 'react';
 
@@ -36,10 +37,10 @@ function App() {
     return (
         <BrowserRouter>
             <CollectionsProvider>
-			{isLoggedIn ? <Navbar /> : null }
+			<Navbar />
                 <Routes>
                     <Route path="/login" element={<Login />} />
-                    <Route path="/" element={isLoggedIn ? <HomePage /> : <Navigate to="/login" />} />
+                    <Route path="/" element={localStorage.getItem("jwt") ? <HomePage /> : <Navigate to="/login" />} />
                     <Route path="/collection" element={isLoggedIn ? <Collection /> : <Navigate to="/login" />} />
                     <Route path="/newcollection" element={isLoggedIn ? <NewCollection /> : <Navigate to="/login" />} />
                     <Route path="/novelties" element={isLoggedIn ? <Novelties /> : <Navigate to="/login" />} />
@@ -53,6 +54,7 @@ function App() {
                     <Route path="/termsAndConditions" element={isLoggedIn ? <TermsAndConditions /> : <Navigate to="/login" />} />
                     <Route path="/notFound" element={isLoggedIn ? <NotFound /> : <Navigate to="/login" />} />
                     <Route path="/blog" element={isLoggedIn ? <Blog /> : <Navigate to="/login" />} />
+                    <Route path="/BlogDetail/:id" element={isLoggedIn ? <BlogDetail /> : <Navigate to="/login" />} />
                 </Routes>
             </CollectionsProvider>
         </BrowserRouter>

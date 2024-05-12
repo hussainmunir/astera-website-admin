@@ -98,7 +98,7 @@ const Section3 = () => {
 			formData.append("buttonText", buttonText); // Include buttonText in formData
 
 			const response = await axios.post(
-				"https://backend.asteraporcelain.com/api/v1/homescreen/updateSection2",
+				"https://backend.asteraporcelain.com/api/v1/homescreen/updateSection3",
 				formData,
 				{
 					headers: {

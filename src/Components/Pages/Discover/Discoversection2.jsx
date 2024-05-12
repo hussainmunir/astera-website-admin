@@ -59,9 +59,10 @@ export function Discoversection2() {
 			title:sectionTitle,
 			description:editorContent,
 		}
+		
 		if (selectedImage) {
-			requestData.append("backgroundImage", selectedImage);
-		}
+			requestData.backgroundImage = selectedImage;
+		  }
 
 		try {
 			const response = await axios.post(

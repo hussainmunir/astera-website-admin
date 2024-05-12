@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
 import { CircularProgress } from "@mui/material";
@@ -6,65 +6,86 @@ import uploadsvg from "../../../Images/UploadIcons.png";
 import ReactQuill from "react-quill";
 import { baseUrlImage } from "../../../api/base_urls";
 
-const Section6Update = () => {
+const Section6Update = ({ item, index, fetchData }) => {
 	const [section6Data, setSection6Data] = useState([]);
 	const [loading, setLoading] = useState(false);
 
+	const [itemId, setItemId] = useState("");
+	const [name, setName] = useState("");
+	const [occupation, setOccupation] = useState("");
+	const [bio, setBio] = useState("");
+	const [avatarImage, setAvatarImage] = useState(null);
+	const [backgroundImage, setBackgroundImage] = useState(null);
+	const [selectedAvatarImage, setSelectedAvatarImage] = useState(null);
+	const [selectedBackgroundImage, setSelectedBackgroundImage] = useState(null);
+
+
+
 	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const response = await axios.get(
-					"https://backend.asteraporcelain.com/api/v1/homescreen/getAllCollections"
-				);
-				if (
-					response.data &&
-					response.data.data &&
-					response.data.data.homePage &&
-					response.data.data.homePage.section6
-				) {
-					setSection6Data(response.data.data.homePage.section6);
-				}
-			} catch (error) {
-				console.error("Error fetching data:", error);
-			}
-		};
+	// 	const fetchData = async () => {
+	// 		try {
+	// 			const response = await axios.get(
+	// 				"https://backend.asteraporcelain.com/api/v1/homescreen/getAllCollections"
+	// 			);
+	// 			if (
+	// 				response.data &&
+	// 				response.data.data &&
+	// 				response.data.data.homePage &&
+	// 				response.data.data.homePage.section6
+	// 			) {
+	// 				setSection6Data(response.data.data.homePage.section6);
+	// 			}
+	// 		} catch (error) {
+	// 			console.error("Error fetching data:", error);
+	// 		}
+	// 	};
 
-		fetchData();
-	}, []);
+	// 	fetchData();
+	setItemId(item._id);
+	setName(item.name);
+	setOccupation(item.occupation);
+	setBio(item.bio);
+	setAvatarImage(item.avatarImgUrl);
+	setBackgroundImage(item.backgroundImageUrl);
 
-	const fetchData = async () => {
-		try {
-			const response = await axios.get(
-				"https://backend.asteraporcelain.com/api/v1/homescreen/getAllCollections"
-			);
-			if (
-				response.data &&
-				response.data.data &&
-				response.data.data.homePage &&
-				response.data.data.homePage.section6
-			) {
-				setSection6Data(response.data.data.homePage.section6);
-			}
-		} catch (error) {
-			console.error("Error fetching data:", error);
-		}
-	};
 
-	const handleUpdateItem = async (itemId, updatedItem) => {
+	}, [item]);
+
+	// const fetchData = async () => {
+	// 	try {
+	// 		const response = await axios.get(
+	// 			"https://backend.asteraporcelain.com/api/v1/homescreen/getAllCollections"
+	// 		);
+	// 		if (
+	// 			response.data &&
+	// 			response.data.data &&
+	// 			response.data.data.homePage &&
+	// 			response.data.data.homePage.section6
+	// 		) {
+	// 			setSection6Data(response.data.data.homePage.section6);
+	// 		}
+	// 	} catch (error) {
+	// 		console.error("Error fetching data:", error);
+	// 	}
+	// };
+
+	const handleUpdateItem = async () => {
 		try {
 			setLoading(true);
 			const formData = new FormData();
 			formData.append("id", itemId);
-			formData.append("name", updatedItem.name);
-			formData.append("occupation", updatedItem.occupation);
-			formData.append("bio", updatedItem.bio);
-			if (updatedItem.avatarImage) {
-				formData.append("avatarImage", updatedItem.avatarImage);
+			formData.append("name", name);
+			formData.append("occupation", occupation);
+			formData.append("bio", bio);
+			if (selectedAvatarImage) {
+				formData.append("avatarImage", selectedAvatarImage);
 			}
-			if (updatedItem.backgroundImage) {
-				formData.append("backgroundImage", updatedItem.backgroundImage);
+			if (selectedBackgroundImage) {
+				formData.append("backgroundImage", selectedBackgroundImage);
 			}
-
+			for (let pair of formData.entries()) {
+				console.log(pair[0] + ", " + pair[1]);
+			  }
 			const response = await axios.post(
 				"https://backend.asteraporcelain.com/api/v1/homescreen/updateSection6Item",
 				formData,
@@ -93,6 +114,10 @@ const Section6Update = () => {
 			item._id === itemId ? { ...item } : item
 		);
 		setSection6Data(updatedItems);
+	};
+
+	const handleEditorChange = (content, delta, source, editor) => {
+		setBio(content);
 	};
 
 	const handleSaveItem = async (itemId, updatedItem) => {
@@ -138,31 +163,56 @@ const Section6Update = () => {
 		/>
 	);
 
+	const onDropAvatarImages = useCallback(
+		(acceptedFiles) => {
+		  setSelectedAvatarImage(acceptedFiles[0]); // Concatenate new images with existing array
+		},
+		[setSelectedAvatarImage]
+	  );
+
+	const handleDropWithIndex = (index) => async (acceptedFiles) => {
+		const file = acceptedFiles[0];
+		if (file) {
+		  await handleFileDrop(file, "avatarImage", section6Data[index]._id);
+		}
+	  };
 	const {
 		getRootProps: getAvatarRootProps,
 		getInputProps: getAvatarInputProps,
 	} = useDropzone({
 		accept: "image/*",
-		onDrop: async (acceptedFiles) => {
-			const file = acceptedFiles[0];
-			if (file) {
-				await handleFileDrop(file, "avatarImage", section6Data[0]._id); // Assuming only one item is being edited
-			}
-		},
+		onDrop: onDropAvatarImages
 	});
+
+
+
+	// const { getAvatarRootProps, getAvatarInputProps } = useDropzone({
+	// 	accept: "image/*",
+	// 	onDrop: async (acceptedFiles) => {
+	// 	  const file = acceptedFiles[0];
+	// 	  if (file) {
+	// 		// Access index from getInputProps
+	// 		const index = getInputProps().index;
+	// 		await handleFileDrop(file, "avatarImage", section6Data[index]._id);
+	// 	  }
+	// 	},
+	//   });
+	const onDropbackgroundImages = useCallback(
+		(acceptedFiles) => {
+		  setSelectedBackgroundImage(acceptedFiles[0]); 
+		},
+		[setSelectedBackgroundImage]
+	  );
 
 	const {
 		getRootProps: getBackgroundRootProps,
 		getInputProps: getBackgroundInputProps,
 	} = useDropzone({
 		accept: "image/*",
-		onDrop: async (acceptedFiles) => {
-			const file = acceptedFiles[0];
-			if (file) {
-				await handleFileDrop(file, "backgroundImage", section6Data[0]._id); // Assuming only one item is being edited
-			}
-		},
+		onDrop: onDropbackgroundImages
 	});
+
+	
 
 	return (
 		<div className="max-w-lg ml-4 mt-4">
@@ -173,19 +223,31 @@ const Section6Update = () => {
 				</span>
 			</div>
 
-			{section6Data.map((item) => (
-				<div key={item._id} className="mt-6">
+				<div className="mt-6">
+					Slider {index + 1}
 						<hr
 				className="my-4 border-gray-200 border-empty border-1"
 				style={{ width: "250%" }}
 			/>
 					<div className="flex items-center mb-4">
 						<label className=" font-semibold mr-[30rem]">Name:</label>
-						{renderEditableInput(item, "name")}
+						<input
+						type="text"
+						className="border rounded-lg px-3 py-2 w-64 ml-4"
+						value={name}
+						placeholder="Enter Name"
+						onChange={(e) => setName(e.target.value)}
+					/>
 					</div>
 					<div className="flex items-center mb-4 ">
 						<label className=" font-semibold mr-[28rem]">Occupation:</label>
-						{renderEditableInput(item, "occupation")}
+						<input
+						type="text"
+						className="border rounded-lg px-3 py-2 w-64 ml-3"
+						placeholder="Enter Occupation"
+						value={occupation}
+						onChange={(e) => setOccupation(e.target.value)}
+					/>
 					</div>
 					{/* Description */}
 
@@ -203,10 +265,8 @@ const Section6Update = () => {
 						<div className="flex flex-col">
 							<ReactQuill
 								theme="snow"
-								value={item.bio}
-								onChange={(content) =>
-									handleSaveItem(item._id, { ...item, bio: content })
-								}
+								value={bio}
+								onChange={handleEditorChange}
 								placeholder="Write a short introduction."
 								style={{
 									height: "200px",
@@ -220,16 +280,25 @@ const Section6Update = () => {
 
 					<div className="w-full mt-4  flex items-center">
 						<label className="mr-2 font-semibold">Avatar</label>
+						{selectedAvatarImage ? (
 						<img
-							src={`${baseUrlImage}${item.avatarImgUrl}`}
+						src={URL.createObjectURL(selectedAvatarImage)}
+
+						alt="Uploaded"
+						className="w-auto whitespace-nowrap h-40 object-cover rounded-lg mr-4  ml-[30rem]"
+					/>	
+						):
+						<img
+							src={`${baseUrlImage}${avatarImage}`}
 							alt="Uploaded"
 							className="w-auto whitespace-nowrap h-40 object-cover rounded-lg mr-4  ml-[30rem]"
 						/>
+						}
 						<div
-							{...getAvatarRootProps()}
+							 {...getAvatarRootProps()}
 							className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center whitespace-nowrap"
 						>
-							<input {...getAvatarInputProps()} />
+							 <input {...getAvatarInputProps({ index: index })} />
 							<img
 								src={uploadsvg}
 								alt="Upload Icon"
@@ -247,11 +316,20 @@ const Section6Update = () => {
 
 					<div className="w-full mt-4  flex items-center">
 						<label className="mr-2 font-semibold">Image</label>
-						<img
-							src={`${baseUrlImage}${item.backgroundImageUrl}`}
+						{selectedBackgroundImage ? (
+							<img
+							src={URL.createObjectURL(selectedBackgroundImage)}
 							alt="Uploaded"
 							className="w-auto whitespace-nowrap h-40 object-cover rounded-lg mr-4  ml-[30rem]"
 						/>
+						):
+						
+						<img
+							src={`${baseUrlImage}${backgroundImage}`}
+							alt="Uploaded"
+							className="w-auto whitespace-nowrap h-40 object-cover rounded-lg mr-4  ml-[30rem]"
+						/>
+						}
 						<div
 							{...getBackgroundRootProps()}
 							className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center whitespace-nowrap"
@@ -273,7 +351,7 @@ const Section6Update = () => {
 					<div className="mt-4">
 						<button
 							className="text-white bg-purple-600 rounded-lg px-5 py-2.5 mr-4"
-							onClick={() => handleUpdateItem(item._id, item)}
+							onClick={() => handleUpdateItem()}
 							// disabled={loading}
 						>
 							{loading ? (
@@ -286,7 +364,6 @@ const Section6Update = () => {
 				
 				</div>
 				
-			))}
 			<hr
 				className="my-4 border-gray-200 border-empty border-1 w-full"
 				style={{ width: '250%' }}

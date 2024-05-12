@@ -6,8 +6,7 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import uploadsvg from "../../../Images/UploadIcons.png";
 import { baseUrl, baseUrlImage } from "../../../api/base_urls";
 
-
-const Section1 = () => {
+export const Section1 = () => {
   const [sectionTitle, setSectionTitle] = useState("");
   const [sectionSubTitle, setSectionSubTitle] = useState("");
   const [sectionData, setSectionData] = useState(null);
@@ -16,24 +15,21 @@ const Section1 = () => {
   const [resetMessage, setResetMessage] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const maxChars = 500;
-
   useEffect(() => {
     const fetchSectionData = async () => {
       try {
         const response = await axios.get(
-          `${baseUrl}homescreen/getAllCollections`
+          `${baseUrl}catalogsScreen/getCatalogsPage`
         );
         if (
           response.data &&
           response.data.data &&
-          response.data.data.contactPage &&
-          response.data.data.contactPage.section1
+          response.data.data.section1
         ) {
-          const { section1 } = response.data.data.contactPage;
-          setSectionData(section1);
-          setSectionTitle(section1.title);
-          setSectionSubTitle(section1.subTitle);
+          const section1Data = response.data.data.section1;
+          setSectionData(section1Data);
+          setSectionTitle(section1Data.title);
+          setSectionSubTitle(section1Data.subTitle);
         }
       } catch (error) {
         console.error("Error fetching section data:", error);
@@ -52,17 +48,17 @@ const Section1 = () => {
   const handleSave = async () => {
     setLoading(true);
 
-    const requestData={
-      title:sectionTitle,
-      subTitle:sectionSubTitle,
-    }
+    const requestData = {
+      title: sectionTitle,
+      subTitle: sectionSubTitle,
+    };
     if (selectedImage) {
-			requestData.backgroundImage = selectedImage;
-		  }
+      requestData.append("backgroundImage", selectedImage);
+    }
 
     try {
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/contactScreen/updateSection1",
+        "https://backend.asteraporcelain.com/api/v1/catalogsScreen/updateSection1",
         requestData,
         {
           headers: {
@@ -111,7 +107,7 @@ const Section1 = () => {
             <CircularProgress size={24} color="inherit" />
           ) : (
             <button
-            className="text-white bg-purple-600 rounded-lg px-3 py-2 absolute ml-[87rem]"
+              className="text-white bg-purple-600 rounded-lg px-3 py-2 absolute ml-[87rem]"
               onClick={handleSave}
             >
               Save
@@ -139,11 +135,11 @@ const Section1 = () => {
           <label className="block text-lg font-semibold mb-1 mr-[32rem] whitespace-nowrap">
             Hero Section Title
           </label>
-          <div className="flex">
+          <div className="flex gap-4 absolute ml-[35%]">
             <div className="flex">
               <input
                 type="text"
-                className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black mr-[2rem]"
+                className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black "
                 value={sectionTitle}
                 placeholder="Title"
                 onChange={(e) => setSectionTitle(e.target.value)}
@@ -152,7 +148,7 @@ const Section1 = () => {
             <div className="flex">
               <input
                 type="text"
-                className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black mr-[2rem]"
+                className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black "
                 value={sectionSubTitle}
                 placeholder="Sub-Title"
                 onChange={(e) => setSectionSubTitle(e.target.value)}

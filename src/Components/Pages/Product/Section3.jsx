@@ -9,14 +9,16 @@ import axios from "axios";
 import LazyLoad from "react-lazyload";
 import { baseUrlImage } from "../../../api/base_urls";
 
-export function Section3({ id, data3 }) {
+export function Section3({ id, data3, fetchProducts }) {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedProducts, setSelectedProducts] = useState([]);
   const [products, setProducts] = useState([]);
 
   const [name, setName] = useState("");
   const [measurement, setMeasurement] = useState("");
   const [serialNo, setSerialNo] = useState("");
   const [loading, setLoading] = useState(false);
+  const [requestMessage, setRequestMessage] = useState("");
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [resetMessage, setResetMessage] = useState("");
   const [title, setTitle] = useState(""); // Define the title state variable
@@ -33,13 +35,21 @@ export function Section3({ id, data3 }) {
     }
   }, [data3]);
 
-  const handleRegularImageUpload = (event) => {
-    const file = event.target.files[0];
-    setSelectedImage(file);
-  };
+
 
   const onDrop = (acceptedFiles) => {
     setSelectedImage(acceptedFiles[0]);
+    // setSelectedImage((prevImages) => [...prevImages, ...acceptedFiles]);
+  };
+  const onDropProductImages = (acceptedFiles) => {
+    const newProducts = acceptedFiles.map(file => ({
+      imageFiles: file,
+      name: "",
+      measurement: "",
+      serialNo: "",
+    }));
+  
+    setSelectedProducts(prevProducts => [...prevProducts, ...newProducts]);
   };
 
   const updateProductName = (name, index) => {
@@ -61,27 +71,76 @@ export function Section3({ id, data3 }) {
   };
 
   const handleDeletePair = () => {
-    setSelectedImage(null);
+    setSelectedImage([]);
     setName("");
     setMeasurement("");
     setSerialNo("");
   };
 
+  // const handleSave = async () => {
+  //   setLoading(true);
+  //   const formData = new FormData();
+  //   formData.append("productId", id);
+  //   formData.append("name", name);
+  //   formData.append("measurement", measurement);
+  //   formData.append("serialNo", serialNo);
+  //   formData.append("title", title);
+  //   if (selectedImage) {
+  //     formData.append("imageFile", selectedImage);
+  //   }
+
+  //   try {
+  //     const response = await axios.post(
+  //       "https://backend.asteraporcelain.com/api/v1/productsScreen/addProductToSection3",
+  //       formData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "multipart/form-data",
+  //         },
+  //       }
+  //     );
+  //     console.log("Save successful:", response.data);
+  //     setRequestMessage(response.data.message)
+  //     setTimeout(() => {
+  //       setRequestMessage("");
+  //     }, 3000);
+  //     fetchProducts();
+  //     handleDeletePair();
+  //     setSaveSuccess(true);
+  //   } catch (error) {
+  //     console.error("Error saving data:", error);
+  //   } finally {
+  //     setLoading(false);
+  //     setTimeout(() => {
+  //       setSaveSuccess(false);
+  //     }, 3000);
+  //   }
+  // };
+
+
   const handleSave = async () => {
     setLoading(true);
-    const formData = new FormData();
-    formData.append("productId", id);
-    formData.append("name", name);
-    formData.append("measurement", measurement);
-    formData.append("serialNo", serialNo);
-    formData.append("title", title);
-    if (selectedImage) {
-      formData.append("imageFile", selectedImage);
-    }
-
+  
     try {
+      const formData = new FormData();
+      formData.append("productId", id);
+      formData.append("products", selectedProducts);
+  
+      selectedProducts.forEach((product, index) => {
+        // formData.append(`products[${index}][name]`, product.name);
+        // formData.append(`products[${index}][measurement]`, product.measurement);
+        // formData.append(`products[${index}][serialNo]`, product.serialNo);
+        // formData.append(`products[${index}][imageFiles]`, product.imageFiles);
+        formData.append(`imageFiles`, product.imageFiles);
+        console.log(product.name)
+      });
+
+      for (let pair of formData.entries()) {
+        console.log(pair[0] + ", " + pair[1]);
+      }
+  
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/productsScreen/addProductToSection3",
+        "https://backend.asteraporcelain.com/api/v1/productsScreen/addProductsToSection3WithImages",
         formData,
         {
           headers: {
@@ -90,7 +149,13 @@ export function Section3({ id, data3 }) {
         }
       );
       console.log("Save successful:", response.data);
-      handleDeletePair();
+      setRequestMessage(response.data.message)
+      setTimeout(() => {
+        setRequestMessage("");
+      }, 3000);
+      fetchProducts();
+      setSelectedProducts([]);
+      // handleDeletePair();
       setSaveSuccess(true);
     } catch (error) {
       console.error("Error saving data:", error);
@@ -101,6 +166,7 @@ export function Section3({ id, data3 }) {
       }, 3000);
     }
   };
+  
 
   const handleUpdate = async (index) => {
     setLoading(true);
@@ -125,8 +191,14 @@ export function Section3({ id, data3 }) {
         }
       );
       console.log("Update successful:", response.data);
+      setRequestMessage(response.data.message)
+      setTimeout(() => {
+        setRequestMessage("");
+      }, 3000);
+      fetchProducts();
       handleDeletePair();
       setSaveSuccess(true);
+
     } catch (error) {
       console.error("Error updating data:", error);
     } finally {
@@ -143,6 +215,48 @@ export function Section3({ id, data3 }) {
     );
   };
 
+  const removeProduct = (indexToRemove) => {
+    setSelectedProducts(prevProducts => {
+      return prevProducts.filter((product, index) => index !== indexToRemove);
+    });
+  };
+
+  const updateProductObjectName = (newName, indexToUpdate) => {
+    setSelectedProducts(prevProducts => {
+      return prevProducts.map((product, index) => {
+        if (index === indexToUpdate) {
+          return { ...product, name: newName };
+        }
+        return product;
+      });
+    });
+    console.log(selectedProducts[indexToUpdate])
+  };
+  
+  const updateProductObjectMeasurement = (newMeasurement, indexToUpdate) => {
+    setSelectedProducts(prevProducts => {
+      return prevProducts.map((product, index) => {
+        if (index === indexToUpdate) {
+          return { ...product, measurement: newMeasurement };
+        }
+        return product;
+      });
+    });
+  };
+  
+  const updateProductObjectSerialNo = (newSerialNo, indexToUpdate) => {
+    setSelectedProducts(prevProducts => {
+      return prevProducts.map((product, index) => {
+        if (index === indexToUpdate) {
+          return { ...product, serialNo: newSerialNo };
+        }
+        return product;
+      });
+    });
+  };
+  
+  
+
   const handleDeleteImageApi = async (index) => {
     try {
       const productId = products[index]._id;
@@ -151,8 +265,14 @@ export function Section3({ id, data3 }) {
         "https://backend.asteraporcelain.com/api/v1/productsScreen/deleteProductFromSection3",
         { productPagesId, productId }
       );
-      console.log("Image deleted successfully:", response.data);
+      console.log("Image deleted response:",productId,productPagesId, response.data);
+      setRequestMessage(response.data.message)
+      setTimeout(() => {
+        setRequestMessage("");
+      }, 3000);
+      fetchProducts();
       handleDeleteImageApiUi(index);
+
     } catch (error) {
       console.error("Error deleting image:", error);
     }
@@ -169,6 +289,12 @@ export function Section3({ id, data3 }) {
         }
       );
       console.log("Update successful:", response.data);
+      fetchProducts();
+
+      setRequestMessage(response.data.message)
+      setTimeout(() => {
+        setRequestMessage("");
+      }, 3000);
       setSaveSuccess(true);
     } catch (error) {
       console.error("Error updating title:", error);
@@ -187,7 +313,7 @@ export function Section3({ id, data3 }) {
         setMeasurement("");
         setSerialNo("");
       }
-      setSelectedImage(null);
+      setSelectedImage([]);
       setResetMessage("Fields reset successfully");
       setTimeout(() => {
         setResetMessage("");
@@ -196,9 +322,13 @@ export function Section3({ id, data3 }) {
   };
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
+  const { getRootProps: getRootPropsProducts, getInputProps: getInputPropsProducts } = useDropzone({ onDrop: onDropProductImages });
 
   return (
     <div className="h-full">
+      <p className="text-center">
+        {requestMessage}
+        </p>
       <div className="w-full flex flex-col ml-[2rem]">
         <p className="w-full text-gray-600 text-lg max-md:max-w-full">
           <b>Section 3</b>
@@ -223,10 +353,10 @@ export function Section3({ id, data3 }) {
           <CircularProgress size={24} color="inherit" />
         ) : (
           <button
-            className="border-1 border-solid border-blue w-[5rem] text-white bg-blue-700 p-2 rounded-xl"
+            className="border-1 border-solid border-blue w-[10rem] text-white bg-blue-700 p-2 rounded-xl"
             onClick={handleSave}
           >
-            Save
+            ADD Products
           </button>
         )}
         {saveSuccess && (
@@ -246,16 +376,13 @@ export function Section3({ id, data3 }) {
           value={title} // Assuming title is stored in the state
           onChange={(e) => setTitle(e.target.value)}
         />
-        {loading ? (
-          <CircularProgress size={24} color="inherit" />
-        ) : (
+       
           <button
             className="border-solid mt-10 border-2 p-2 ml-[3rem]  h-[3rem] w-[5rem] border-black text-blue bg-white rounded-xl"
             onClick={handleUpdateTitle} // Call the function on button click
           >
             Update
           </button>
-        )}
         {saveSuccess && (
           <div className="text-green-600 mt-2 absolute top-[25rem] ml-[85%]">
             Save successful!
@@ -277,10 +404,10 @@ export function Section3({ id, data3 }) {
           <div className="flex mt-[4rem] ml-[7rem] gap-4">
             <div className="flex items-start">
               <div
-                {...getRootProps()}
+                {...getRootPropsProducts()}
                 className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center"
               >
-                <input {...getInputProps()} multiple={false} />
+                <input {...getInputPropsProducts()} />
                 <img
                   src={uploadsvg}
                   alt="Upload Icon"
@@ -294,7 +421,7 @@ export function Section3({ id, data3 }) {
                 </p>
               </div>
             </div>
-            {selectedImage && (
+            {/* {selectedImage && (
               <div className="flex flex-col items-center">
                 <img
                   src={URL.createObjectURL(selectedImage)}
@@ -331,12 +458,81 @@ export function Section3({ id, data3 }) {
                   />
                 </div>
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </div>
 
+      
       <div className="overflow-x-auto mx-14 mt-10">
+      {selectedProducts?.length > 0 && (
+          <p>
+          Products to Upload
+        </p>
+        )}
+        <div
+          className="flex gap-4 h-full mb-2"
+          style={{ width: `calc(315px * ${selectedProducts?.length})` }}
+        >
+          {selectedProducts?.map((product, index) => (
+            <div key={index} className="flex flex-col items-center">
+              <label>
+                <div className="relative">
+                  <LazyLoad>
+                    <img
+                      src={URL.createObjectURL(product.imageFiles)}
+                      alt="Uploaded"
+                      loading="lazy"
+                      className="w-[300px] h-[150px] object-fit cursor-pointer"
+                    />
+                  </LazyLoad>
+                </div>
+              </label>
+              <IconButton
+                className="absolute top-2  bg-white"
+                onClick={() => removeProduct(index)}
+              >
+                <CloseIcon />
+              </IconButton>
+              
+              <div className="flex flex-col items-center">
+                <input
+                  type="text"
+                  className="mt-8 w-[20rem] border-2 border-black-500 border-solid p-3 rounded-lg"
+                  placeholder="NAME"
+                  value={product.name}
+                  onChange={(e) => updateProductObjectName(e.target.value, index)}
+                />
+                <input
+                  type="text"
+                  className="mt-8 w-[20rem] border-2 border-black-500 border-solid p-3 rounded-lg"
+                  placeholder="MEASUREMENT"
+                  value={product.measurement}
+                  onChange={(e) =>
+                    updateProductObjectMeasurement(e.target.value, index)
+                  }
+                />
+                <input
+                  type="text"
+                  className="mt-8 w-[20rem] border-2 border-black-500 border-solid p-3 rounded-lg"
+                  placeholder="SERIAL NO"
+                  value={product.serialNo}
+                  onChange={(e) => updateProductObjectSerialNo(e.target.value, index)}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        
+      </div>
+
+      <div className="overflow-x-auto mx-14 mt-10">
+      {products?.length > 0 && (
+          <p>
+          Uploaded Products
+        </p>
+        )}
         <div
           className="flex gap-4 h-full mb-2"
           style={{ width: `calc(315px * ${products?.length})` }}
@@ -396,6 +592,8 @@ export function Section3({ id, data3 }) {
             </div>
           ))}
         </div>
+
+        
       </div>
       <div className="border border-l border-gray m-[2rem] "></div>
     </div>

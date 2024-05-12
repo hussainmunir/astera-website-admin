@@ -62,8 +62,8 @@ export function Discoversection3() {
 		}
 
 		if (selectedImage) {
-			requestData.append("backgroundImage", selectedImage);
-		}
+			requestData.backgroundImage = selectedImage;
+		  }
 
 		try {
 			const response = await axios.post(

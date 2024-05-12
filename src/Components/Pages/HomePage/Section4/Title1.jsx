@@ -14,7 +14,7 @@ import { CircularProgress } from "@mui/material";
 
 
 
-const Section4 = () => {
+const Section4 = ({ index, item, fetchData }) => {
 	const [editorContent, setEditorContent] = useState("");
 	const [charCount, setCharCount] = useState(0);
 	const [selectedImage, setSelectedImage] = useState(null); // State for image 1
@@ -37,68 +37,80 @@ const Section4 = () => {
 
 
 	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const response = await axios.get(
-					"https://backend.asteraporcelain.com/api/v1/homescreen/getAllCollections"
-				);
-				if (
-					response.data &&
-					response.data.data &&
-					response.data.data.homePage &&
-					response.data.data.homePage.section4 &&
-					response.data.data.homePage.section4.length > 0
-				) {
-					const section4DataItem1 = response.data.data.homePage.section4[0];
-					console.log("section4DataItem1", section4DataItem1)
-					setTitle(section4DataItem1.title);
-					setId(section4DataItem1._id);
-					setSubtitle(section4DataItem1.subtitle);
-					setDescription(section4DataItem1.description);
-					setOriginalData(section4DataItem1); // Store original fetched data
-					setBackgroundImageUrl(
-						`${section4DataItem1.backgroundImageUrl}`
-					);
-					setSupportiveImages(section4DataItem1.supportiveImages)
-					setEditorContent(section4DataItem1.description);
-				}
-			} catch (error) {
-				console.error("Error fetching data:", error);
-			}
-		};
+		// const fetchData = async () => {
+		// 	try {
+		// 		const response = await axios.get(
+		// 			"https://backend.asteraporcelain.com/api/v1/homescreen/getAllCollections"
+		// 		);
+		// 		if (
+		// 			response.data &&
+		// 			response.data.data &&
+		// 			response.data.data.homePage &&
+		// 			response.data.data.homePage.section4 &&
+		// 			response.data.data.homePage.section4.length > 0
+		// 		) {
+		// 			const section4DataItem1 = response.data.data.homePage.section4[0];
+		// 			console.log("section4DataItem1", section4DataItem1)
+		// 			setTitle(section4DataItem1.title);
+		// 			setId(section4DataItem1._id);
+		// 			setSubtitle(section4DataItem1.subtitle);
+		// 			setDescription(section4DataItem1.description);
+		// 			setOriginalData(section4DataItem1); // Store original fetched data
+		// 			setBackgroundImageUrl(
+		// 				`${section4DataItem1.backgroundImageUrl}`
+		// 			);
+		// 			setSupportiveImages(section4DataItem1.supportiveImages)
+		// 			setEditorContent(section4DataItem1.description);
+		// 		}
+		// 	} catch (error) {
+		// 		console.error("Error fetching data:", error);
+		// 	}
+		// };
 
-		fetchData();
-	}, []);
+		// fetchData();
+		const section4DataItem1 = item;
+		console.log("section4DataItem", section4DataItem1)
+		setTitle(section4DataItem1.title);
+		setId(section4DataItem1._id);
+		setSubtitle(section4DataItem1.subtitle);
+		setDescription(section4DataItem1.description);
+		setOriginalData(section4DataItem1); // Store original fetched data
+		setBackgroundImageUrl(
+			`${section4DataItem1.backgroundImageUrl}`
+		);
+		setSupportiveImages(section4DataItem1.supportiveImages)
+		setEditorContent(section4DataItem1.description);
+	}, [item]);
 
-	const fetchData = async () => {
-		try {
-			const response = await axios.get(
-				"https://backend.asteraporcelain.com/api/v1/homescreen/getAllCollections"
-			);
-			if (
-				response.data &&
-				response.data.data &&
-				response.data.data.homePage &&
-				response.data.data.homePage.section4 &&
-				response.data.data.homePage.section4.length > 0
-			) {
-				const section4DataItem1 = response.data.data.homePage.section4[0];
-				console.log("section4DataItem1", section4DataItem1)
-				setTitle(section4DataItem1.title);
-				setId(section4DataItem1._id);
-				setSubtitle(section4DataItem1.subtitle);
-				setDescription(section4DataItem1.description);
-				setOriginalData(section4DataItem1); // Store original fetched data
-				setBackgroundImageUrl(
-					`${section4DataItem1.backgroundImageUrl}`
-				);
-				setSupportiveImages(section4DataItem1.supportiveImages)
-				setEditorContent(section4DataItem1.description);
-			}
-		} catch (error) {
-			console.error("Error fetching data:", error);
-		}
-	};
+	// const fetchData = async () => {
+	// 	try {
+	// 		const response = await axios.get(
+	// 			"https://backend.asteraporcelain.com/api/v1/homescreen/getAllCollections"
+	// 		);
+	// 		if (
+	// 			response.data &&
+	// 			response.data.data &&
+	// 			response.data.data.homePage &&
+	// 			response.data.data.homePage.section4 &&
+	// 			response.data.data.homePage.section4.length > 0
+	// 		) {
+	// 			const section4DataItem1 = response.data.data.homePage.section4[0];
+	// 			console.log("section4DataItem1", section4DataItem1)
+	// 			setTitle(section4DataItem1.title);
+	// 			setId(section4DataItem1._id);
+	// 			setSubtitle(section4DataItem1.subtitle);
+	// 			setDescription(section4DataItem1.description);
+	// 			setOriginalData(section4DataItem1); // Store original fetched data
+	// 			setBackgroundImageUrl(
+	// 				`${section4DataItem1.backgroundImageUrl}`
+	// 			);
+	// 			setSupportiveImages(section4DataItem1.supportiveImages)
+	// 			setEditorContent(section4DataItem1.description);
+	// 		}
+	// 	} catch (error) {
+	// 		console.error("Error fetching data:", error);
+	// 	}
+	// };
 
 	const onDropImage1 = useCallback((acceptedFiles) => {
 		setSelectedImage(acceptedFiles[0]);
@@ -111,6 +123,21 @@ const Section4 = () => {
 		[setSupportiveImagesUpdate]
 	);
 
+	const resetState = () => {
+		const section4DataItem1 = item;
+		console.log("section4DataItem", section4DataItem1)
+		setTitle(section4DataItem1.title);
+		setId(section4DataItem1._id);
+		setSubtitle(section4DataItem1.subtitle);
+		setDescription(section4DataItem1.description);
+		setOriginalData(section4DataItem1); // Store original fetched data
+		setBackgroundImageUrl(
+			`${section4DataItem1.backgroundImageUrl}`
+		);
+		setSupportiveImages(section4DataItem1.supportiveImages)
+		setEditorContent(section4DataItem1.description);
+	};
+
 	const handleSave = async () => {
 		try {
 			setLoading(true);
@@ -118,7 +145,7 @@ const Section4 = () => {
 
 			formData.append("title", title);
 			formData.append("subtitle", subtitle);
-			formData.append("description", description);
+			formData.append("description", editorContent);
 			formData.append("id", Id);
 
 			if (selectedImage) {
@@ -135,6 +162,7 @@ const Section4 = () => {
 			);
 
 			console.log("Save successful:", response.data);
+			fetchData();
 			setSaveSuccess(true);
 
 			setLoading(false);
@@ -151,6 +179,45 @@ const Section4 = () => {
 		}
 	};
 
+
+	const removeSlide = async () => {
+		try {
+			setLoading(true);
+			const formData = new FormData();
+			formData.append("itemId", Id);
+
+			for (let pair of formData.entries()) {
+				console.log(pair[0] + ", " + pair[1]);
+			  }
+
+			const response = await axios.post(
+				"https://backend.asteraporcelain.com/api/v1/homescreen/deleteSection4Item",
+				formData,
+				{
+					headers: {
+						"Content-Type": "multipart/form-data",
+					},
+				}
+			);
+
+			console.log("Delete successful:", response.data);
+			fetchData();
+			setSaveSuccess(true);
+
+			setLoading(false);
+
+			// Hide success message after 3 seconds (3000 milliseconds)
+			setTimeout(() => {
+				setSaveSuccess(false);
+			}, 3000);
+			// Optionally add logic to display a success message or perform other actions
+		} catch (error) {
+			setLoading(false);
+			console.error("Error deleteing slide:", error);
+			// Handle error scenarios, e.g., display an error message to the user
+		}
+	};
+
 	const AddSupportiveImage = async () => {
 		try {
 			setLoading(true);
@@ -163,7 +230,7 @@ const Section4 = () => {
 			}
 			for (let pair of formData.entries()) {
 				console.log(pair[0] + ", " + pair[1]);
-			  }
+			}
 			const response = await axios.post(
 				"https://backend.asteraporcelain.com/api/v1/homescreen/addSupportiveImagesToSection4",
 				formData,
@@ -173,14 +240,14 @@ const Section4 = () => {
 					},
 				}
 			);
-			fetchData();
+
 			setSupportiveImagesUpdate(null);
 			console.log("Save successful:", response.data);
 			setSaveSuccess(true);
 
 			setLoading(false);
-			
 
+			fetchData();
 			// Hide success message after 3 seconds (3000 milliseconds)
 			setTimeout(() => {
 				setSaveSuccess(false);
@@ -202,7 +269,7 @@ const Section4 = () => {
 
 			for (let pair of formData.entries()) {
 				console.log(pair[0] + ", " + pair[1]);
-			  }
+			}
 			const response = await axios.post(
 				"https://backend.asteraporcelain.com/api/v1/homescreen/deleteSupportiveImageFromSection4",
 				formData,
@@ -219,7 +286,7 @@ const Section4 = () => {
 			setSaveSuccess(true);
 
 			setLoading(false);
-			
+
 
 			// Hide success message after 3 seconds (3000 milliseconds)
 			setTimeout(() => {
@@ -330,14 +397,22 @@ const Section4 = () => {
 								Update successful!
 							</div>
 						)}
-						<button className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute ml-[80%]">
+						<button className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute ml-[80%]"
+						onClick={resetState}
+						>
 							Cancel
+						</button>
+
+						<button className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute ml-[70%]"
+						onClick={removeSlide}
+						>
+							Remove Slide
 						</button>
 					</div>
 
 					<div className="flex items-center">
 						<label className="block text-lg font-semibold mb-1 mr-[32rem] whitespace-nowrap">
-							Title 1
+							Slide {index + 1}
 						</label>
 						<div className="flex">
 							<input
@@ -514,30 +589,30 @@ const Section4 = () => {
 							</div>
 
 							<div className="mx-3">
-							{supportiveImagesUpdate && (
-								<div>
-								<img
-									src={URL.createObjectURL(supportiveImagesUpdate)}
-									alt="Uploaded"
-									className="w-40 h-40 object-cover rounded-lg mr-[2rem]"
-								/>
-								<button
-								className="text-black border border-black rounded-lg px-5 mt-5 py-2.5 ml-7"
-								onClick={AddSupportiveImage}
-							>
-								Add
-							</button>
-								</div>
-								
-							)}
-							
+								{supportiveImagesUpdate && (
+									<div>
+										<img
+											src={URL.createObjectURL(supportiveImagesUpdate)}
+											alt="Uploaded"
+											className="w-40 h-40 object-cover rounded-lg mr-[2rem]"
+										/>
+										<button
+											className="text-black border border-black rounded-lg px-5 mt-5 py-2.5 ml-7"
+											onClick={AddSupportiveImage}
+										>
+											Add
+										</button>
+									</div>
+
+								)}
+
 							</div>
-							
+
 							<div
 								{...getRootPropsSupportiveImages()}
 								className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center ml-4 mr-4"
 							>
-								
+
 								<input {...getInputPropsSupportiveImages()} />
 								<img
 									src={uploadsvg}

@@ -23,7 +23,7 @@ const Section2 = () => {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [resetMessage, setResetMessage] = useState("");
   const [pid, setPid] = useState("");
-  const [addSelectedImage, setAddSelectedImage] = useState(null);
+  const [addSelectedImage, setAddSelectedImage] = useState([]);
   const [selectedUpdateFile, setSelectedUpdateFile] = useState(null);
 
 
@@ -110,7 +110,7 @@ const Section2 = () => {
     }
   };
 
-  
+
   const {
     getRootProps: getRootPropsForSelectedImage,
     getInputProps: getInputPropsForSelectedImage,
@@ -129,7 +129,7 @@ const Section2 = () => {
     },
   });
 
-  
+
   const indexRef = useRef();
   const handleFileUpdate = async (event, index) => {
     console.log("event.target.files[0]", event.target.files[0]);
@@ -139,32 +139,35 @@ const Section2 = () => {
   };
 
   const handleAdd = async () => {
-    // Check if both addTitle and addSubTitle are not empty
+    setLoading(true);
   
-    // Construct FormData
-    const addRequestData = new FormData();
- 
-
-    // Append image if it exists
-    if (addSelectedImage) {
-      addRequestData.append("imageFile", addSelectedImage);
-    }
-
     try {
+      const formData = new FormData();
+  
+      // Append image if it exists
+      if (addSelectedImage) {
+        // If addSelectedImage is an array of files, append each file individually
+        addSelectedImage.forEach((file, index) => {
+          formData.append(`imageFile`, file);
+        });
+      }
+  
       const response = await axios.post(
         "https://backend.asteraporcelain.com/api/v1/eventsScreen/addToSection2",
-        addRequestData,
+        formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         }
       );
+  
       console.log("Update successful:", response.data);
+  
       // Clear input fields after successful update
-     
-      setAddSelectedImage(null);
+      setAddSelectedImage([]);
       setSaveSuccess(true);
+  
       // Optionally, you can refetch data after adding the new item
       fetchData();
     } catch (error) {
@@ -178,6 +181,7 @@ const Section2 = () => {
       }, 3000);
     }
   };
+  
 
 
   const handleDeleteImageApi = async (index) => {
@@ -201,16 +205,27 @@ const Section2 = () => {
 
 
 
+  // const onDropImage1 = useCallback((acceptedFiles) => {
+  //   setAddSelectedImage(acceptedFiles[0]);
+  // }, []);
+
   const onDropImage1 = useCallback((acceptedFiles) => {
-    setAddSelectedImage(acceptedFiles[0]);
-  }, []);
+    setAddSelectedImage(prevImages => [...prevImages, ...acceptedFiles]);
+  }, [setAddSelectedImage]);
 
   const onDropSupportiveImages = useCallback(
     (acceptedFiles) => {
-      setAddSelectedImage(acceptedFiles[0]);
+      setAddSelectedImage(prevImages => [...prevImages, ...acceptedFiles]);
     },
-    [] // No dependencies, as the state update is based only on acceptedFiles
+    [setAddSelectedImage]
   );
+
+  // const onDropSupportiveImages = useCallback(
+  //   (acceptedFiles) => {
+  //     setAddSelectedImage(acceptedFiles[0]);
+  //   },
+  //   [] 
+  // );
 
   const {
     getRootProps: getRootPropsImage1,
@@ -231,7 +246,7 @@ const Section2 = () => {
   });
 
   const handleDeleteImage = (indexToRemove) => {
-    setSupportiveImages((prevImages) =>
+    setAddSelectedImage((prevImages) =>
       prevImages.filter((image, index) => index !== indexToRemove)
     );
   };
@@ -244,8 +259,16 @@ const Section2 = () => {
         <p className="mt-1 w-full text-sm leading-5 text-ellipsis text-slate-600 max-md:max-w-full">
           Update desired photo and details here
         </p>
-      </div>
 
+      </div>
+      <div className="flex ml-[80rem] space-x-5 -mt-8">
+      <button
+        className="border-solid mt-5 border-2 p-2 w-[5rem] border-blue text-white bg-blue-700 rounded-xl"
+        onClick={() => handleAdd()}
+      >
+        Add
+      </button>
+      </div>
       <div className="flex flex-row">
         <label className="block text-lg w-[1rem] ml-[2.5rem] mt-[2rem] font-semibold mb-1">
           Event Images{" "}
@@ -279,12 +302,13 @@ const Section2 = () => {
               </p>
             </div>
             <div className="mt-4 w-[70%]">
-              <div className="flex flex-wrap -mx-2">
-                {addSelectedImage &&  (
-                  <div className="w-1/5 px-2 mb-4">
+              <div className="flex flex-wrap">
+
+            {addSelectedImage.map((event, index) => (
+                  <div key={index} className="w-1/5 px-2 mb-4">
                     <div className="relative overflow-hidden rounded-lg">
                       <img
-                        src={URL.createObjectURL(addSelectedImage)}
+                        src={URL.createObjectURL(event)}
                         alt="Uploaded"
                         className="w-full h-auto object-cover"
                         style={{ aspectRatio: "1/1" }}
@@ -304,46 +328,45 @@ const Section2 = () => {
                           Deleted successfully!
                         </div>
                       )}
-                      <button
-                        className="border-solid mt-5 border-2 p-2 w-[5rem] border-black text-blue bg-white rounded-xl"
-                        onClick={() => handleAdd()}
-                      >
-                        Add
-                      </button>
+
                     </div>
                   </div>
-                )}
+                ))}
+              </div>
+
+              <div className="flex flex-wrap -mx-2">
+             
                 {sectionData &&
                   sectionData.events &&
                   sectionData.events.map((event, index) => (
                     <div key={index} className="w-1/5 px-2 mb-4">
                       <div className="relative overflow-hidden rounded-lg">
-                      <label>
-                <input
-                  type="file"
-                  onChange={(event) => handleFileUpdate(event, index)}
-                  className="hidden"
-                />
-                <div className="relative">
-                  <LazyLoad>
-                    <img
-                      src={`${baseUrlImage}${event.imageUrl}`}
-                      alt="Uploaded"
-                      loading="lazy"
-                      className="w-[300px] h-[150px] object-fit cursor-pointer"
-                      //  onClick={(event) => event.target.previousSibling.click()}
-                    />
-                  </LazyLoad>
-                </div>
-              </label>
-              <div className="mt-5 flex flex-wrap items-center justify-center">
-                        <IconButton
-                          className="flex justify-center items-center right-0  bg-white"
-                          onClick={() => handleDeleteImageApi(event._id)}
-                        >
-                          <CloseIcon />
-                          
-                        </IconButton>
+                        <label>
+                          <input
+                            type="file"
+                            onChange={(event) => handleFileUpdate(event, index)}
+                            className="hidden"
+                          />
+                          <div className="relative">
+                            <LazyLoad>
+                              <img
+                                src={`${baseUrlImage}${event.imageUrl}`}
+                                alt="Uploaded"
+                                loading="lazy"
+                                className="w-[300px] h-[150px] object-fit cursor-pointer"
+                              //  onClick={(event) => event.target.previousSibling.click()}
+                              />
+                            </LazyLoad>
+                          </div>
+                        </label>
+                        <div className="mt-5 flex flex-wrap items-center justify-center">
+                          <IconButton
+                            className="flex justify-center items-center right-0  bg-white"
+                            onClick={() => handleDeleteImageApi(event._id)}
+                          >
+                            <CloseIcon />
+
+                          </IconButton>
                         </div>
                       </div>
                     </div>

@@ -71,8 +71,8 @@ const Section2 = () => {
       phoneSubTitle:phoneSubTitle, 
     }
     if (selectedImage) {
-      requestData.append("backgroundImage", selectedImage);
-    }
+			requestData.backgroundImage = selectedImage;
+		  }
 
     try {
       const response = await axios.post(

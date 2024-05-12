@@ -41,14 +41,49 @@ const Section6 = () => {
 		fetchData();
 	}, []);
 
+	const fetchData = async () => {
+		try {
+			const response = await axios.get(
+				"https://backend.asteraporcelain.com/api/v1/homescreen/getAllCollections"
+			);
+			if (
+				response.data &&
+				response.data.data &&
+				response.data.data.homePage &&
+				response.data.data.homePage.section6
+			) {
+				const section6Items = response.data.data.homePage.section6;
+				setSection6Data(section6Items);
+			}
+		} catch (error) {
+			console.error("Error fetching data:", error);
+		}
+	};
+
+	const handleReset = () => {
+		setNewItemData({
+			name: "",
+			occupation: "",
+			bio: "",
+			avatarImageUrl: "",
+			backgroundImageUrl: "",
+		});
+	
+	  };
+
 	const handleAddItem = async () => {
 		try {
+			setLoading(true);
 			const formData = new FormData();
 			formData.append("name", newItemData.name);
 			formData.append("occupation", newItemData.occupation);
 			formData.append("bio", newItemData.bio);
 			formData.append("avatarImage", newItemData.avatarImageUrl);
 			formData.append("backgroundImage", newItemData.backgroundImageUrl);
+
+			for (let pair of formData.entries()) {
+				console.log(pair[0] + ", " + pair[1]);
+			  }
 
 			const response = await axios.post(
 				"https://backend.asteraporcelain.com/api/v1/homescreen/addSection6Item",
@@ -61,6 +96,8 @@ const Section6 = () => {
 			);
 
 			console.log("Add item successful:", response.data);
+		fetchData();
+
 
 			// Clear newItemData and update state
 			setNewItemData({
@@ -70,9 +107,11 @@ const Section6 = () => {
 				avatarImageUrl: "",
 				backgroundImageUrl: "",
 			});
+			setLoading(false);
 		} catch (error) {
 			console.error("Error adding item:", error);
 			// Handle error state or show error message
+			setLoading(false);
 		}
 	};
 
@@ -84,11 +123,15 @@ const Section6 = () => {
 		onDrop: (acceptedFiles) => {
 			const file = acceptedFiles[0];
 			if (file) {
-				setNewItemData({
-					...newItemData,
-					avatarImage: file,
-					avatarImageUrl: URL.createObjectURL(file), // Store local URL for preview
-				});
+				// setNewItemData({
+				// 	...newItemData,
+				// 	avatarImage: file,
+				// 	avatarImageUrl: file, // Store local URL for preview
+				// });
+				setNewItemData((prevData) => ({
+					...prevData,
+					avatarImageUrl: file,
+				  }))
 			}
 		},
 	});
@@ -101,18 +144,32 @@ const Section6 = () => {
 		onDrop: (acceptedFiles) => {
 			const file = acceptedFiles[0];
 			if (file) {
-				setNewItemData({
-					...newItemData,
-					backgroundImage: file,
-					backgroundImageUrl: URL.createObjectURL(file), // Store local URL for preview
-				});
+				// setNewItemData({
+				// 	...newItemData,
+				// 	backgroundImage: file,
+				// 	backgroundImageUrl: file, // Store local URL for preview
+				// });
+				setNewItemData((prevData) => ({
+					...prevData,
+					backgroundImageUrl: file,
+				  }))
 			}
 		},
 	});
 
+	const handleEditorChange = (content, delta, source, editor) => {
+		setNewItemData((prevData) => ({
+			...prevData,
+			bio: content,
+		  }))
+	};
+
 	return (
 		<div className="max-w-lg ml-4 mt-4">
-			<Section6Update/>
+			{section6Data.map((item, index) => (
+			<Section6Update  item={item} index={index} fetchData={fetchData} />
+			))}
+
 			<div className="text-lg font-semibold leading-7 text-gray-900">
 				Section 6{" "}
 				<span className="text-red-500 ml-1">- Add New Item for Section 6</span>
@@ -127,8 +184,11 @@ const Section6 = () => {
 						value={newItemData.name}
 						placeholder="Enter Name"
 						onChange={(e) =>
-							setNewItemData({ ...newItemData, name: e.target.value })
-						}
+							setNewItemData((prevData) => ({
+							  ...prevData,
+							  name: e.target.value,
+							}))
+						  }
 					/>
 				</div>
 				<div className="flex items-center mb-4">
@@ -139,8 +199,11 @@ const Section6 = () => {
 						placeholder="Enter Occupation"
 						value={newItemData.occupation}
 						onChange={(e) =>
-							setNewItemData({ ...newItemData, occupation: e.target.value })
-						}
+							setNewItemData((prevData) => ({
+							  ...prevData,
+							  occupation: e.target.value,
+							}))
+						  }
 					/>
 				</div>
 				{/* <div className="flex mt-4">
@@ -173,9 +236,7 @@ const Section6 = () => {
 						<ReactQuill
 							theme="snow"
 							value={newItemData.bio}
-							onChange={(e) =>
-								setNewItemData({ ...newItemData, bio: e.target.value })
-							}
+							onChange={handleEditorChange}
 							placeholder="Write a short introduction."
 							style={{
 								height: "200px",
@@ -189,7 +250,7 @@ const Section6 = () => {
 					<label className="mr-2 font-semibold">Avatar:</label>
 					{newItemData.avatarImageUrl && (
 						<img
-							src={newItemData.avatarImageUrl}
+							src={URL.createObjectURL(newItemData.avatarImageUrl)}
 							alt="Avatar Preview"
 							className="w-auto h-40 object-cover rounded-lg ml-[30rem]"
 						/>
@@ -212,7 +273,7 @@ const Section6 = () => {
 					<label className="mr-2 font-semibold whitespace-nowrap">Background Image:</label>
 					{newItemData.backgroundImageUrl && (
 						<img
-							src={newItemData.backgroundImageUrl}
+							src={URL.createObjectURL(newItemData.backgroundImageUrl)}
 							alt="Background Preview"
 							className="w-auto h-40 object-cover rounded-lg ml-[30rem]"
 						/>
@@ -237,6 +298,12 @@ const Section6 = () => {
 					disabled={loading}
 				>
 					{loading ? <CircularProgress size={24} color="inherit" /> : "Save"}
+				</button>
+				<button
+					className="text-white bg-purple-600 rounded-lg px-5 py-2.5 mt-4 ml-4"
+					onClick={handleReset}
+				>
+					{"Cancel"}
 				</button>
 			</div>
 			<hr

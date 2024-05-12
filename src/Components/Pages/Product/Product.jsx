@@ -64,9 +64,6 @@ export function Product() {
             {
               imageUrl: 'https://example.com/image1.jpg',
             },
-            {
-              imageUrl: 'https://example.com/image2.jpg',
-            },
           ],
           section3: {
             title: 'Section 3 Title',
@@ -76,12 +73,6 @@ export function Product() {
                 name: 'Product 1',
                 measurement: 'Measurement 1',
                 serialNo: 'Serial No 1',
-              },
-              {
-                imageUrl: 'https://example.com/product2.jpg',
-                name: 'Product 2',
-                measurement: 'Measurement 2',
-                serialNo: 'Serial No 2',
               },
             ],
           },
@@ -118,9 +109,9 @@ export function Product() {
       <div>
         {products.map((product, index) => (
           <div key={index}>
-            <Section1 id={product._id} data1={product.section1} />
-            <Section2 id={product._id} data2={product.section2} />
-            <Section3 id={product._id} data3={product.section3} />
+            <Section1 id={product._id} data1={product.section1}  />
+            <Section2 id={product._id} data2={product.section2} fetchProducts={fetchProducts} />
+            <Section3 id={product._id} data3={product.section3} fetchProducts={fetchProducts} />
           </div>
         ))}
       </div>

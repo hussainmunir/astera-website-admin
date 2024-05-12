@@ -9,7 +9,7 @@ import LazyLoad from "react-lazyload";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 
-export function Section2({ id, data2 }) {
+export function Section2({ id, data2, fetchProducts }) {
   // const [selectedImage, setSelectedImage] = useState(null);
   const [supportiveImages, setSupportiveImages] = useState([]);
   const [imageUrl, setImageUrl] = useState([]);
@@ -116,6 +116,7 @@ export function Section2({ id, data2 }) {
           },
         }
       );
+      fetchProducts();
       setSaveSuccess(true);
       setSupportiveImages([]);
       // Handle success response
@@ -151,6 +152,7 @@ export function Section2({ id, data2 }) {
           },
         }
       );
+      fetchProducts();
 
       // Handle success response
       console.log("Image updated successfully:", response.data);
@@ -171,7 +173,9 @@ export function Section2({ id, data2 }) {
       // Handle success response
       console.log("Image deleted successfully:", response.data);
       // Call the handleDeleteImage function to update the UI
-      handleDeleteImageApiUi(index);
+      // handleDeleteImageApiUi(index);
+      fetchProducts();
+
     } catch (error) {
       // Handle error
       console.error("Error deleting image:", error);
@@ -250,36 +254,61 @@ export function Section2({ id, data2 }) {
               </div>
             </div>
 
-            <div className="overflow-x-auto mx-14 mt-10">
-              <div
-                className="flex gap-4 "
-                style={{ width: `calc(315px * ${supportiveImages?.length})` }}
-              >
-                {supportiveImages?.map((image, index) => (
-                  <div
-                    key={index}
-                    className="relative overflow-hidden rounded-lg"
-                  >
-                    <img
-                      src={URL.createObjectURL(image)}
-                      alt="Uploaded"
-                      className="w-[300px] h-[150px] object-fit cursor-pointer"
-                    />
-                    <IconButton
-                      className="absolute top-1 right-0 m-2 bg-white"
-                      onClick={() => handleDeleteImage(index)}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </div>
-                ))}
-              </div>
-            </div>
+         
+
+
+
+
           </div>
         </div>
       </div>
-      
+
       <div className="overflow-x-auto mx-14 mt-10">
+        {supportiveImages?.length > 0 && (
+          <p>
+          Images to upload
+        </p>
+        )}
+      
+        <div
+          className="flex gap-4 h-full mb-2"
+          style={{ width: `calc(315px * ${supportiveImages?.length})` }}
+        >
+          
+          {supportiveImages?.map((image, index) => (
+            <div key={index} className="">
+              <label>
+                
+                <div className="relative">
+                  <LazyLoad>
+                    <img
+                       src={URL.createObjectURL(image)}
+                      alt="Uploaded"
+                      loading="lazy"
+                      className="w-[300px] h-[150px] object-fit cursor-pointer"
+                    //  onClick={(event) => event.target.previousSibling.click()}
+                    />
+                  </LazyLoad>
+                </div>
+              </label>
+
+              <IconButton
+                className="absolute top-1 left-[45%] bg-white"
+                onClick={() => handleDeleteImage(index)}
+              >
+                <CloseIcon />
+              </IconButton>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="overflow-x-auto mx-14 mt-10">
+      {imageUrl?.length > 0 && (
+          <p>
+          Uploaded Images
+        </p>
+        )}
         <div
           className="flex gap-4 h-full mb-2"
           style={{ width: `calc(315px * ${imageUrl?.length})` }}
@@ -299,7 +328,7 @@ export function Section2({ id, data2 }) {
                       alt="Uploaded"
                       loading="lazy"
                       className="w-[300px] h-[150px] object-fit cursor-pointer"
-                      //  onClick={(event) => event.target.previousSibling.click()}
+                    //  onClick={(event) => event.target.previousSibling.click()}
                     />
                   </LazyLoad>
                 </div>

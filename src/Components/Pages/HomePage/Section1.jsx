@@ -187,9 +187,21 @@ export const Section1 = () => {
     });
 
     const renderSectionItems = () => {
-        return section1Data.map((item) => (
+        return section1Data.map((item, index) => (
             <div key={item._id} className="mt-6">
-                <div className="flex items-center mb-4">
+                <div className="text-lg font-semibold leading-7 text-gray-900">
+                    Section 1{" "}
+                    <span className="mt-1 text-lg text-bold ml-4 whitespace-nowrap text-red-600">
+                        Update Item For Section 1
+                    </span>
+                </div>
+                <div className="mt-1 text-sm leading-5 text-slate-600">
+                    Update desired photo and details here.
+                </div>
+                <div className="mt-1 text-lg text-black font-bold leading-5 text-slate-600">
+                    Slide {index + 1}
+                </div>
+                <div className="flex items-center mb-4 mt-5">
                     <label className="mr-2 font-semibold">Title:</label>
                     <input
                         type="text"
@@ -349,15 +361,7 @@ export const Section1 = () => {
     return (
         <>
             <div className="max-w-lg ml-4 mt-4">
-                <div className="text-lg font-semibold leading-7 text-gray-900">
-                    Section 1{" "}
-                    <span className="mt-1 text-lg text-bold ml-4 whitespace-nowrap text-red-600">
-                        Update Item For Section 1
-                    </span>
-                </div>
-                <div className="mt-1 text-sm leading-5 text-slate-600">
-                    Update desired photo and details here.
-                </div>
+                
                 {renderSectionItems()}
             </div>
 

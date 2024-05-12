@@ -41,9 +41,12 @@ const Section1 = () => {
   const handleSave = async () => {
     setLoading(true);
     const requestData={}
+    // if (selectedImage) {
+    //    requestData.append("backgroundImage", selectedImage);
+    // }
     if (selectedImage) {
-       requestData.append("backgroundImage", selectedImage);
-    }
+			requestData.backgroundImage = selectedImage;
+		  }
 
     try {
       const response = await axios.post(

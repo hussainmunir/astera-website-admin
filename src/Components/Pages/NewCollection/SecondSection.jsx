@@ -53,8 +53,8 @@ export function SecondSection() {
         subTitle: subTitle,
       };
       if (selectedImage) {
-        requestData.append("backgroundImage", selectedImage);
-      }
+        requestData.backgroundImage = selectedImage;
+        }
       const response = await axios.post(
         "https://backend.asteraporcelain.com/api/v1/whatsnewCollectionScreen/updateSection1",
         requestData,

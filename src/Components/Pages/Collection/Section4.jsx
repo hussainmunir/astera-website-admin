@@ -58,8 +58,8 @@ const Section4 = () => {
         addButton: addButton,
       };
       if (selectedImage) {
-        requestData.append("backgroundImage", selectedImage);
-      }
+        requestData.backgroundImage = selectedImage;
+        }
       const response = await axios.post(
         "https://backend.asteraporcelain.com/api/v1/collectionScreen/updateSection2",
         requestData,

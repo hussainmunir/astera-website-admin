@@ -63,7 +63,7 @@ export function Discoversection7() {
 		  };
 	  
 		  if (selectedImage) {
-			requestData.append("backgroundImage", selectedImage);
+			requestData.backgroundImage = selectedImage;
 		  }
 
 		try {
