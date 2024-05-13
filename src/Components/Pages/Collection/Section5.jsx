@@ -36,6 +36,13 @@ const Section5 = () => {
             setSubTitle(section5.subTitle || "");
             setAddButton(section5.addButton || "");
             setSectionData(section5);
+
+            if (section5.addButton === true) {
+              setInputEnabled(true);
+            } else {
+              setInputEnabled(false);
+            }
+
           } else {
             console.log("section5 value not available");
           }
@@ -55,14 +62,24 @@ const Section5 = () => {
       const requestData = {
         title: title,
         subTitle: subTitle,
-        addButton: addButton,
+        
       };
      
       if (selectedImage) {
         requestData.backgroundImage = selectedImage;
         }
+
+        if(inputEnabled){
+          setAddButton(true);
+        }
+        else{
+          setAddButton(false);
+        }
+        requestData.addButton=addButton;
+
+
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/collectionScreen/updateSection2",
+        `${baseUrl}collectionScreen/updateSection2`,
         requestData,
         {
           headers: {
@@ -107,13 +124,10 @@ const Section5 = () => {
   const handleToggleChange = () => {
     setInputEnabled(!inputEnabled);
 
-    // Toggle addButton state based on current value
     if (!addButton && !inputEnabled) {
-      // If addButton is false and user toggles switch from off to on
-      setAddButton("true"); // Set addButton to true
+      setAddButton("true");
     } else if (addButton && inputEnabled) {
-      // If addButton is true and user toggles switch from on to off
-      setAddButton("false"); // Set addButton to false
+      setAddButton("false");
     }
   };
 
@@ -123,7 +137,7 @@ const Section5 = () => {
         <div className="hidden md:flex items-center justify-between mb-[1rem]">
           <div className="w-full flex flex-col">
             <div className="w-full text-lg font-semibold leading-7 text-gray-900 max-md:max-w-full">
-              Section 4
+              Section 5
             </div>
             <div className="mt-1 w-full text-sm leading-5 text-ellipsis text-slate-600 max-md:max-w-full">
               Update desired photo and details here.

@@ -37,6 +37,14 @@ const Section3 = () => {
             setSubTitle(section3.subTitle || "");
             setAddButton(section3.addButton || "");
             setSectionData(section3);
+
+            if (section3.addButton === true) {
+              setInputEnabled(true);
+            } else {
+              setInputEnabled(false);
+            }
+
+
           } else {
             console.log("section3 value not available");
           }
@@ -56,14 +64,25 @@ const Section3 = () => {
       const requestData = {
         title: title,
         subTitle: subTitle,
-        addButton: addButton,
+     
       };
      
       if (selectedImage) {
         requestData.backgroundImage = selectedImage;
         }
+
+      if(inputEnabled){
+        setAddButton(true);
+      }
+      else{
+        setAddButton(false);
+      }
+
+
+      
+        requestData.addButton=addButton;
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/collectionScreen/updateSection2",
+              `${baseUrl}collectionScreen/updateSection3`,
         requestData,
         {
           headers: {
@@ -108,13 +127,10 @@ const Section3 = () => {
   const handleToggleChange = () => {
     setInputEnabled(!inputEnabled);
 
-    // Toggle addButton state based on current value
     if (!addButton && !inputEnabled) {
-      // If addButton is false and user toggles switch from off to on
-      setAddButton("true"); // Set addButton to true
+      setAddButton("true");
     } else if (addButton && inputEnabled) {
-      // If addButton is true and user toggles switch from on to off
-      setAddButton("false"); // Set addButton to false
+      setAddButton("false");
     }
   };
 
@@ -131,7 +147,7 @@ const Section3 = () => {
             </div>
           </div>
           {loading ? (
-            <CircularProgress size={24} color="inherit" />
+            <CircularProgress size={24} color="inherit" className="absolute ml-[87%]"/>
           ) : (
             <button
               className="text-white bg-purple-600 rounded-lg px-3 py-2 absolute ml-[87%] "

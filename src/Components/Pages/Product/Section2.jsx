@@ -4,7 +4,7 @@ import uploadsvg from "../../../Images/UploadIcons.png";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { baseUrlImage } from "../../../api/base_urls";
+import { baseUrl, baseUrlImage } from "../../../api/base_urls";
 import LazyLoad from "react-lazyload";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -108,7 +108,7 @@ export function Section2({ id, data2, fetchProducts }) {
       }
 
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/productsScreen/addToSection2",
+        `${baseUrl}roductsScreen/addToSection2`,
         formData,
         {
           headers: {
@@ -144,7 +144,7 @@ export function Section2({ id, data2, fetchProducts }) {
       }
 
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/productsScreen/updateSection2Item",
+        `${baseUrl}productsScreen/updateSection2Item`,
         formData,
         {
           headers: {
@@ -167,7 +167,7 @@ export function Section2({ id, data2, fetchProducts }) {
       const itemId = imageUrl[index]._id;
       const productId = id;
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/productsScreen/deleteSection2Item",
+        `${baseUrl}productsScreen/deleteSection2Item`,
         { itemId, productId }
       );
       // Handle success response

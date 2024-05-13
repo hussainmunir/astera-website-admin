@@ -56,7 +56,7 @@ export function Section1() {
         requestData.backgroundImage = selectedImage;
         }
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/noveltiesCollectionScreen/updateSection1",
+        `${baseUrl}noveltiesCollectionScreen/updateSection1`,
         requestData,
         {
           headers: {

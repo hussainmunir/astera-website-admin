@@ -67,7 +67,7 @@ export function Discoversection4() {
 
 		try {
 			const response = await axios.post(
-				"https://backend.asteraporcelain.com/api/v1/discoverScreen/updateSection4",
+				`${baseUrl}}discoverScreen/updateSection4`,
 				requestData,
 				{
 					headers: {

@@ -62,7 +62,7 @@ export function Section1() {
 
     try {
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/eventsScreen/updateSection1",
+        `${baseUrl}eventsScreen/updateSection1`,
         requestData,
         {
           headers: {

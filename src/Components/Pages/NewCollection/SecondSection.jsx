@@ -14,7 +14,7 @@ export function SecondSection() {
   const [loading, setLoading] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [resetMessage, setResetMessage] = useState("");
-
+  const [addButton,setAddButton]=useState("");
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -55,8 +55,16 @@ export function SecondSection() {
       if (selectedImage) {
         requestData.backgroundImage = selectedImage;
         }
+
+        if(inputEnabled){
+          setAddButton(true);
+        }
+        else{
+          setAddButton(false);
+        }
+        formData.append("addButton",addButton);
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/whatsnewCollectionScreen/updateSection1",
+        `${baseUrl}whatsnewCollectionScreen/updateSection1`,
         requestData,
         {
           headers: {
@@ -120,7 +128,7 @@ export function SecondSection() {
             </button>
           )}
           {saveSuccess && (
-            <div className="text-green-600 absolute mt-[5rem] ml-[87%]">
+            <div className="text-green-600 mt-[5rem] absolute ml-[87%]">
               Save successful!
             </div>
           )}

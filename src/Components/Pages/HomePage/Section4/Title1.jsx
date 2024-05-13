@@ -9,7 +9,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import Title2 from "./Title2";
 import Title3 from "./Title3";
 import axios from "axios";
-import { baseUrlImage } from "../../../../api/base_urls";
+import { baseUrl, baseUrlImage } from "../../../../api/base_urls";
 import { CircularProgress } from "@mui/material";
 
 
@@ -152,7 +152,7 @@ const Section4 = ({ index, item, fetchData }) => {
 				formData.append("backgroundImage", selectedImage);
 			}
 			const response = await axios.post(
-				"https://backend.asteraporcelain.com/api/v1/homescreen/updateSection4Item",
+				`${baseUrl}homescreen/updateSection4Item`,
 				formData,
 				{
 					headers: {
@@ -191,7 +191,7 @@ const Section4 = ({ index, item, fetchData }) => {
 			  }
 
 			const response = await axios.post(
-				"https://backend.asteraporcelain.com/api/v1/homescreen/deleteSection4Item",
+				`${baseUrl}homescreen/deleteSection4Item`,
 				formData,
 				{
 					headers: {
@@ -232,7 +232,7 @@ const Section4 = ({ index, item, fetchData }) => {
 				console.log(pair[0] + ", " + pair[1]);
 			}
 			const response = await axios.post(
-				"https://backend.asteraporcelain.com/api/v1/homescreen/addSupportiveImagesToSection4",
+				`${baseUrl}homescreen/addSupportiveImagesToSection4`,
 				formData,
 				{
 					headers: {
@@ -271,7 +271,7 @@ const Section4 = ({ index, item, fetchData }) => {
 				console.log(pair[0] + ", " + pair[1]);
 			}
 			const response = await axios.post(
-				"https://backend.asteraporcelain.com/api/v1/homescreen/deleteSupportiveImageFromSection4",
+				`${baseUrl}homescreen/deleteSupportiveImageFromSection4`,
 				formData,
 				{
 					headers: {
@@ -383,7 +383,7 @@ const Section4 = ({ index, item, fetchData }) => {
 						</div>
 						{/* Update Button */}
 						{loading ? (
-							<CircularProgress size={24} color="inherit" />
+							<CircularProgress size={24}  color="inherit" className="absolute ml-[87.5%]" />
 						) : (
 							<button
 								className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute ml-[87%] "
@@ -393,7 +393,7 @@ const Section4 = ({ index, item, fetchData }) => {
 							</button>
 						)}
 						{saveSuccess && (
-							<div className="text-green-600 mt-2 absolute top-[72rem] ml-[87%]">
+							<div className="text-green-600 absolute mt-[5rem] ml-[87%]">
 								Update successful!
 							</div>
 						)}
@@ -402,12 +402,20 @@ const Section4 = ({ index, item, fetchData }) => {
 						>
 							Cancel
 						</button>
-
+						{loading ? (
+							<CircularProgress size={24}  color="inherit" className="absolute ml-[70%]" />
+						) : (
 						<button className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute ml-[70%]"
 						onClick={removeSlide}
 						>
 							Remove Slide
 						</button>
+						)}
+						{saveSuccess && (
+							<div className="text-green-600 absolute mt-[5rem] ml-[70%]">
+								Remove successful!
+							</div>
+						)}
 					</div>
 
 					<div className="flex items-center">

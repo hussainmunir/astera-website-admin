@@ -56,7 +56,7 @@ export function Product() {
   const addProductsPage = async () => {
     try {
       const response = await axios.post(
-        'https://backend.asteraporcelain.com/api/v1/productsScreen/addProductPage',
+        `${baseUrl}productsScreen/addProductPage`,
         {
           section1: {
             title: 'Product Page Title',
@@ -102,7 +102,7 @@ export function Product() {
 			  }
 
 			const response = await axios.post(
-				"https://backend.asteraporcelain.com/api/v1/productsScreen/removeProductPage",
+				`${baseUrl}productsScreen/removeProductPage`,
 				formData,
 				{
 					headers: {
@@ -128,7 +128,7 @@ export function Product() {
   return (
     <div className="w-[100%]">
       <div className="ml-[2rem] mt-[2rem]">
-        <p className="w-full text-lg font-bold leading-7 text-gray-900 w-full">
+        <p className="w-full text-lg font-bold leading-7 text-gray-900">
           Collection Page
         </p>
         {/* <p className="mt-1 text-ellipsis text-slate-600 max-md:max-w-full">

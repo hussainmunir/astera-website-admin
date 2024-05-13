@@ -37,6 +37,14 @@ const Section2 = () => {
             setSubTitle(section2.subTitle || "");
             setAddButton(section2.addButton || "");
             setSectionData(section2);
+
+
+            if (section2.addButton === true) {
+              setInputEnabled(true);
+            } else {
+              setInputEnabled(false);
+            }
+  
           } else {
             console.log("section2 value not available");
           }
@@ -56,13 +64,21 @@ const Section2 = () => {
       const requestData = {
         title: title,
         subTitle: subTitle,
-        addButton: addButton,
       };
       if (selectedImage) {
         requestData.backgroundImage = selectedImage;
-        }
+      }
+
+      if(inputEnabled){
+        setAddButton(true);
+      }
+      else{
+        setAddButton(false);
+      }
+
+      requestData.addButton=addButton;
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/collectionScreen/updateSection2",
+        `${baseUrl}collectionScreen/updateSection2`,
         requestData,
         {
           headers: {
@@ -107,13 +123,10 @@ const Section2 = () => {
   const handleToggleChange = () => {
     setInputEnabled(!inputEnabled);
 
-    // Toggle addButton state based on current value
     if (!addButton && !inputEnabled) {
-      // If addButton is false and user toggles switch from off to on
-      setAddButton("true"); // Set addButton to true
+      setAddButton("true");
     } else if (addButton && inputEnabled) {
-      // If addButton is true and user toggles switch from on to off
-      setAddButton("false"); // Set addButton to false
+      setAddButton("false");
     }
   };
 

@@ -7,7 +7,7 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
-import { baseUrlImage } from "../../../../api/base_urls";
+import { baseUrl, baseUrlImage } from "../../../../api/base_urls";
 import { CircularProgress } from "@mui/material";
 
 const Title3 = () => {
@@ -36,7 +36,7 @@ const Title3 = () => {
 		const fetchData = async () => {
 			try {
 				const response = await axios.get(
-					"https://backend.asteraporcelain.com/api/v1/homescreen/getAllCollections"
+					`${baseUrl}homescreen/getAllCollections`
 				);
 				if (
 					response.data &&
@@ -69,7 +69,7 @@ const Title3 = () => {
 	const fetchData = async () => {
 		try {
 			const response = await axios.get(
-				"https://backend.asteraporcelain.com/api/v1/homescreen/getAllCollections"
+				`${baseUrl}homescreen/getAllCollections`
 			);
 			if (
 				response.data &&
@@ -121,7 +121,7 @@ const Title3 = () => {
 				formData.append("backgroundImage", selectedImage);
 			}
 			const response = await axios.post(
-				"https://backend.asteraporcelain.com/api/v1/homescreen/updateSection4Item",
+				`${baseUrl}homescreen/updateSection4Item`,
 				formData,
 				{
 					headers: {
@@ -161,7 +161,7 @@ const Title3 = () => {
 				console.log(pair[0] + ", " + pair[1]);
 			  }
 			const response = await axios.post(
-				"https://backend.asteraporcelain.com/api/v1/homescreen/addSupportiveImagesToSection4",
+				`${baseUrl}homescreen/addSupportiveImagesToSection4`,
 				formData,
 				{
 					headers: {
@@ -200,7 +200,7 @@ const Title3 = () => {
 				console.log(pair[0] + ", " + pair[1]);
 			  }
 			const response = await axios.post(
-				"https://backend.asteraporcelain.com/api/v1/homescreen/deleteSupportiveImageFromSection4",
+				`${baseUrl}homescreen/deleteSupportiveImageFromSection4`,
 				formData,
 				{
 					headers: {

@@ -24,9 +24,9 @@ export function Discoversection1() {
   useEffect(() => {
     const fetchSectionData = async () => {
       try {
-		const response = await axios.get(
-			`${baseUrl}homescreen/getAllCollections`
-		);
+        const response = await axios.get(
+          `${baseUrl}homescreen/getAllCollections`
+        );
         if (
           response.data &&
           response.data.data &&
@@ -53,41 +53,40 @@ export function Discoversection1() {
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   const handleSave = async () => {
-	setLoading(true);
-  
-	try {
-	  const requestData = {
-		title: sectionTitle,
-		description: editorContent,
-	  };
-  
-	  if (selectedImage) {
-	
-		requestData.backgroundImage = selectedImage;
-	  }
-  
-	  const response = await axios.post(
-		'https://backend.asteraporcelain.com/api/v1/discoverScreen/updateSection1',
-		requestData,
-		{
-		  headers: {
-			'Content-Type': 'multipart/form-data',
-		  },
-		}
-	  );
-  
-	  console.log('Update successful:', response.data);
-	  setSaveSuccess(true);
-	} catch (error) {
-	  console.error('Error updating section:', error);
-	} finally {
-	  setLoading(false);
-	  setTimeout(() => {
-		setSaveSuccess(false);
-	  }, 3000);
-	}
+    setLoading(true);
+
+    try {
+      const requestData = {
+        title: sectionTitle,
+        description: editorContent,
+      };
+
+      if (selectedImage) {
+        requestData.backgroundImage = selectedImage;
+      }
+
+      const response = await axios.post(
+        `${baseUrl}discoverScreen/updateSection1`,
+        requestData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log("Update successful:", response.data);
+      setSaveSuccess(true);
+    } catch (error) {
+      console.error("Error updating section:", error);
+    } finally {
+      setLoading(false);
+      setTimeout(() => {
+        setSaveSuccess(false);
+      }, 3000);
+    }
   };
-  
+
   const handleCancel = () => {
     if (sectionData) {
       setSectionTitle(sectionData.title);
@@ -124,7 +123,7 @@ export function Discoversection1() {
             </div>
           </div>
           {loading ? (
-            <CircularProgress size={24} color="inherit" />
+            <CircularProgress size={24} color="inherit" className="absolute -mt-[3rem] ml-[86%]" />
           ) : (
             <button
               className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute top-[20rem] ml-[86%]"
@@ -134,7 +133,7 @@ export function Discoversection1() {
             </button>
           )}
           {saveSuccess && (
-            <div className="text-green-600 mt-2 absolute top-[25rem] ml-[85%]">
+            <div className="text-green-600 mt-2 absolute top-[22rem] ml-[85%]">
               Save successful!
             </div>
           )}
@@ -145,7 +144,7 @@ export function Discoversection1() {
             Cancel
           </button>
           {resetMessage && (
-            <div className="text-red-600 mt-2 absolute top-[25rem] ml-[85%]">
+            <div className="text-red-600 mt-2 absolute top-[22rem] ml-[80%]">
               {resetMessage}
             </div>
           )}
@@ -231,13 +230,13 @@ export function Discoversection1() {
                     alt="Uploaded"
                     className="w-auto h-40 object-cover rounded-lg mr-2"
                   />
-				) : sectionData && sectionData.backgroundImageUrl ? (
-					<img
-					  src={`${baseUrlImage}${sectionData.backgroundImageUrl}`}
-					  alt="Initial Image"
-					  className="w-auto h-40 object-cover rounded-lg mr-2"
-					/>
-				  ) : null}
+                ) : sectionData && sectionData.backgroundImageUrl ? (
+                  <img
+                    src={`${baseUrlImage}${sectionData.backgroundImageUrl}`}
+                    alt="Initial Image"
+                    className="w-auto h-40 object-cover rounded-lg mr-2"
+                  />
+                ) : null}
                 <div
                   {...getRootProps()}
                   className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center"

@@ -6,6 +6,7 @@ import { CircularProgress } from "@mui/material";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import Section6Update from "./Section6Update";
+import { baseUrl } from "../../../api/base_urls";
 
 const Section6 = () => {
 	const [section6Data, setSection6Data] = useState([]);
@@ -22,7 +23,7 @@ const Section6 = () => {
 		const fetchData = async () => {
 			try {
 				const response = await axios.get(
-					"https://backend.asteraporcelain.com/api/v1/homescreen/getAllCollections"
+					`${baseUrl}homescreen/getAllCollections`
 				);
 				if (
 					response.data &&
@@ -44,7 +45,7 @@ const Section6 = () => {
 	const fetchData = async () => {
 		try {
 			const response = await axios.get(
-				"https://backend.asteraporcelain.com/api/v1/homescreen/getAllCollections"
+				`${baseUrl}homescreen/getAllCollections`
 			);
 			if (
 				response.data &&
@@ -86,7 +87,7 @@ const Section6 = () => {
 			  }
 
 			const response = await axios.post(
-				"https://backend.asteraporcelain.com/api/v1/homescreen/addSection6Item",
+				`${baseUrl}homescreen/addSection6Item`,
 				formData,
 				{
 					headers: {
@@ -310,7 +311,7 @@ const Section6 = () => {
 			</div>
 			<hr
 				className="my-4 border-black border-empty border-1"
-				style={{ width: "350%" }}
+				style={{ width: "300%" }}
 			/>
 		</div>
 	);

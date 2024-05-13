@@ -9,7 +9,6 @@ import { baseUrl, baseUrlImage } from "../../../api/base_urls";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "react-router-dom";
 
-
 export function Section2() {
   const navigate = useNavigate();
   const [addSelectedImage, setAddSelectedImage] = useState("");
@@ -21,7 +20,7 @@ export function Section2() {
   const [editorAddContent, setEditorAddContent] = useState("");
   const [charCount, setCharCount] = useState(0);
   const [charAddCount, setCharAddCount] = useState(0);
-  
+
   const [selectedImage, setSelectedImage] = useState([]);
   const [title, setTitle] = useState("");
   const [imageTitle, setImageTitle] = useState("");
@@ -56,7 +55,7 @@ export function Section2() {
 
   const handleEditorAddChange = (content, delta, source, editor) => {
     setEditorAddContent(content);
-    setCharAddCount(editor.getLength() - 1); // Minus 1 to not count the trailing newline
+    setCharAddCount(editor.getLength() - 1);
   };
 
   const onDrop = (acceptedFiles) => {
@@ -208,13 +207,11 @@ export function Section2() {
       setTimeout(() => {
         setSaveSuccess(false);
       }, 3000);
-
     } catch (error) {
       setLoading(false);
       console.error("Error saving data:", error);
     }
   };
-
 
   const modules = {
     toolbar: [
@@ -226,13 +223,10 @@ export function Section2() {
       ["clean"],
     ],
     clipboard: {
-      // Extend default configuration to handle pasted text
       matchVisual: false,
     },
   };
 
-  // Quill formats to attach to editor
-  // Add your desired formats here
   const formats = [
     "header",
     "font",
@@ -248,7 +242,6 @@ export function Section2() {
     "image",
     "video",
   ];
-
 
   return (
     <div className="">
@@ -295,59 +288,56 @@ export function Section2() {
             </p>
           </div>
           <input
-                  className="p-2 w-[28rem] mt-[3rem] rounded-lg border-gray border-2"
-                  placeholder="TITLE"
-                  type="text"
-                  value={imageTitle}
-                  onChange={(e) => setImageTitle(e.target.value)}
-
-                  
-                />
-                <input
-                  className="mt-[1rem] p-2 w-[28rem] rounded-lg border-gray border-2"
-                  placeholder="AUTHOR"
-                 type="text"
-                 value={imageAuthor}
-                 onChange={(e) => setImageAuthor(e.target.value)}
-                  
-                />
-                <input
-                  className="mt-[1rem] p-2 w-[28rem] rounded-lg border-gray border-2"
-                  placeholder="DATE"
-                  type="text"
-                  value={imageDate}
-                  onChange={(e) => setImageDate(e.target.value)}
-                />
-           <div className="flex flex-col">
-              <ReactQuill
-                theme="snow"
-                value={editorAddContent}
-                onChange={handleEditorAddChange}
-                modules={modules}
-                formats={formats}
-                placeholder="Write a short introduction."
-                style={{
-                  height: "200px",
-                  marginBottom: "40px",
-                  marginTop: "10px",
-                  width: "650px",
-                }}
-              />
-              <div className="text-sm ml-1 text-gray-600">
-                {`${maxChars - charCount} characters left`}
-              </div>
-              </div>
-              {loading ? (
-                    <CircularProgress size={24} color="inherit" />
-                  ) : (
-                    <button
-                      className="text-white bg-purple-600 rounded-lg px-5 py-2.5"
-                      onClick={() => handleAdd()}
-                    >
-                      Add
-                    </button>
-                  )}
-                
+            className="p-2 w-[28rem] mt-[3rem] rounded-lg border-gray border-2"
+            placeholder="TITLE"
+            type="text"
+            value={imageTitle}
+            onChange={(e) => setImageTitle(e.target.value)}
+          />
+          <input
+            className="mt-[1rem] p-2 w-[28rem] rounded-lg border-gray border-2"
+            placeholder="AUTHOR"
+            type="text"
+            value={imageAuthor}
+            onChange={(e) => setImageAuthor(e.target.value)}
+          />
+          <input
+            className="mt-[1rem] p-2 w-[28rem] rounded-lg border-gray border-2"
+            placeholder="DATE"
+            type="text"
+            value={imageDate}
+            onChange={(e) => setImageDate(e.target.value)}
+          />
+          <div className="flex flex-col">
+            <ReactQuill
+              theme="snow"
+              value={editorAddContent}
+              onChange={handleEditorAddChange}
+              modules={modules}
+              formats={formats}
+              placeholder="Write a short introduction."
+              style={{
+                height: "200px",
+                marginBottom: "40px",
+                marginTop: "10px",
+                width: "650px",
+              }}
+            />
+            <div className="text-sm ml-1 text-gray-600">
+              {`${maxChars - charCount} characters left`}
+            </div>
+          </div>
+          {loading ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            <button
+              className="text-white bg-purple-600 rounded-lg px-5 py-2.5"
+              onClick={() => handleAdd()}
+            >
+              Add
+            </button>
+          )}
+          
         </div>
       </div>
 
@@ -358,14 +348,12 @@ export function Section2() {
         Array.isArray(sectionData.blogs) &&
         sectionData.blogs.map((blog, index) => (
           <div key={index} className="flex ">
-            <div className="w-1/3">
-            </div>
+            <div className="w-1/3"></div>
             <div className="w-auto mt-[2rem] -ml-[8rem] flex">
-             
               <div className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center whitespace-nowrap">
-              <p className="text-lg text-black-800 font-bold my-2">
-                Blog {index + 1}
-              </p>
+                <p className="text-lg text-black-800 font-bold my-2">
+                  Blog {index + 1}
+                </p>
                 {selectedImage && selectedImage[index] && (
                   <img
                     src={URL.createObjectURL(selectedImage[index])}
@@ -512,13 +500,6 @@ export function Section2() {
             </div>
           </div>
         ))}
-
-
-
-
-
-
-      
     </div>
   );
 }

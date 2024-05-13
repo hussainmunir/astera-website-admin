@@ -21,15 +21,14 @@ export function Section1() {
   const [loading, setLoading] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [resetMessage, setResetMessage] = useState("");
+  const [addButton, setAddButton] = useState("");
 
   const onDrop = useCallback((acceptedFiles) => {
     setSelectedImage(acceptedFiles[0]);
   }, []);
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
-  const handleToggleChange = () => {
-    setInputEnabled(!inputEnabled); // Toggle the input field enable/disable state
-  };
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,6 +43,12 @@ export function Section1() {
           setEditorContent(response.data.data.section1.subTitle);
           setInputText(response.data.data.section1.buttonText);
           setSectionData(response.data.data.section1);
+
+          if (response.data.data.section1.addButton === true) {
+            setInputEnabled(true);
+          } else {
+            setInputEnabled(false);
+          }
         }
       } catch (error) {
         console.log("Error fetching data:", error);
@@ -55,25 +60,21 @@ export function Section1() {
   const fetchData = async () => {
     try {
       const response = await axios.get(`${baseUrl}blogsScreen/getBlogsPage`);
-      if (
-        response.data &&
-        response.data.data &&
-        response.data.data.section1
-      ) {
+      if (response.data && response.data.data && response.data.data.section1) {
         setTitle(response.data.data.section1.title);
         setEditorContent(response.data.data.section1.subTitle);
         setInputText(response.data.data.section1.buttonText);
         setSectionData(response.data.data.section1);
+        
       }
     } catch (error) {
       console.log("Error fetching data:", error);
     }
   };
 
-  // Handler for the editor change
   const handleEditorChange = (content, delta, source, editor) => {
     setEditorContent(content);
-    setCharCount(editor.getLength() - 1); // Minus 1 to not count the trailing newline
+    setCharCount(editor.getLength() - 1);
   };
 
   const handleSave = async () => {
@@ -84,12 +85,18 @@ export function Section1() {
     formData.append("buttonText", inputText);
 
     if (selectedImage) {
-      formData.append("backgroundImage", selectedImage); // Use "backgroundImage" instead of "backgroundImageUrl"
+      formData.append("backgroundImage", selectedImage);
     }
 
+    if (inputEnabled) {
+      setAddButton(true);
+    } else {
+      setAddButton(false);
+    }
+    formData.append("addButton", addButton);
     try {
       const response = await axios.post(
-        `${baseUrl}blogsScreen/updateSection1`, // Use `${baseUrl}blogsScreen/updateSection1` instead of hardcoded URL
+        `${baseUrl}blogsScreen/updateSection1`,
         formData,
         {
           headers: {
@@ -122,6 +129,19 @@ export function Section1() {
       fetchData();
     }
   };
+
+
+  const handleToggleChange = () => {
+    setInputEnabled(!inputEnabled);
+
+    if (!addButton && !inputEnabled) {
+      setAddButton("true");
+    } else if (addButton && inputEnabled) {
+      setAddButton("false");
+    }
+  };
+
+
   return (
     <div className="">
       <div className="flex flex-col mt-[2rem] ml-[2rem]">
@@ -140,9 +160,7 @@ export function Section1() {
           Cancel
         </button>
         {resetMessage && (
-          <div className="text-red-600 mt-2 absolute top-[25rem] ml-[85%]">
-            {resetMessage}
-          </div>
+          <div className="text-red-600 mt-[4rem] absolute">{resetMessage}</div>
         )}
         {loading ? (
           <CircularProgress size={24} color="inherit" />
@@ -155,7 +173,7 @@ export function Section1() {
           </button>
         )}
         {saveSuccess && (
-          <div className="text-green-600 mt-2 absolute top-[25rem] ml-[85%]">
+          <div className="text-green-600 absolute mt-[4rem]">
             Save successful!
           </div>
         )}

@@ -115,7 +115,7 @@ export function Section2() {
     }
     try {
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/noveltiesCollectionScreen/updateSection2Item",
+        `${baseUrl}noveltiesCollectionScreen/updateSection2Item`,
         requestData,
         {
           headers: {
@@ -180,7 +180,7 @@ export function Section2() {
 
     try {
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/noveltiesCollectionScreen/addSection2Item",
+        `${baseUrl}noveltiesCollectionScreen/addSection2Item`,
         addRequestData,
         {
           headers: {
@@ -213,7 +213,7 @@ export function Section2() {
       const itemId = products[index]._id;
       console.log(itemId);
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/noveltiesCollectionScreen/deleteSection2Item",
+        `${baseUrl}noveltiesCollectionScreen/deleteSection2Item`,
         { itemId }
       );
       console.log("Image deleted successfully:", response.data);

@@ -50,7 +50,7 @@ const Section1 = () => {
 
     try {
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/collectionScreen/updateSection1",
+        `${baseUrl}collectionScreen/updateSection1`,
         requestData,
         {
           headers: {

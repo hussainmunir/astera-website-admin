@@ -54,7 +54,7 @@ export function Section1({ id, data1 }) {
 
     try {
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/productsScreen/updateSection1",
+        `${baseUrl}productsScreen/updateSection1`,
         formData,
         {
           headers: {

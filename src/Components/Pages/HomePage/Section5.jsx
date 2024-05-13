@@ -3,6 +3,7 @@ import axios from "axios";
 import { useDropzone } from "react-dropzone";
 import uploadsvg from "../../../Images/UploadIcons.png";
 import { CircularProgress } from "@mui/material";
+import { baseUrl, baseUrlImage } from "../../../api/base_urls";
 
 const Section5 = () => {
   const [section5Data, setSection5Data] = useState([]);
@@ -22,7 +23,7 @@ const Section5 = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "https://backend.asteraporcelain.com/api/v1/homescreen/getAllCollections"
+        `${baseUrl}homescreen/getAllCollections`
       );
       if (response.data && response.data.data) {
         const section5Images =
@@ -44,7 +45,7 @@ const Section5 = () => {
       formData.append("imageSubtitle", newSubtitle);
 
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/homescreen/updateSection5",
+        `${baseUrl}homescreen/updateSection5`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -90,7 +91,7 @@ const Section5 = () => {
 			  }
 
 			const response = await axios.post(
-				"https://backend.asteraporcelain.com/api/v1/homescreen/removeSection5Item",
+				`${baseUrl}homescreen/removeSection5Item`,
 				formData,
 				{
 					headers: {
@@ -120,7 +121,7 @@ const Section5 = () => {
       formData.append("imageSubtitle", newItemData.imageSubtitle);
 
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/homescreen/addSection5Item",
+        `${baseUrl}homescreen/addSection5Item`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -221,7 +222,7 @@ const Section5 = () => {
           <div className="w-full mt-4  flex items-center">
             <label className="mr-2 font-semibold">Image</label>
             <img
-              src={`https://backend.asteraporcelain.com/${item.imageUrl}`}
+              src={`${baseUrlImage}${item.imageUrl}`}
               alt="Uploaded"
               className="w-auto whitespace-nowrap h-40 object-cover rounded-lg mr-4  ml-[30rem]"
             />

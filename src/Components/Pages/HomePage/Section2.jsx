@@ -1,3 +1,6 @@
+
+
+// export default Section2;
 import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import ReactQuill from "react-quill";
@@ -6,7 +9,7 @@ import uploadsvg from "../../../Images/UploadIcons.png";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { CircularProgress, Switch } from "@mui/material";
 import axios from "axios";
-import { baseUrlImage } from "../../../api/base_urls";
+import { baseUrl, baseUrlImage } from "../../../api/base_urls";
 
 export const Section2 = () => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -29,7 +32,7 @@ export const Section2 = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "https://backend.asteraporcelain.com/api/v1/homescreen/getAllCollections"
+          `${baseUrl}homescreen/getAllCollections`
         );
         if (
           response.data &&
@@ -42,8 +45,15 @@ export const Section2 = () => {
           setSubtitle(section2Data.subtitle);
           setDescription(section2Data.description);
           setButtonText(section2Data.buttonText);
+          
+          if (section2Data.addButton === true) {
+            setInputEnabled(true);
+          } else {
+            setInputEnabled(false);
+          }
+          
           setSelectedImage(
-            `https://backend.asteraporcelain.com/${section2Data.backgroundImageUrl}`
+            `${baseUrlImage}${section2Data.backgroundImageUrl}`
           );
           setOriginalData(section2Data); // Store original fetched data
           setEditorContent(section2Data.description);
@@ -95,10 +105,15 @@ export const Section2 = () => {
       formData.append("title", title);
       formData.append("subtitle", subtitle);
       formData.append("description", description);
-      formData.append("buttonText", buttonText); // Include buttonText in formData
-
+      formData.append("buttonText", buttonText);
+      if (inputEnabled) {
+        setAddButton(true);
+      } else {
+        setAddButton(false);
+      }
+      formData.append("addButton", addButton);
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/homescreen/updateSection2",
+        `${baseUrl}homescreen/updateSection2`,
         formData,
         {
           headers: {
@@ -108,6 +123,7 @@ export const Section2 = () => {
       );
 
       console.log("Save successful:", response.data);
+
       setSaveSuccess(true); // Set save success message
       setTimeout(() => {
         setSaveSuccess("");
@@ -146,19 +162,19 @@ export const Section2 = () => {
           <CircularProgress size={24} color="inherit" />
         ) : (
           <button
-            className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute top-[260rem] ml-[90%]"
+            className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute top-[247rem] ml-[90%]"
             onClick={handleSave}
           >
             Save
           </button>
         )}
         {saveSuccess && (
-          <div className="text-green-600 mt-2 absolute top-[265rem] ml-[85%]">
+          <div className="text-green-600 mt-2 absolute top-[250rem] ml-[85%]">
             Save successful!
           </div>
         )}
         <button
-          className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute top-[260rem] ml-[85%]"
+          className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute top-[247rem] ml-[85%]"
           onClick={handleCancel}
         >
           Cancel

@@ -39,6 +39,28 @@ export const Section1 = () => {
     fetchSectionData();
   }, []);
 
+
+
+  const fetchSectionData = async () => {
+    try {
+      const response = await axios.get(
+        `${baseUrl}catalogsScreen/getCatalogsPage`
+      );
+      if (
+        response.data &&
+        response.data.data &&
+        response.data.data.section1
+      ) {
+        const section1Data = response.data.data.section1;
+        setSectionData(section1Data);
+        setSectionTitle(section1Data.title);
+        setSectionSubTitle(section1Data.subTitle);
+      }
+    } catch (error) {
+      console.error("Error fetching section data:", error);
+    }
+  };
+
   const onDrop = useCallback((acceptedFiles) => {
     setSelectedImage(acceptedFiles[0]);
   }, []);
@@ -58,7 +80,7 @@ export const Section1 = () => {
 		  }
     try {
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/catalogsScreen/updateSection1",
+        `${baseUrl}catalogsScreen/updateSection1`,
         requestData,
         {
           headers: {
@@ -75,7 +97,7 @@ export const Section1 = () => {
       setTimeout(() => {
         setSaveSuccess(false);
       }, 3000);
-    }
+    }fetchSectionData();
   };
 
   const handleCancel = () => {

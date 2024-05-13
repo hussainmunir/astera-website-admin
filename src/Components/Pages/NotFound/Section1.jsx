@@ -4,7 +4,7 @@ import { useDropzone } from "react-dropzone";
 import uploadsvg from "../../../Images/UploadIcons.png";
 import arrow from "../../../assets/rightArrow.jpeg";
 import axios from "axios";
-import { baseUrlImage } from "../../../api/base_urls";
+import { baseUrl, baseUrlImage } from "../../../api/base_urls";
 
 export function Section1() {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -20,7 +20,7 @@ export function Section1() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "https://backend.asteraporcelain.com/api/v1/notFoundScreen/getNotFoundPage"
+          `${baseUrl}notFoundScreen/getNotFoundPage`
         );
         console.log("response", response);
         if (
@@ -78,7 +78,7 @@ export function Section1() {
       }
       console.log("selectedImage",selectedImage)
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/notFoundScreen/updateSection1",
+        `${baseUrl}notFoundScreen/updateSection`,
         requestData,
         {
           headers: {

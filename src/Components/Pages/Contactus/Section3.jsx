@@ -6,7 +6,7 @@ import uploadsvg from "../../../Images/UploadIcons.png";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import AddIcon from "@mui/icons-material/Add";
 import Button from "@mui/material/Button";
-import { baseUrl,baseUrlImage } from "../../../api/base_urls";
+import { baseUrl, baseUrlImage } from "../../../api/base_urls";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import { IconButton } from "@mui/material";
@@ -54,58 +54,81 @@ const Section3 = () => {
   }, []);
 
 
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        `${baseUrl}homescreen/getAllCollections`
+      );
+      if (
+        response.data &&
+        response.data.data &&
+        response.data.data.contactPage &&
+        response.data.data.contactPage.section3
+      ) {
+        const { section3 } = response.data.data.contactPage;
+        setSectionData(section3);
+        setTitle(section3.title);
+        setEditorContent(section3.subTitle);
+        setBackgroundColor(section3.backgroundColor);
+        setFields(
+          section3 && section3.contactFields && section3.contactFields
+        );
+      }
+    } catch (error) {
+      console.log("Error fetching data:", error);
+    }
+  };
+
   const handleAddFields = () => {
     setFields([...fields, { name: "", type: "" }]);
   };
 
-
   const handleSave = async () => {
     setLoading(true);
-  
+
     // const requestData = new FormData();
     // requestData.append("title", title);
     // requestData.append("subTitle", editorContent);
     // requestData.append("backgroundColor", backgroundColor);
-    
+
     // Append each contact field individually
     // fields.forEach((field, index) => {
     //   requestData.append(`contactFields[${index}][name]`, field.name);
     //   requestData.append(`contactFields[${index}][type]`, field.type);
     // });
 
-    const updatedFields = fields.map(field => {
+    const updatedFields = fields.map((field) => {
       // Extract only the "name" and "type" properties
       const { name, type } = field;
       // Create a new object with the extracted properties
       return { name, type };
-  });
-  // requestData.append("contactFields", updatedFields);
+    });
+    // requestData.append("contactFields", updatedFields);
 
-  const requestData = {
-    title: title,
-    subTitle: editorContent,
-    backgroundColor: backgroundColor,
-    contactFields: updatedFields,
-  };
+    const requestData = {
+      title: title,
+      subTitle: editorContent,
+      backgroundColor: backgroundColor,
+      contactFields: updatedFields,
+    };
 
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  };
-  
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
     if (selectedImage) {
       requestData.append("backgroundImage", selectedImage);
     }
 
-  
     try {
-      console.log("fields",fields)
-     const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/contactScreen/updateSection3",
+      console.log("fields", fields);
+      const response = await axios.post(
+        `${baseUrl}contactScreen/updateSection3`,
         requestData,
         config
-     );
+      );
       console.log("Update successful:", response.data);
       setSaveSuccess(true);
     } catch (error) {
@@ -115,11 +138,8 @@ const Section3 = () => {
       setTimeout(() => {
         setSaveSuccess(false);
       }, 3000);
-    }
+    }fetchData();
   };
-  
-  
-  
 
   const handleCancel = () => {
     if (sectionData) {
@@ -140,7 +160,7 @@ const Section3 = () => {
   const updateFieldTitle = (name, index) => {
     const updatedFields = [...fields];
     updatedFields[index].name = name;
-    console.log("name",name)
+    console.log("name", name);
     setFields(updatedFields);
   };
 
@@ -155,7 +175,6 @@ const Section3 = () => {
     updatedFields.splice(index, 1);
     setFields(updatedFields);
   };
-  
 
   const onDrop = useCallback((acceptedFiles) => {
     setSelectedImage(acceptedFiles[0]);
@@ -195,24 +214,23 @@ const Section3 = () => {
     "number",
     "date",
     "time",
+  ];
 
-];
-
-const formats = [
-  "header",
-  "font",
-  "size",
-  "bold",
-  "italic",
-  "underline",
-  "strike",
-  "blockquote",
-  "list",
-  "bullet",
-  "link",
-  "image",
-  "video",
-];
+  const formats = [
+    "header",
+    "font",
+    "size",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "link",
+    "image",
+    "video",
+  ];
   return (
     <div>
       <div className="max-w-lg ml-[2rem] mt-[2rem]">
@@ -224,18 +242,19 @@ const formats = [
             <div className="mt-1 w-full text-sm leading-5 text-ellipsis text-slate-600 max-md:max-w-full">
               Update desired photo and details here.
             </div>
-          </div>{loading ? (
-            <CircularProgress size={24} color="inherit" />
+          </div>
+          {loading ? (
+            <CircularProgress size={24} color="inherit" className="absolute ml-[87rem]"/>
           ) : (
             <button
-            className="text-white bg-purple-600 rounded-lg px-3 py-2 absolute ml-[87rem]"
+              className="text-white bg-purple-600 rounded-lg px-3 py-2 absolute ml-[87rem]"
               onClick={handleSave}
             >
               Save
             </button>
           )}
           {saveSuccess && (
-            <div className="text-green-600 mt-2 absolute top-[25rem] ml-[85%]">
+            <div className="text-green-600 absolute mt-[5rem] ml-[87rem]">
               Save successful!
             </div>
           )}
@@ -246,11 +265,10 @@ const formats = [
             Cancel
           </button>
           {resetMessage && (
-            <div className="text-red-600 mt-2 absolute top-[25rem] ml-[85%]">
-              {resetMessage}
+            <div className="text-red-600 absolute ml-[81rem] mt-[5rem]">
+             Fields Reset Successfully
             </div>
           )}
-          
         </div>
 
         <div className="flex items-center">
@@ -264,7 +282,6 @@ const formats = [
               placeholder="HEADING"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-
             />
           </div>
         </div>
@@ -328,19 +345,19 @@ const formats = [
           </p>
         </div>
         <div className="w-full mt-[2rem] ml-[16rem] flex justify-start">
-        {selectedImage ? (
-              <img
-                src={URL.createObjectURL(selectedImage)}
-                alt="Uploaded"
-                className="w-auto h-40 object-cover rounded-lg mr-2"
-              />
-            ) : sectionData && sectionData.backgroundImageUrl ? (
-              <img
-                src={`${baseUrlImage}${sectionData.backgroundImageUrl}`}
-                alt="Initial Image"
-                className="w-auto h-40 object-cover rounded-lg mr-2"
-              />
-            ) : null}
+          {selectedImage ? (
+            <img
+              src={URL.createObjectURL(selectedImage)}
+              alt="Uploaded"
+              className="w-auto h-40 object-cover rounded-lg mr-2"
+            />
+          ) : sectionData && sectionData.backgroundImageUrl ? (
+            <img
+              src={`${baseUrlImage}${sectionData.backgroundImageUrl}`}
+              alt="Initial Image"
+              className="w-auto h-40 object-cover rounded-lg mr-2"
+            />
+          ) : null}
           <div
             {...getRootProps()}
             className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col items-center"
@@ -363,7 +380,7 @@ const formats = [
             htmlFor="fields"
             className="block text-lg font-semibold mb-1 mr-[32rem] whitespace-nowrap"
           >
-           Update Fields
+            Update Fields
           </label>
           <div>
             {fields.map((item, index) => (
@@ -375,51 +392,49 @@ const formats = [
                   value={item.name}
                   onChange={(e) => updateFieldTitle(e.target.value, index)}
                 />
-               <select
-  className="w-auto border border-gray-300 rounded-lg px-3 py-2 mx-5 focus:outline-none focus:border-black mb-2"
-  value={item.type}
-  onChange={(e) => updateFieldType(e.target.value, index)}
->
-  {textInputTypes.map((format, formatIndex) => (
-    <option key={formatIndex} value={format}>
-      {format}
-    </option>
-  ))}
-</select>
+                <select
+                  className="w-auto border border-gray-300 rounded-lg px-3 py-2 mx-5 focus:outline-none focus:border-black mb-2"
+                  value={item.type}
+                  onChange={(e) => updateFieldType(e.target.value, index)}
+                >
+                  {textInputTypes.map((format, formatIndex) => (
+                    <option key={formatIndex} value={format}>
+                      {format}
+                    </option>
+                  ))}
+                </select>
                 <IconButton
-                className="absolute bottom-1 bg-white"
-                onClick={() => removeField(index)}
-              >
-                <CloseIcon />
-              </IconButton>
+                  className="absolute bottom-1 bg-white"
+                  onClick={() => removeField(index)}
+                >
+                  <CloseIcon />
+                </IconButton>
               </div>
             ))}
           </div>
         </div>
         <label
-            htmlFor="fields"
-            className="block text-lg font-semibold mb-1 mr-[32rem] whitespace-nowrap"
-          >
-           Add New Field
-          </label>
-        
+          htmlFor="fields"
+          className="block text-lg font-semibold mb-1 mr-[32rem] whitespace-nowrap"
+        >
+          Add New Field
+        </label>
+
         {/* Add button */}
         <div>
-      <div className="flex mt-4 ml-[39rem]">
-        <div className="flex flex-row justify-center">
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAddFields}
-          >
-            Add <AddIcon />
-          </Button>
+          <div className="flex mt-4 ml-[39rem]">
+            <div className="flex flex-row justify-center">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleAddFields}
+              >
+                Add <AddIcon />
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-      </div>
-
-     
 
       <div className="border border-l border-black m-[2rem] "></div>
     </div>

@@ -4,7 +4,7 @@ import { useDropzone } from "react-dropzone";
 import { CircularProgress } from "@mui/material";
 import uploadsvg from "../../../Images/UploadIcons.png";
 import ReactQuill from "react-quill";
-import { baseUrlImage } from "../../../api/base_urls";
+import { baseUrl, baseUrlImage } from "../../../api/base_urls";
 
 const Section6Update = ({ item, index, fetchData }) => {
 	const [section6Data, setSection6Data] = useState([]);
@@ -80,7 +80,7 @@ const Section6Update = ({ item, index, fetchData }) => {
 			  }
 
 			const response = await axios.post(
-				"https://backend.asteraporcelain.com/api/v1/homescreen/removeSection6Item",
+				`${baseUrl}homescreen/removeSection6Item`,
 				formData,
 				{
 					headers: {
@@ -411,7 +411,7 @@ const Section6Update = ({ item, index, fetchData }) => {
 				
 			<hr
 				className="my-4 border-gray-200 border-empty border-1 w-full"
-				style={{ width: '250%' }}
+				style={{ width: '300%' }}
 			/>
 		</div>
 	);

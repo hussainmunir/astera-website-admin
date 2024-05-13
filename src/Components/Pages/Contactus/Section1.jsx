@@ -62,7 +62,7 @@ const Section1 = () => {
 
     try {
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/contactScreen/updateSection1",
+        `${baseUrl}contactScreen/updateSection1`,
         requestData,
         {
           headers: {
@@ -108,7 +108,7 @@ const Section1 = () => {
             </div>
           </div>
           {loading ? (
-            <CircularProgress size={24} color="inherit" />
+            <CircularProgress size={24} color="inherit" className="absolute ml-[87rem]"/>
           ) : (
             <button
             className="text-white bg-purple-600 rounded-lg px-3 py-2 absolute ml-[87rem]"
@@ -118,7 +118,7 @@ const Section1 = () => {
             </button>
           )}
           {saveSuccess && (
-            <div className="text-green-600 mt-2 absolute top-[25rem] ml-[85%]">
+            <div  className="text-green-600 bg-white rounded-lg px-3 py-2 mt-[7rem] absolute ml-[87rem]">
               Save successful!
             </div>
           )}
@@ -129,7 +129,7 @@ const Section1 = () => {
             Cancel
           </button>
           {resetMessage && (
-            <div className="text-red-600 mt-2 absolute top-[25rem] ml-[85%]">
+            <div className="text-red-600 absolute ml-[81rem] mt-[5rem]">
               {resetMessage}
             </div>
           )}

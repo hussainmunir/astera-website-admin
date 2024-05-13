@@ -91,7 +91,7 @@ const Section2 = () => {
       }
 
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/eventsScreen/updateSection2Item",
+        `${baseUrl}eventsScreen/updateSection2Item`,
         formData,
         {
           headers: {
@@ -153,7 +153,7 @@ const Section2 = () => {
       }
   
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/eventsScreen/addToSection2",
+        `${baseUrl}eventsScreen/addToSection2`,
         formData,
         {
           headers: {
@@ -188,7 +188,7 @@ const Section2 = () => {
     try {
       const itemId = index;
       const response = await axios.post(
-        "https://backend.asteraporcelain.com/api/v1/eventsScreen/deleteSection2Item",
+        `${baseUrl}eventsScreen/deleteSection2Item`,
         { itemId }
       );
       // Handle success response

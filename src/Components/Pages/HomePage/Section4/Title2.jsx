@@ -115,25 +115,25 @@ const Title2 = ({ fetchData }) => {
 		setSupportiveImages([]);
 	  };
 
-	const handleSave = async () => {
+	  const handleSave = async () => {
 		try {
 			setLoading(true);
 			const formData = new FormData();
-
+	
 			formData.append("title", title);
 			formData.append("subtitle", subtitle);
 			formData.append("description", editorContent);
-
+	
 			if (selectedImage) {
 				formData.append("backgroundImage", selectedImage);
 			}
 			if (supportiveImages) {
-				formData.append("supportiveImages", supportiveImages);
+				// Loop through each file in the supportiveImages array and append them individually
+				supportiveImages.forEach((image, index) => {
+					formData.append(`supportiveImages`, image);
+				});
 			}
-
-			for (let pair of formData.entries()) {
-				console.log(pair[0] + ", " + pair[1]);
-			  }
+	
 			const response = await axios.post(
 				"https://backend.asteraporcelain.com/api/v1/homescreen/addSection4Item",
 				formData,
@@ -143,16 +143,16 @@ const Title2 = ({ fetchData }) => {
 					},
 				}
 			);
-
+	
 			console.log("Save successful:", response.data);
-
+	
 			fetchData();
 			setSaveSuccess(true);
-
+	
 			setLoading(false);
-
+	
 			resetState();
-
+	
 			// Hide success message after 3 seconds (3000 milliseconds)
 			setTimeout(() => {
 				setSaveSuccess(false);
@@ -164,6 +164,7 @@ const Title2 = ({ fetchData }) => {
 			// Handle error scenarios, e.g., display an error message to the user
 		}
 	};
+	
 
 	const AddSupportiveImage = async () => {
 		try {

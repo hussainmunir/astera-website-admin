@@ -66,7 +66,7 @@ export function Discoversection2() {
 
 		try {
 			const response = await axios.post(
-				"https://backend.asteraporcelain.com/api/v1/discoverScreen/updateSection2",
+				`${baseUrl}discoverScreen/updateSection2`,
 				requestData,
 				{
 					headers: {
@@ -123,7 +123,7 @@ export function Discoversection2() {
 						</div>
 					</div>
 					{loading ? (
-						<CircularProgress size={24} color="inherit" />
+						<CircularProgress size={24} color="inherit" className="absolute ml-[86%]"/>
 					) : (
 						<button
 							className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute top-[60rem] ml-[86%]"

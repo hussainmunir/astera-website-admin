@@ -4,6 +4,7 @@ import Section2 from "./Title2";
 import Section3 from "./Title3";
 import React, { useCallback, useState, useEffect } from "react";
 import axios from "axios";
+import { baseUrl } from "../../../../api/base_urls";
 
 
 
@@ -17,7 +18,7 @@ import axios from "axios";
 			const fetchData = async () => {
 				try {
 					const response = await axios.get(
-						"https://backend.asteraporcelain.com/api/v1/homescreen/getAllCollections"
+						`${baseUrl}homescreen/getAllCollections`
 					);
 					if (
 						response.data &&
@@ -42,7 +43,7 @@ import axios from "axios";
 		const fetchData = async () => {
 			try {
 				const response = await axios.get(
-					"https://backend.asteraporcelain.com/api/v1/homescreen/getAllCollections"
+					`${baseUrl}homescreen/getAllCollections`
 				);
 				if (
 					response.data &&
