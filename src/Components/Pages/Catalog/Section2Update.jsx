@@ -225,10 +225,10 @@ export function Section2Update({sectionData, index, fetchData}) {
   });
 
   return (
-    <div className="w-full">
+    <div className="w-full" key={index}>
       
 
-          <div className="mx-5">
+          <div className="mx-5" key={index}>
             <div className="w-full text-lg font-semibold leading-7 text-gray-900 max-md:max-w-full">
              Update Section 2 Item
             </div>

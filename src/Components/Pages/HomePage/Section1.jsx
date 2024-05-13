@@ -37,6 +37,7 @@ export const Section1 = () => {
                     response.data.data.homePage.section1.length > 0
                 ) {
                     setSection1Data(response.data.data.homePage.section1);
+                    setOriginalData(response.data.data.homePage.section1);
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -59,6 +60,7 @@ export const Section1 = () => {
 				response.data.data.homePage.section1.length > 0
 			) {
 				setSection1Data(response.data.data.homePage.section1);
+                setOriginalData(response.data.data.homePage.section1);
 			}
 		} catch (error) {
 			console.error("Error fetching data:", error);
@@ -109,13 +111,54 @@ export const Section1 = () => {
         }
     };
 
+    const removeSlide = async (itemId) => {
+		try {
+			setLoading(true);
+			const formData = new FormData();
+			formData.append("itemId", itemId);
+
+			for (let pair of formData.entries()) {
+				console.log(pair[0] + ", " + pair[1]);
+			  }
+
+			const response = await axios.post(
+				"https://backend.asteraporcelain.com/api/v1/homescreen/removeSection1Item",
+				formData,
+				{
+					headers: {
+						"Content-Type": "multipart/form-data",
+					},
+				}
+			);
+
+			console.log("Delete successful:", response.data);
+			fetchData();
+			setSaveSuccess(true);
+
+			setLoading(false);
+
+			// Hide success message after 3 seconds (3000 milliseconds)
+			setTimeout(() => {
+				setSaveSuccess(false);
+			}, 3000);
+			// Optionally add logic to display a success message or perform other actions
+		} catch (error) {
+			setLoading(false);
+			console.error("Error deleteing slide:", error);
+			// Handle error scenarios, e.g., display an error message to the user
+		}
+	};
+
     const handleCancel = (itemId) => {
+        console.log("itemId",itemId);
+
         const itemToReset = originalData.find((item) => item._id === itemId);
         if (!itemToReset) return;
 
         const updatedSection1 = section1Data.map((item) =>
             item._id === itemId ? { ...itemToReset } : item
         );
+        console.log("updatedSection1",updatedSection1);
         setSection1Data(updatedSection1);
         setResetMessage("Fields reset successfully");
         setTimeout(() => {
@@ -132,12 +175,21 @@ export const Section1 = () => {
         },
     });
 
+    // const handleInputChangeForAdd = (e, field) => {
+    //     setNewItem({
+    //         ...newItem,
+    //         [field]: e.target.value,
+    //     });
+    // };
     const handleInputChangeForAdd = (e, field) => {
-        setNewItem({
-            ...newItem,
-            [field]: e.target.value,
-        });
-    };
+        const value = e.target.value;
+        setNewItem(prevItem => ({
+          ...prevItem,
+          [field]: value
+        }));
+      };
+      
+
 
     const handleAddItem = async () => {
         try {
@@ -167,6 +219,7 @@ export const Section1 = () => {
                 description: "",
                 backgroundImage: null,
             });
+            setSelectedImageForAdd(null);
             setTimeout(() => {
                 setSaveSuccess(false);
             }, 3000);
@@ -273,6 +326,12 @@ export const Section1 = () => {
                     >
                         Cancel
                     </button>
+                    <button
+                        className="text-black bg-white border rounded-lg px-5 py-2.5"
+                        onClick={() => removeSlide(item._id)}
+                    >
+                        Delete Slide
+                    </button>
                     {resetMessage && (
                         <div className="text-red-600 ml-4">{resetMessage}</div>
                     )}
@@ -321,9 +380,9 @@ export const Section1 = () => {
                     />
                 </div>
                 <div className="w-full ml-[32rem] mt-4  flex items-center">
-                    {newItem.backgroundImage && (
+                    {selectedImageForAdd && (
                         <img
-                            src={URL.createObjectURL(newItem.backgroundImage)}
+                            src={URL.createObjectURL(selectedImageForAdd)}
                             alt="Uploaded Image"
                             className="w-full mt-2 rounded-lg"
                             style={{ maxHeight: "200px" }}

@@ -23,38 +23,52 @@ import { useState, useEffect } from 'react';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-	const jwt = localStorage.getItem("jwt");
     useEffect(() => {
-		console.log("localStorage.getItem", localStorage.getItem("jwt"))
-        if (jwt) {
+        console.log("localStorage.getItem", localStorage.getItem("jwt"))
+        const jwt = localStorage.getItem("jwt");
+
+        if (jwt?.length > 0 && jwt !== "null") {
+            console.log("coming in jwt", jwt)
             setIsLoggedIn(true);
         }
         else {
             setIsLoggedIn(false);
         }
-    }, []); 
+        console.log("isLoggedIn", isLoggedIn)
+    }, []);
 
     return (
         <BrowserRouter>
             <CollectionsProvider>
-			<Navbar />
+                <Navbar />
                 <Routes>
                     <Route path="/login" element={<Login />} />
-                    <Route path="/" element={localStorage.getItem("jwt") ? <HomePage /> : <Navigate to="/login" />} />
-                    <Route path="/collection" element={isLoggedIn ? <Collection /> : <Navigate to="/login" />} />
-                    <Route path="/newcollection" element={isLoggedIn ? <NewCollection /> : <Navigate to="/login" />} />
-                    <Route path="/novelties" element={isLoggedIn ? <Novelties /> : <Navigate to="/login" />} />
-                    <Route path="/timeless" element={isLoggedIn ? <Timeless /> : <Navigate to="/login" />} />
-                    <Route path="/contact" element={isLoggedIn ? <Contactus /> : <Navigate to="/login" />} />
-                    <Route path="/discover" element={isLoggedIn ? <Discover /> : <Navigate to="/login" />} />
-                    <Route path="/catalog" element={isLoggedIn ? <Catalog /> : <Navigate to="/login" />} />
-                    <Route path="/product" element={isLoggedIn ? <Product /> : <Navigate to="/login" />} />
-                    <Route path="/event" element={isLoggedIn ? <Event /> : <Navigate to="/login" />} />
-                    <Route path="/privacyPolicy" element={isLoggedIn ? <PrivacyPolicy /> : <Navigate to="/login" />} />
-                    <Route path="/termsAndConditions" element={isLoggedIn ? <TermsAndConditions /> : <Navigate to="/login" />} />
-                    <Route path="/notFound" element={isLoggedIn ? <NotFound /> : <Navigate to="/login" />} />
-                    <Route path="/blog" element={isLoggedIn ? <Blog /> : <Navigate to="/login" />} />
-                    <Route path="/BlogDetail/:id" element={isLoggedIn ? <BlogDetail /> : <Navigate to="/login" />} />
+                    <Route
+                        path="/"
+                        element={
+                            isLoggedIn ? (
+                                // Log the value of isLoggedIn to confirm its value
+                                console.log("User is logged in:", isLoggedIn) || <HomePage />
+                            ) : (
+                                // Log the value of isLoggedIn to confirm its value
+                                console.log("User is not logged in:", isLoggedIn) || <Login />
+                            )
+                        }
+                    />
+                    <Route path="/collection" element={isLoggedIn ? <Collection /> : <Login />} />
+                    <Route path="/newcollection" element={isLoggedIn ? <NewCollection /> : <Login />} />
+                    <Route path="/novelties" element={isLoggedIn ? <Novelties /> : <Login />} />
+                    <Route path="/timeless" element={isLoggedIn ? <Timeless /> : <Login />} />
+                    <Route path="/contact" element={isLoggedIn ? <Contactus /> : <Login />} />
+                    <Route path="/discover" element={isLoggedIn ? <Discover /> : <Login />} />
+                    <Route path="/catalog" element={isLoggedIn ? <Catalog /> : <Login />} />
+                    <Route path="/product" element={isLoggedIn ? <Product /> : <Login />} />
+                    <Route path="/event" element={isLoggedIn ? <Event /> : <Login />} />
+                    <Route path="/privacyPolicy" element={isLoggedIn ? <PrivacyPolicy /> : <Login />} />
+                    <Route path="/termsAndConditions" element={isLoggedIn ? <TermsAndConditions /> : <Login />} />
+                    <Route path="/notFound" element={isLoggedIn ? <NotFound /> : <Login />} />
+                    <Route path="/blog" element={isLoggedIn ? <Blog /> : <Login />} />
+                    <Route path="/BlogDetail/:id" element={isLoggedIn ? <BlogDetail /> : <Login />} />
                 </Routes>
             </CollectionsProvider>
         </BrowserRouter>

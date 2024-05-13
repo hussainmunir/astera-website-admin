@@ -33,6 +33,7 @@ export const Login = () => {
         const { jwt } = response.data;
         localStorage.setItem("jwt", jwt);
         navigate("/");
+        window.location.reload();
       } else {
         setError("Invalid username or password");
       }

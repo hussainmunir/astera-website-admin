@@ -52,10 +52,10 @@ export const Section1 = () => {
       title: sectionTitle,
       subTitle: sectionSubTitle,
     };
+    
     if (selectedImage) {
-      requestData.append("backgroundImage", selectedImage);
-    }
-
+			requestData.backgroundImage = selectedImage;
+		  }
     try {
       const response = await axios.post(
         "https://backend.asteraporcelain.com/api/v1/catalogsScreen/updateSection1",
@@ -110,7 +110,7 @@ export const Section1 = () => {
               className="text-white bg-purple-600 rounded-lg px-3 py-2 absolute ml-[87rem]"
               onClick={handleSave}
             >
-              Save
+              Update
             </button>
           )}
           {saveSuccess && (

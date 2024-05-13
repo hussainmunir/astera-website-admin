@@ -370,7 +370,7 @@ const Section4 = ({ index, item, fetchData }) => {
 
 	return (
 		<>
-			<div>
+			<div key={index}>
 				<div className="max-w-lg ml-[2rem] mt-[2rem]">
 					<div className="hidden md:flex items-center justify-between mb-[1rem]">
 						<div className="w-full flex flex-col">

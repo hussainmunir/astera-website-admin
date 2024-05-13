@@ -79,6 +79,39 @@ const Section5 = () => {
     }, 3000);
   };
 
+  const removeItem = async (itemId) => {
+		try {
+			setLoading(true);
+			const formData = new FormData();
+			formData.append("itemId", itemId);
+
+			for (let pair of formData.entries()) {
+				console.log(pair[0] + ", " + pair[1]);
+			  }
+
+			const response = await axios.post(
+				"https://backend.asteraporcelain.com/api/v1/homescreen/removeSection5Item",
+				formData,
+				{
+					headers: {
+						"Content-Type": "multipart/form-data",
+					},
+				}
+			);
+
+			console.log("Delete successful:", response.data);
+			fetchData();
+
+			setLoading(false);
+
+			// Optionally add logic to display a success message or perform other actions
+		} catch (error) {
+			setLoading(false);
+			console.error("Error deleteing slide:", error);
+			// Handle error scenarios, e.g., display an error message to the user
+		}
+	};
+
   const handleAddItem = async () => {
     try {
       const formData = new FormData();
@@ -236,6 +269,12 @@ const Section5 = () => {
             onClick={() => handleCancel(item._id)}
           >
             Cancel
+          </button>
+          <button
+            className="text-black bg-white border-2 border-black rounded-lg px-5 py-2.5 mt-4 ml-4"
+            onClick={() => removeItem(item._id)}
+          >
+            Remove
           </button>
           {/* Reset message */}
           {resetMessage && (

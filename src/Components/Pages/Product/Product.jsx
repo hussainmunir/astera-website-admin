@@ -5,9 +5,13 @@ import Section3 from "./Section3";
 import Section1 from "./Section1";
 import { baseUrl } from "../../../api/base_urls";
 import { Button } from "@mui/material";
+import { CircularProgress } from "@mui/material";
+
 
 export function Product() {
   const [products, setProducts] = useState([]);
+	const [loading, setLoading] = useState(false);
+
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -86,12 +90,45 @@ export function Product() {
       console.error('Error:', error);
     }
   };
+
+  const removeProduct = async (itemId) => {
+		try {
+			setLoading(true);
+			const formData = new FormData();
+			formData.append("productId", itemId);
+
+			for (let pair of formData.entries()) {
+				console.log(pair[0] + ", " + pair[1]);
+			  }
+
+			const response = await axios.post(
+				"https://backend.asteraporcelain.com/api/v1/productsScreen/removeProductPage",
+				formData,
+				{
+					headers: {
+						"Content-Type": "multipart/form-data",
+					},
+				}
+			);
+
+			console.log("Delete successful:", response.data);
+			fetchProducts();
+
+			setLoading(false);
+
+			// Optionally add logic to display a success message or perform other actions
+		} catch (error) {
+			setLoading(false);
+			console.error("Error deleteing slide:", error);
+			// Handle error scenarios, e.g., display an error message to the user
+		}
+	};
   
 
   return (
     <div className="w-[100%]">
       <div className="ml-[2rem] mt-[2rem]">
-        <p className="w-full text-lg font-bold leading-7 text-gray-900 max-md:max-w-full">
+        <p className="w-full text-lg font-bold leading-7 text-gray-900 w-full">
           Collection Page
         </p>
         {/* <p className="mt-1 text-ellipsis text-slate-600 max-md:max-w-full">
@@ -108,7 +145,18 @@ export function Product() {
       </div>
       <div>
         {products.map((product, index) => (
-          <div key={index}>
+          <div key={index} className="ml-[2rem] mt-[2rem] border border-solid border-black">
+            <button
+              className="border-1 mt-5 px-5 border-solid border-blue text-white bg-blue-700 p-2 rounded-xl ml-[80%]"
+              onClick={ () => removeProduct(product._id)}
+            >
+              {loading ? (
+								<CircularProgress size={24} color="inherit" />
+							) : (
+								"Delete Product Page"
+							)}
+              
+            </button>
             <Section1 id={product._id} data1={product.section1}  />
             <Section2 id={product._id} data2={product.section2} fetchProducts={fetchProducts} />
             <Section3 id={product._id} data3={product.section3} fetchProducts={fetchProducts} />

@@ -167,7 +167,9 @@ const Section6 = () => {
 	return (
 		<div className="max-w-lg ml-4 mt-4">
 			{section6Data.map((item, index) => (
+				<div key={index} >
 			<Section6Update  item={item} index={index} fetchData={fetchData} />
+			</div>
 			))}
 
 			<div className="text-lg font-semibold leading-7 text-gray-900">

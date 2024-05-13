@@ -508,7 +508,9 @@ export function Section2() {
       {sectionData &&
         Array.isArray(sectionData) &&
         sectionData.map((sectionData, index) => (
+          <div key={index}>
           <Section2Update sectionData={sectionData} index={index} fetchData={fetchData} />
+          </div>
         ))}
 
       {/* {sectionData &&

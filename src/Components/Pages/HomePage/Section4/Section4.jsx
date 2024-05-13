@@ -64,7 +64,9 @@ import axios from "axios";
 	return (
 		<div>
 			{section4Data.map((item, index) => (
+				<div key={index}>
 			<Section1 index = {index} item={item} fetchData={fetchData}/>
+			</div>
 			))}
             <Section2 fetchData={fetchData}/>
             {/* <Section3 /> */}

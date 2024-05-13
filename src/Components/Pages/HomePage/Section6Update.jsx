@@ -69,6 +69,39 @@ const Section6Update = ({ item, index, fetchData }) => {
 	// 	}
 	// };
 
+	const removeSlide = async () => {
+		try {
+			setLoading(true);
+			const formData = new FormData();
+			formData.append("itemId", itemId);
+
+			for (let pair of formData.entries()) {
+				console.log(pair[0] + ", " + pair[1]);
+			  }
+
+			const response = await axios.post(
+				"https://backend.asteraporcelain.com/api/v1/homescreen/removeSection6Item",
+				formData,
+				{
+					headers: {
+						"Content-Type": "multipart/form-data",
+					},
+				}
+			);
+
+			console.log("Delete successful:", response.data);
+			fetchData();
+
+			setLoading(false);
+
+			// Optionally add logic to display a success message or perform other actions
+		} catch (error) {
+			setLoading(false);
+			console.error("Error deleteing slide:", error);
+			// Handle error scenarios, e.g., display an error message to the user
+		}
+	};
+
 	const handleUpdateItem = async () => {
 		try {
 			setLoading(true);
@@ -215,7 +248,7 @@ const Section6Update = ({ item, index, fetchData }) => {
 	
 
 	return (
-		<div className="max-w-lg ml-4 mt-4">
+		<div key={index} className="max-w-lg ml-4 mt-4">
 			<div className="text-lg font-semibold leading-7 text-gray-900">
 				Section 6
 				<span className="mt-1 text-lg text-bold ml-4 whitespace-nowrap text-red-600">
@@ -359,6 +392,18 @@ const Section6Update = ({ item, index, fetchData }) => {
 							) : (
 								"Update"
 							)}
+						</button>
+						<button
+							className="text-white bg-purple-600 rounded-lg px-5 py-2.5 mr-4"
+							onClick={() => fetchData()}
+						>
+							Cancel
+						</button>
+						<button
+							className="text-white bg-purple-600 rounded-lg px-5 py-2.5 mr-4"
+							onClick={() => removeSlide()}
+						>
+							Remove Slide
 						</button>
 					</div>
 				

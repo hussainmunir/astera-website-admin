@@ -59,11 +59,11 @@ export function Section2() {
       if (
         response.data &&
         response.data.data &&
-        response.data.data.whatsnewCollection
+        response.data.data.noveltiesCollection
       ) {
-        const whatsnewCollection = response.data.data.whatsnewCollection;
-        if (whatsnewCollection.section2) {
-          const { section2 } = whatsnewCollection;
+        const noveltiesCollection = response.data.data.noveltiesCollection;
+        if (noveltiesCollection.section2) {
+          const { section2 } = noveltiesCollection;
           setTitle(section2.title || "");
           setSubTitle(section2.subTitle || "");
           setProducts(section2);
