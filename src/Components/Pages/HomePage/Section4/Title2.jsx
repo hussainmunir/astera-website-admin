@@ -7,7 +7,7 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
-import { baseUrlImage } from "../../../../api/base_urls";
+import { baseUrl, baseUrlImage } from "../../../../api/base_urls";
 import { CircularProgress } from "@mui/material";
 
 const Title2 = ({ fetchData }) => {
@@ -116,54 +116,35 @@ const Title2 = ({ fetchData }) => {
 	  };
 
 	  const handleSave = async () => {
-		try {
-			setLoading(true);
-			const formData = new FormData();
-	
-			formData.append("title", title);
-			formData.append("subtitle", subtitle);
-			formData.append("description", editorContent);
-	
-			if (selectedImage) {
-				formData.append("backgroundImage", selectedImage);
-			}
-			if (supportiveImages) {
-				// Loop through each file in the supportiveImages array and append them individually
-				supportiveImages.forEach((image, index) => {
-					formData.append(`supportiveImages`, image);
-				});
-			}
-	
-			const response = await axios.post(
-				"https://backend.asteraporcelain.com/api/v1/homescreen/addSection4Item",
-				formData,
-				{
-					headers: {
-						"Content-Type": "multipart/form-data",
-					},
-				}
-			);
-	
-			console.log("Save successful:", response.data);
-	
-			fetchData();
-			setSaveSuccess(true);
-	
-			setLoading(false);
-	
-			resetState();
-	
-			// Hide success message after 3 seconds (3000 milliseconds)
-			setTimeout(() => {
-				setSaveSuccess(false);
-			}, 3000);
-			// Optionally add logic to display a success message or perform other actions
-		} catch (error) {
-			setLoading(false);
-			console.error("Error saving data:", error);
-			// Handle error scenarios, e.g., display an error message to the user
-		}
-	};
+        try {
+            setLoading(true);
+            const formData = new FormData();
+
+            formData.append("title", title);
+            formData.append("subtitle", subtitle);
+            formData.append("description", editorContent);
+            if (selectedImage) {
+                formData.append("backgroundImage", selectedImage);
+            }
+            supportiveImages.forEach((image, index) => {
+                formData.append(`supportiveImages`, image);
+            });
+
+            const response = await axios.post(`${baseUrl}homescreen/addSection4Item`, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            console.log("Save successful:", response.data);
+
+            setLoading(false);
+        } catch (error) {
+            setLoading(false);
+            console.error("Error saving data:", error);
+        }
+    };
+
 	
 
 	const AddSupportiveImage = async () => {
@@ -180,7 +161,7 @@ const Title2 = ({ fetchData }) => {
 				console.log(pair[0] + ", " + pair[1]);
 			  }
 			const response = await axios.post(
-				"https://backend.asteraporcelain.com/api/v1/homescreen/addSupportiveImagesToSection4",
+				`${baseUrl}homescreen/addSupportiveImagesToSection4`,
 				formData,
 				{
 					headers: {
@@ -331,7 +312,7 @@ const Title2 = ({ fetchData }) => {
 						</div>
 						{/* Update Button */}
 						{loading ? (
-							<CircularProgress size={24} color="inherit" />
+							<CircularProgress size={24} color="inherit" className=" absolute ml-[87%] " />
 						) : (
 							<button
 								className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute ml-[87%] "
@@ -341,8 +322,8 @@ const Title2 = ({ fetchData }) => {
 							</button>
 						)}
 						{saveSuccess && (
-							<div className="text-green-600 mt-2 absolute top-[72rem] ml-[87%]">
-								Update successful!
+							<div className="text-green-600 absolute ml-[87%] mt-[5rem]">
+								Save successful!
 							</div>
 						)}
 						<button className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute ml-[80%]"
@@ -544,6 +525,7 @@ const Title2 = ({ fetchData }) => {
 							>
 								Add
 							</button>
+							
 								</div>
 								
 							)}
