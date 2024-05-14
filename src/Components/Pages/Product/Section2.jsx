@@ -99,16 +99,24 @@ export function Section2({ id, data2, fetchProducts }) {
     try {
       const formData = new FormData();
       formData.append("productId", id);
-      supportiveImages.forEach((image) => {
-        formData.append("imageFile", image);
-      });
+      // supportiveImages.forEach((image) => {
+      //   formData.append("imageFile", image);
+      // });
+
+      if (supportiveImages) {
+				// Loop through each file in the supportiveImages array and append them individually
+				supportiveImages.forEach((image, index) => {
+          console.log(supportiveImages);
+					formData.append(`imageFile`, image);
+				});
+			}
 
       for (let pair of formData.entries()) {
         console.log(pair[0] + ", " + pair[1]);
       }
 
       const response = await axios.post(
-        `${baseUrl}roductsScreen/addToSection2`,
+        `${baseUrl}productsScreen/addToSection2`,
         formData,
         {
           headers: {
