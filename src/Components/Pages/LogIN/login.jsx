@@ -39,7 +39,7 @@ export const Login = () => {
       }
     } catch (error) {
       console.error("Error occurred while logging in:", error);
-      setError("An error occurred while logging in. Please try again later.");
+      setError(`${error.response.data.message}`);
     }
   };
 

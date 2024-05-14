@@ -58,7 +58,7 @@ export function Section1() {
         requestData.append("backgroundImage", selectedImage);
       }
       const response = await axios.post(
-        `${baseUrl}privacyPolicyScreen/updateSection1`,
+        `${baseUrl}termsAndConditionsScreen/updateSection1`,
         requestData,
         {
           headers: {

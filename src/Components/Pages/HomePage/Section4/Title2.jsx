@@ -137,7 +137,8 @@ const Title2 = ({ fetchData }) => {
             });
 
             console.log("Save successful:", response.data);
-
+			fetchData();
+			resetState();
             setLoading(false);
         } catch (error) {
             setLoading(false);

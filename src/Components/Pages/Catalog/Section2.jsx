@@ -23,7 +23,7 @@ export function Section2() {
 
 
   const [title, setTitle] = useState("");
-  const [subTitle, setSubTitle] = useState("");
+  const [subTitle, setSubTitle] = useState(" ");
   const [selectedImage, setSelectedImage] = useState(null);
   const [file, setFile] = useState(null);
   const [buttonDownloadText, setButtonDownloadText] = useState("");

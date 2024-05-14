@@ -11,9 +11,7 @@ export function TermsAndConditions() {
           Title for Collection Page
         </p>
         <p className="mt-1 text-ellipsis text-slate-600 max-md:max-w-full">
-          Lorem ipsum dolor sit amet consectetur. Est lectus sit at bibendum
-          elementum accumsan dignissim tempus in. Pretium nibh venenatis urna
-          sed.
+         
         </p>
       </div>
       <Section1 />

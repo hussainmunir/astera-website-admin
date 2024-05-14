@@ -62,7 +62,7 @@ export function Section2() {
       requestData.append("privacyText",editorContent)
      
       const response = await axios.post(
-        `${baseUrl}privacyPolicyScreen/updateSection2`,
+        `${baseUrl}termsAndConditionsScreen/updateSection2`,
         requestData,
         {
           headers: {
