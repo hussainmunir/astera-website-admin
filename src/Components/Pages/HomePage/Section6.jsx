@@ -251,13 +251,11 @@ const Section6 = () => {
         <div className="w-auto mt-[2rem]  flex">
           <label className="mr-2 font-semibold">Avatar:</label>
           {newItemData.avatarImageUrl && (
-            <LazyLoad>
-              <img
-                src={URL.createObjectURL(newItemData.avatarImageUrl)}
-                alt="Avatar Preview"
-                className="w-auto h-40 object-cover rounded-lg ml-[30rem]"
-              />
-            </LazyLoad>
+            <img
+              src={URL.createObjectURL(newItemData.avatarImageUrl)}
+              alt="Avatar Preview"
+              className="w-auto h-40 object-cover rounded-lg ml-[30rem]"
+            />
           )}
           <div
             {...getAvatarRootProps()}
@@ -278,14 +276,11 @@ const Section6 = () => {
             Background Image:
           </label>
           {newItemData.backgroundImageUrl && (
-            <LazyLoad>
-              {" "}
-              <img
-                src={URL.createObjectURL(newItemData.backgroundImageUrl)}
-                alt="Background Preview"
-                className="w-auto h-40 object-cover rounded-lg ml-[30rem]"
-              />
-            </LazyLoad>
+            <img
+              src={URL.createObjectURL(newItemData.backgroundImageUrl)}
+              alt="Background Preview"
+              className="w-auto h-40 object-cover absolute rounded-lg ml-[30rem]"
+            />
           )}
           <div
             {...getBackgroundRootProps()}

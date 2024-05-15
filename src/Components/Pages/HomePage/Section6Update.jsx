@@ -303,8 +303,7 @@ const Section6Update = ({ item, index, fetchData }) => {
         {/* Avatar */}
         <div className="w-full mt-4  flex items-center">
           <label className="mr-2 font-semibold">Avatar</label>
-          <LazyLoad>
-            {" "}
+        
             {selectedAvatarImage ? (
               <img
                 src={URL.createObjectURL(selectedAvatarImage)}
@@ -318,7 +317,7 @@ const Section6Update = ({ item, index, fetchData }) => {
                 className="w-auto whitespace-nowrap h-40 object-cover rounded-lg mr-4  ml-[30rem]"
               />
             )}
-          </LazyLoad>
+          
 
           <div
             {...getAvatarRootProps()}
@@ -337,7 +336,7 @@ const Section6Update = ({ item, index, fetchData }) => {
         {/* Background Image */}
         <div className="w-full mt-4  flex items-center">
           <label className="mr-2 font-semibold">Image</label>
-          <LazyLoad>
+        
             {selectedBackgroundImage ? (
               <img
                 src={URL.createObjectURL(selectedBackgroundImage)}
@@ -351,7 +350,7 @@ const Section6Update = ({ item, index, fetchData }) => {
                 className="w-auto whitespace-nowrap h-40 object-cover rounded-lg mr-4  ml-[30rem]"
               />
             )}
-          </LazyLoad>
+         
 
           <div
             {...getBackgroundRootProps()}
