@@ -12,6 +12,7 @@ import { baseUrl, baseUrlImage } from "../../../api/base_urls";
 export function Discoversection1() {
   const collections = useCollections();
   const [sectionTitle, setSectionTitle] = useState("");
+  const [sectionSubTitle, setSectionSubTitle] = useState("");
   const [sectionData, setSectionData] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [editorContent, setEditorContent] = useState("");
@@ -19,6 +20,7 @@ export function Discoversection1() {
   const [loading, setLoading] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [resetMessage, setResetMessage] = useState("");
+  const [txtBold,setTxtBold]=useState("");
   const maxChars = 500;
 
   useEffect(() => {
@@ -37,7 +39,10 @@ export function Discoversection1() {
           setSectionData(section1);
           setEditorContent(section1.description);
           setSectionTitle(section1.title);
+          setSectionSubTitle(section1.subtitle);
+          setTxtBold(section1.subtitleBold);
         }
+        console.log("data", sectionData);
       } catch (error) {
         console.error("Error fetching section data:", error);
       }
@@ -54,20 +59,20 @@ export function Discoversection1() {
 
   const handleSave = async () => {
     setLoading(true);
-
+    const formData = new FormData();
     try {
-      const requestData = {
-        title: sectionTitle,
-        description: editorContent,
-      };
+      formData.append("title", sectionTitle),
+        formData.append("description", editorContent),
+        formData.append("subtitle", sectionSubTitle);
+        formData.append("subtitleBold",txtBold);
 
       if (selectedImage) {
-        requestData.backgroundImage = selectedImage;
+        formData.append("backgroundImage", selectedImage);
       }
 
       const response = await axios.post(
         `${baseUrl}discoverScreen/updateSection1`,
-        requestData,
+        formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -123,7 +128,11 @@ export function Discoversection1() {
             </div>
           </div>
           {loading ? (
-            <CircularProgress size={24} color="inherit" className="absolute -mt-[3rem] ml-[86%]" />
+            <CircularProgress
+              size={24}
+              color="inherit"
+              className="absolute -mt-[3rem] ml-[86%]"
+            />
           ) : (
             <button
               className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute top-[20rem] ml-[86%]"
@@ -152,13 +161,27 @@ export function Discoversection1() {
             <label className="block text-lg font-semibold mb-1 mr-[32rem] whitespace-nowrap">
               Title
             </label>
-            <div className="flex">
+            <div className="flex gap-6 flex-col">
               <input
                 type="text"
                 className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black mr-[2rem]"
                 value={sectionTitle}
                 placeholder="Title"
                 onChange={(e) => setSectionTitle(e.target.value)}
+              />{" "}
+              <input
+                type="text"
+                className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black mr-[2rem]"
+                value={sectionSubTitle}
+                placeholder="Sub-Title"
+                onChange={(e) => setSectionSubTitle(e.target.value)}
+              />
+              <input
+                type="text"
+                className="w-auto border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black mr-[2rem]"
+                value={txtBold}
+                placeholder="Sub-Title Bold"
+                onChange={(e) => setTxtBold(e.target.value)}
               />
             </div>
           </div>

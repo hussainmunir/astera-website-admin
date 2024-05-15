@@ -395,13 +395,13 @@ export function Section2Update({sectionData, index, fetchData}) {
                               : URL.createObjectURL(selectedImage)
                           }
                           alt="Uploaded"
-                          className="w-auto h-auto object-cover rounded-lg mr-[2rem]"
+                          className="w-[10rem] h-[10rem] object-cover rounded-lg mr-[2rem]"
                         />
                       ) : (
                         <img
                         src={`${baseUrlImage}${backgroundImageUrl}`}
                         alt="Upload Icon"
-                        className="w-auto h-40 mb-2 flex justify-center items-center"
+                        className="w-[10rem] h-[10rem] mb-2 flex justify-center items-center"
                         style={{ margin: "auto" }}
                       />
                      )} 

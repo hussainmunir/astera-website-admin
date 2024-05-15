@@ -126,25 +126,25 @@ export function Discoversection3() {
 						<CircularProgress size={24} color="inherit" className="absolute ml-[86%]"/>
 					) : (
 						<button
-							className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute top-[100rem] ml-[86%]"
+							className="text-white bg-purple-600 rounded-lg px-5 py-2.5 absolute top-[110rem] ml-[86%]"
 							onClick={handleSave}
 						>
 							Save
 						</button>
 					)}
 					{saveSuccess && (
-						<div className="text-green-600 mt-2 absolute top-[105rem] ml-[85%]">
+						<div className="text-green-600 mt-2 absolute top-[115rem] ml-[85%]">
 							Save successful!
 						</div>
 					)}
 					<button
-						className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute top-[100rem] ml-[80%]"
+						className="text-black bg-white border-2 border-black rounded-2xl px-3 py-2 absolute top-[110rem] ml-[80%]"
 						onClick={handleCancel}
 					>
 						Cancel
 					</button>
 					{resetMessage && (
-						<div className="text-red-600 mt-2 absolute top-[105rem] ml-[85%]">
+						<div className="text-red-600 mt-2 absolute top-[115rem] ml-[85%]">
 							{resetMessage}
 						</div>
 					)}

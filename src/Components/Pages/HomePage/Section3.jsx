@@ -103,15 +103,8 @@ const Section3 = () => {
       formData.append("title", title);
       formData.append("subtitle", subtitle);
       formData.append("description", description);
-      formData.append("buttonText", buttonText);
-	  
-	  if(inputEnabled){
-        setAddButton(true);
-      }
-      else{
-        setAddButton(false);
-      }
-      formData.append("addButton",addButton);
+      formData.append("buttonText", buttonText); // Use buttonText directly
+      formData.append("addButton", inputEnabled); // Use inputEnabled directly
       const response = await axios.post(
         `${baseUrl}homescreen/updateSection3`,
         formData,
@@ -123,19 +116,20 @@ const Section3 = () => {
       );
 
       console.log("Save successful:", response.data);
+
       setSaveSuccess(true); // Set save success message
       setTimeout(() => {
-        setSaveSuccess("");
+        setSaveSuccess(false); // Reset save success message
       }, 3000);
-      // Optionally add logic to display a success message or perform other actions
     } catch (error) {
       console.error("Error saving data:", error);
-      // Handle error scenarios, e.g., display an error message to the user
     }
   };
 
+
   const handleToggleChange = () => {
-    setInputEnabled(!inputEnabled); // Toggle the input field enable/disable state
+    setInputEnabled(!inputEnabled);
+     // Toggle the input field enable/disable state
     if (!inputEnabled) {
       // Set input text to current buttonText when enabling input
       setInputText(buttonText);
@@ -144,6 +138,7 @@ const Section3 = () => {
 
   const handleInputChange = (e) => {
     setInputText(e.target.value);
+    setButtonText(inputText);
   };
 
   return (

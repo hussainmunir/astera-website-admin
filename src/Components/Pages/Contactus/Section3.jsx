@@ -114,16 +114,18 @@ const Section3 = () => {
 
     const config = {
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "multipart/form-data",
       },
     };
 
+   
     if (selectedImage) {
-      requestData.append("backgroundImage", selectedImage);
-    }
-
+			requestData.backgroundImage = selectedImage;
+		  }
+      
     try {
       console.log("fields", fields);
+      console.log("requestData", requestData);
       const response = await axios.post(
         `${baseUrl}contactScreen/updateSection3`,
         requestData,

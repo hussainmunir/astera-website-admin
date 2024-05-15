@@ -24,7 +24,8 @@ export const Section2 = () => {
   const [loading, setLoading] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [resetMessage, setResetMessage] = useState("");
-  const [originalData, setOriginalData] = useState(null); // Store original fetched data
+  const [originalData, setOriginalData] = useState(null);
+  const [addButton,setAddButton]=useState(""); // Store original fetched data
 
   const maxChars = 500;
 
@@ -105,13 +106,8 @@ export const Section2 = () => {
       formData.append("title", title);
       formData.append("subtitle", subtitle);
       formData.append("description", description);
-      formData.append("buttonText", buttonText);
-      if (inputEnabled) {
-        setAddButton(true);
-      } else {
-        setAddButton(false);
-      }
-      formData.append("addButton", addButton);
+      formData.append("buttonText", buttonText); // Use buttonText directly
+      formData.append("addButton", inputEnabled); // Use inputEnabled directly
       const response = await axios.post(
         `${baseUrl}homescreen/updateSection2`,
         formData,
@@ -126,12 +122,10 @@ export const Section2 = () => {
 
       setSaveSuccess(true); // Set save success message
       setTimeout(() => {
-        setSaveSuccess("");
+        setSaveSuccess(false); // Reset save success message
       }, 3000);
-      // Optionally add logic to display a success message or perform other actions
     } catch (error) {
       console.error("Error saving data:", error);
-      // Handle error scenarios, e.g., display an error message to the user
     }
   };
 
@@ -144,8 +138,10 @@ export const Section2 = () => {
   };
 
   const handleInputChange = (e) => {
-    setInputText(e.target.value);
+    setInputText(e.target.value); 
+    setButtonText(inputText);
   };
+
 
   return (
     <div className="max-w-lg ml-[2rem] mt-[2rem]">
@@ -251,7 +247,7 @@ export const Section2 = () => {
               type="text"
               className="border ml-[28rem] border-gray-300 px-3 py-2 focus:outline-none focus:border-black"
               placeholder={inputEnabled ? "Input Field" : "Button Text"}
-              value={inputEnabled ? inputText : buttonText} // Use inputText when editing, otherwise use buttonText
+              value={inputEnabled ? inputText : inputText} // Use inputText when editing, otherwise use buttonText
               onChange={handleInputChange}
               disabled={!inputEnabled}
             />
