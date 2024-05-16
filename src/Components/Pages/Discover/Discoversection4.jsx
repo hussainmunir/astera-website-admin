@@ -55,38 +55,38 @@ export function Discoversection4() {
 
 	const handleSave = async () => {
 		setLoading(true);
-
-		const requestData={
-			title:sectionTitle,
-			description:editorContent,
-		}
-
+	
+		const requestData = {
+		  title: sectionTitle,
+		  description: editorContent,
+		};
+	
 		if (selectedImage) {
-			requestData.backgroundImage = selectedImage;
-		  }
-
+				requestData.backgroundImage = selectedImage;
+			  }
+	
 		try {
-			const response = await axios.post(
-				`${baseUrl}}discoverScreen/updateSection4`,
-				requestData,
-				{
-					headers: {
-						"Content-Type": "multipart/form-data",
-					},
-				}
-			);
-			console.log("Update successful:", response.data);
-			setSaveSuccess(true);
+		  const response = await axios.post(
+			`${baseUrl}discoverScreen/updateSection4`,
+			requestData,
+			{
+			  headers: {
+				"Content-Type": "multipart/form-data",
+			  },
+			}
+		  );
+		  console.log("Update successful:", response.data);
+		  setSaveSuccess(true);
 		} catch (error) {
-			console.error("Error updating section:", error);
+		  console.error("Error updating section:", error);
 		} finally {
-			setLoading(false);
-			setTimeout(() => {
-				setSaveSuccess(false);
-			}, 3000);
+		  setLoading(false);
+		  setTimeout(() => {
+			setSaveSuccess(false);
+		  }, 3000);
 		}
-	};
-
+	  };
+	
 	const handleCancel = () => {
 		if (sectionData) {
 			setSectionTitle(sectionData.title);
